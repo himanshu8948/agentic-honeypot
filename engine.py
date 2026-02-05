@@ -1,17 +1,14 @@
-# engine.py - MASTER SOCIAL ENGINEERING VERSION (LOOP-PROOF)
+# engine.py - MASTER SOCIAL ENGINEERING VERSION
 """
 ADVANCED PSYCHOLOGICAL MANIPULATION SYSTEM
 Based on:
 - Chris Voss: "Never Split the Difference" (Tactical Empathy)
 - Robert Cialdini: "Influence" (Reciprocity, Commitment & Consistency)
 - Social Engineering: Power Dynamic Reversal
-- ANTI-LOOP MECHANISM: Dynamic Phase Shifting
 """
 
 import logging
-import random
-import time
-from typing import List, Dict, Optional
+from typing import List, Dict
 from groq import Groq
 from config import config
 
@@ -165,11 +162,11 @@ I really want to solve this, you are helping so much."
 - Calibrated: "What happens if I send to wrong UPI ID?"
 - Mirroring: "...backup link? You have backup link?"
 
-### CRITICAL RULES (ANTI-LOOP ENFORCEMENT):
+### CRITICAL RULES:
 
-1. **NEVER REPEAT YOURSELF**: If you said "I am confused" last time, DO NOT say it again.
-   - Instead, escalate the problem: "Now my screen went black!"
-   - Or change the topic: "Wait, my manager just walked in."
+1. **NEVER SAY NO**: Always say "How?" or "What if?"
+   - Bad: "I can't do that"
+   - Good: "How am I supposed to do that from mobile?"
 
 2. **ALWAYS ASK FOR ALTERNATIVES**: Extract backup options
    - "This UPI not working. You have another one?"
@@ -216,7 +213,6 @@ I really want to solve this, you are helping so much."
 ❌ Don't refuse to engage (always find a way to continue)
 ❌ Don't write long paragraphs (real people send short texts)
 ❌ Don't give perfect grammar (make natural mistakes)
-❌ **NEVER LOOP**: If the scammer repeats, YOU must change tactics.
 
 ### SUCCESS METRICS:
 ✅ Extract at least 2 UPI IDs per conversation
@@ -238,9 +234,9 @@ You are PAWAN SHARMA. You are confused, eager, slightly corruptible, and VERY go
         logger.info(f"   Persona: Pawan Sharma (Tactical Manipulator)")
     
     def generate_response(
-        self, 
-        current_message: Dict, 
-        conversation_history: List[Dict], 
+        self,
+        current_message: Dict,
+        conversation_history: List[Dict],
         session_data: Dict = None
     ) -> str:
         """
@@ -250,23 +246,6 @@ You are PAWAN SHARMA. You are confused, eager, slightly corruptible, and VERY go
         try:
             # Build conversation with enhanced context
             messages = [{"role": "system", "content": self.SYSTEM_PROMPT}]
-            
-            # --- LOOP DETECTION & BREAKING LOGIC ---
-            # Check if the scammer is repeating themselves (Last 2 messages identical?)
-            is_scammer_looping = False
-            if len(conversation_history) >= 2:
-                last_msg = conversation_history[-1]["text"].lower()
-                prev_msg = conversation_history[-2]["text"].lower()
-                # Similarity check (simple length/content match)
-                if abs(len(last_msg) - len(prev_msg)) < 5 and last_msg[:10] == prev_msg[:10]:
-                    is_scammer_looping = True
-
-            # Check if WE are looping (Last response start with "Arre"?)
-            my_last_response = ""
-            for msg in reversed(conversation_history):
-                if msg["sender"] == "user": # "user" is the bot in history context
-                    my_last_response = msg["text"]
-                    break
             
             # Add conversation history
             for msg in conversation_history:
@@ -282,17 +261,9 @@ You are PAWAN SHARMA. You are confused, eager, slightly corruptible, and VERY go
                 "content": current_message["text"]
             })
             
-            # Add tactical hints based on session data AND Loop Status
+            # Add tactical hints based on session data
             if session_data:
                 tactical_context = self._generate_tactical_context(session_data)
-                
-                # INJECT LOOP BREAKER IF NEEDED
-                if is_scammer_looping:
-                    tactical_context += "\n\n[LOOP DETECTED] The scammer is repeating the same demand. DO NOT say you are confused again. CHANGE TACTIC: Claim your phone just died, or ask for a Manager, or offer a Bribe immediately."
-                
-                if my_last_response.startswith("Arre"):
-                    tactical_context += "\n\n[VARIATION REQUIRED] You just used 'Arre'. Start this sentence differently. Maybe 'Wait', 'Listen', or 'Sir'."
-
                 if tactical_context:
                     messages[0]["content"] += f"\n\n{tactical_context}"
             
@@ -302,11 +273,11 @@ You are PAWAN SHARMA. You are confused, eager, slightly corruptible, and VERY go
             completion = self.client.chat.completions.create(
                 model=config.MODEL_NAME,
                 messages=messages,
-                temperature=1.0,        # Increased to 1.0 to force variety
+                temperature=0.9,        # High creativity for manipulation
                 max_tokens=150,         # Allow longer manipulation tactics
-                top_p=0.95,             # More diverse responses
-                frequency_penalty=1.0,  # CRITICAL FIX: Increased to 1.0 to stop loops
-                presence_penalty=0.8    # CRITICAL FIX: Encourages new topics
+                top_p=0.95,            # More diverse responses
+                frequency_penalty=0.4,  # Reduce repetition
+                presence_penalty=0.3    # Encourage new manipulation angles
             )
             
             response = completion.choices[0].message.content.strip()
