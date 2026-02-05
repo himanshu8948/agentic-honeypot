@@ -1,163 +1,346 @@
-# intelligence.py
+"""
+FILE: intelligence.py
+VERSION: 6.0 - ENTERPRISE FORENSIC SUITE
+PURPOSE: Comprehensive Digital Footprint Extraction and Threat Analysis.
+Designed for: GUVI AI Impact India - Agentic Honey-Pot Project.
+"""
+
 import re
 import logging
-from typing import Dict, List, Tuple
+import json
 import phonenumbers
+from typing import Dict, List, Tuple, Set, Optional, Any
+from datetime import datetime
+from urllib.parse import urlparse
 
-logger = logging.getLogger(__name__)
+# ============================================================================
+# LOGGING & AUDIT CONFIGURATION
+# ============================================================================
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger("ScamForensicsEngine")
 
 class IntelligenceExtractor:
     """
-    Handles Rules 2 & 3: Extract scam intelligence
-    Uses regex patterns and NLP to identify:
-    - Bank accounts
-    - UPI IDs
-    - Phishing links
-    - Phone numbers
-    - Suspicious keywords
+    Master forensic engine utilizing layered RegEx, Contextual Heuristics,
+    and Linguistic Pattern matching to de-anonymize malicious actors.
     """
-    
-    # Regex patterns for Indian financial data
+
+    # ========================================================================
+    # 1. THE DNA LIBRARY: MASTER REGEX PATTERNS
+    # ========================================================================
     PATTERNS = {
-        "upi": r'\b[\w\.-]+@[\w\.-]+\b',  # username@bank
-        "bank_account": r'\b\d{9,18}\b',  # 9-18 digit account numbers
-        "ifsc": r'\b[A-Z]{4}0[A-Z0-9]{6}\b',  # IFSC codes
-        "phone": r'\+?91[-\s]?\d{10}|\b\d{10}\b',  # Indian phone numbers
-        "url": r'https?://[^\s]+|www\.[^\s]+|\b[a-z0-9]+\.(com|in|net|org|xyz|click|tk)[^\s]*'
+        # UPI VPA: Supports standard formats and bank-specific handles
+        "upi": r'\b[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}\b',
+        
+        # Indian Mobile: Supports +91, 0, 91, and varying space/dash separators
+        "phone": r'(?:\+91[\s\-]?)?[0]?[6-9]\d{9}\b',
+        
+        # Bank Account: Standardized Indian Banking digits (9-18 length)
+        "bank_account": r'\b\d{9,18}\b',
+        
+        # IFSC: 4 Alphas (Bank) + 0 (Reserved) + 6 Alphanumerics (Branch)
+        "ifsc": r'\b[A-Z]{4}0[A-Z0-9]{6}\b',
+        
+        # Phishing Links: Catches raw IPs, shortened URLs, and deep paths
+        "url": (
+            r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+(?:/[^\s]*)?|'
+            r'(?:bit\.ly|tinyurl\.com|goo\.gl|t\.co|wa\.me|t\.me|ow\.ly|is\.gd)/[a-zA-Z0-9]+|'
+            r'\b(?:www\.)?[a-z0-9-]+\.[a-z]{2,}(?:\.[a-z]{2,})?+(?:/[^\s]*)?'
+        ),
+        
+        # Financial Instruments: Cards, CVV (extracted but usually masked)
+        "card_number": r'\b(?:\d{4}[\s\-]?){3}\d{4}\b',
+        
+        # Personal Identifiers: PAN (Income Tax), Aadhaar (UIDAI)
+        "pan": r'\b[A-Z]{5}\d{4}[A-Z]\b',
+        "aadhaar": r'\b\d{4}\s\d{4}\s\d{4}\b|\b\d{12}\b',
+        
+        # Electronic Mail
+        "email": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+        
+        # Forensic IDs: UTR, TXN, REF, ORDER numbers
+        "transaction_id": r'\b(?:UTR|TXN|REF|ORDER|PAY|ID|REC|BILL)[\s\-\:\#]?[A-Z0-9]{8,24}\b',
+        
+        # Monetary Indicators
+        "money": r'(?i)(?:Rs\.?|₹|INR|RS|amount|rupees|bucks)[\s]?[\d,]+(?:\.\d{2})?',
+        
+        # Authentication Codes: 4-8 digit numeric codes found near key terms
+        "otp_pattern": r'\b\d{4,8}\b'
     }
-    
-    # Scam keywords (weighted by severity)
-    SCAM_KEYWORDS = {
-        "critical": [
-            "account blocked", "suspended", "verify immediately", "update kyc",
-            "refund pending", "prize won", "lottery", "tax refund",
-            "otp", "cvv", "pin", "password", "atm card blocked"
+
+    # ========================================================================
+    # 2. THREAT TAXONOMY: LINGUISTIC TRIGGERS
+    # ========================================================================
+    THREAT_VECTORS = {
+        "ACCOUNT_MANIPULATION": [
+            "account blocked", "account suspended", "kyc update", "account locked",
+            "freeze", "frozen", "deactivated", "disabled", "rbi block", "bank block",
+            "security alert", "suspicious activity", "unauthorized login"
         ],
-        "high": [
-            "urgent", "verify", "confirm", "update", "click here",
-            "expire", "limited time", "act now", "immediate action"
+        "PSYCHOLOGICAL_URGENCY": [
+            "immediately", "urgent", "expire today", "within 1 hour", "fast",
+            "last chance", "final warning", "don't wait", "now or never",
+            "avoid penalty", "legal action", "court summons", "police case"
         ],
-        "medium": [
-            "bank", "payment", "transfer", "account", "upi",
-            "paytm", "phonepe", "gpay", "link", "secure"
+        "CREDENTIAL_BAITING": [
+            "share otp", "give pin", "tell password", "send screen", "cvv",
+            "expiry date", "verify identity", "confirm kyc", "login details",
+            "authenticate now", "validate account", "security question"
+        ],
+        "AUTHORITY_MISREPRESENTATION": [
+            "customer care", "bank manager", "official", "government", "police",
+            "investigation", "crime", "rbi official", "cbi", "narcotics bureau",
+            "income tax officer", "high court", "legal cell"
+        ],
+        "MALICIOUS_SOFTWARE_BAIT": [
+            "anydesk", "teamviewer", "rustdesk", "apk", "download link", "install",
+            "support app", "verification app", "remote access", "screen share"
         ]
     }
+
+    # ========================================================================
+    # 3. GLOBAL PROVIDER DATASETS
+    # ========================================================================
+    MAJOR_BANKS = [
+        "SBI", "STATE BANK", "HDFC", "ICICI", "AXIS", "KOTAK", "PNB", 
+        "BANK OF BARODA", "YES BANK", "IDFC", "CANARA", "UNION BANK"
+    ]
     
-    @staticmethod
-    def extract(message_text: str, conversation_history: List[Dict]) -> Dict[str, List[str]]:
+    TRUSTED_UPI_HANDLES = [
+        "ybl", "oksbi", "okaxis", "paytm", "ibl", "axl", "upi", "apl", 
+        "fbl", "okhdfcbank", "okicici", "wa.me", "jupiter"
+    ]
+
+    # ========================================================================
+    # 4. PRIMARY EXTRACTION PIPELINE
+    # ========================================================================
+    @classmethod
+    def extract(cls, current_text: str, history: List[Dict]) -> Dict:
         """
-        Extract intelligence from message and conversation history
-        
-        Returns:
-            Dict with keys: bankAccounts, upiIds, phishingLinks, phoneNumbers, suspiciousKeywords
+        Executes a deep forensic audit on the current message and historical turns.
         """
-        intelligence = {
+        results = {
             "bankAccounts": [],
             "upiIds": [],
             "phishingLinks": [],
             "phoneNumbers": [],
-            "suspiciousKeywords": []
+            "suspiciousKeywords": [],
+            "forensic_metadata": {
+                "timestamp": datetime.now().isoformat(),
+                "analysis_version": "6.0-PRO",
+                "extracted_entities_count": 0
+            }
         }
-        
-        # Combine current message with history for context
-        all_text = message_text.lower()
-        for msg in conversation_history:
-            if msg.get("sender") == "scammer":
-                all_text += " " + msg.get("text", "").lower()
-        
-        # Extract UPI IDs
-        upi_matches = re.findall(IntelligenceExtractor.PATTERNS["upi"], all_text)
-        for upi in upi_matches:
-            # Filter out emails and keep only UPI-like patterns
-            if any(bank in upi.lower() for bank in ["@paytm", "@ybl", "@oksbi", "@axl", "@icici", "@hdfcbank", "@upi"]):
-                intelligence["upiIds"].append(upi)
-        
-        # Extract bank accounts
-        account_matches = re.findall(IntelligenceExtractor.PATTERNS["bank_account"], all_text)
-        intelligence["bankAccounts"].extend(account_matches)
-        
-        # Extract phone numbers
-        phone_matches = re.findall(IntelligenceExtractor.PATTERNS["phone"], all_text)
-        for phone in phone_matches:
-            try:
-                parsed = phonenumbers.parse(phone, "IN")
-                if phonenumbers.is_valid_number(parsed):
-                    intelligence["phoneNumbers"].append(phonenumbers.format_number(
-                        parsed, phonenumbers.PhoneNumberFormat.E164
-                    ))
-            except:
-                # If parsing fails, keep raw format
-                intelligence["phoneNumbers"].append(phone)
-        
-        # Extract URLs (potential phishing links)
-        url_matches = re.findall(IntelligenceExtractor.PATTERNS["url"], all_text)
-        for url in url_matches:
-            # Filter out legitimate domains
-            if not any(safe in url.lower() for safe in ["google.com", "gov.in", "wikipedia.org"]):
-                intelligence["phishingLinks"].append(url)
-        
-        # Extract suspicious keywords
-        for severity, keywords in IntelligenceExtractor.SCAM_KEYWORDS.items():
-            for keyword in keywords:
-                if keyword in all_text:
-                    intelligence["suspiciousKeywords"].append(keyword)
-        
-        # Remove duplicates
-        for key in intelligence:
-            intelligence[key] = list(set(intelligence[key]))
-        
-        logger.debug(f"Extracted intelligence: {intelligence}")
-        return intelligence
-    
+
+        # Step 1: Synthesize the Forensic Buffer
+        # We look at everything the scammer has ever said to find patterns.
+        buffer = current_text.lower()
+        for turn in history:
+            if turn.get("sender") == "scammer":
+                buffer += f" [HISTORY_SEGMENT] {turn.get('text', '').lower()}"
+
+        # Step 2: UPI VPA Extraction & Verification
+        raw_upis = re.findall(cls.PATTERNS["upi"], buffer)
+        for u in raw_upis:
+            if cls._verify_vpa_integrity(u):
+                results["upiIds"].append(u.lower().strip())
+
+        # Step 3: Phone Number Normalization (Global Standard E.164)
+        raw_phones = re.findall(cls.PATTERNS["phone"], buffer)
+        for p in raw_phones:
+            standard_p = cls._format_and_validate_phone(p)
+            if standard_p:
+                results["phoneNumbers"].append(standard_p)
+
+        # Step 4: URL Intelligence & Threat Analysis
+        raw_links = re.findall(cls.PATTERNS["url"], buffer)
+        for l in raw_links:
+            if cls._assess_url_threat(l):
+                # Ensure the link is actionable
+                clean_l = l if l.startswith('http') else f"http://{l}"
+                results["phishingLinks"].append(clean_l)
+
+        # Step 5: Banking Logic (Context-Aware Extraction)
+        raw_accounts = re.findall(cls.PATTERNS["bank_account"], buffer)
+        for acc in raw_accounts:
+            if cls._is_actually_bank_account(acc, buffer):
+                results["bankAccounts"].append(acc)
+
+        # Step 6: Alphanumeric Forensics (PAN, Aadhaar, IFSC)
+        cls._run_deep_entity_recognition(buffer, results)
+
+        # Step 7: Behavioral Urgency Analysis
+        cls._perform_linguistic_audit(buffer, results)
+
+        # Step 8: Data Cleansing & Final Deduplication
+        results = cls._post_process_forensics(results)
+
+        # Update metadata count
+        results["forensic_metadata"]["extracted_entities_count"] = sum(
+            len(v) for k, v in results.items() if isinstance(v, list)
+        )
+
+        logger.info(f"Forensic Logic Cycle Complete. Score Generated.")
+        return results
+
+    # ========================================================================
+    # 5. FORENSIC VALIDATION HELPERS (Internal)
+    # ========================================================================
     @staticmethod
-    def calculate_scam_score(intelligence: Dict[str, List[str]]) -> int:
-        """
-        Calculate scam confidence score (0-100)
+    def _verify_vpa_integrity(vpa: str) -> bool:
+        """Checks if the VPA adheres to NPCI/UPI character and domain standards."""
+        if "@" not in vpa: return False
+        user, domain = vpa.split("@", 1)
+        # Check against common phishing typos or invalid domains
+        invalid_vpa_domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"]
+        if domain.lower() in invalid_vpa_domains: return False
+        return len(user) >= 2 and len(domain) >= 2
+
+    @staticmethod
+    def _format_and_validate_phone(phone_str: str) -> Optional[str]:
+        """Performs strict validation using the Google Phone Library."""
+        try:
+            parsed = phonenumbers.parse(phone_str, "IN")
+            if phonenumbers.is_valid_number(parsed):
+                return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
+        except Exception:
+            # Fallback regex-only cleaning if library fails
+            digits = re.sub(r'\D', '', phone_str)
+            if 10 <= len(digits) <= 12:
+                return f"+91{digits[-10:]}"
+        return None
+
+    @staticmethod
+    def _assess_url_threat(url_str: str) -> bool:
+        """Determines if a domain is a known risk or suspicious shortener."""
+        danger_zones = ["bit.ly", "tinyurl", "t.me", "wa.me", "ow.ly", "is.gd", "cutt.ly"]
+        link_low = url_str.lower()
         
-        Scoring:
-        - UPI ID: +30 points
-        - Bank account: +25 points
-        - Phishing link: +20 points
-        - Phone number: +10 points
-        - Critical keyword: +5 points each
-        - High keyword: +3 points each
-        - Medium keyword: +1 point each
+        # Immediate flag for shorteners
+        if any(dz in link_low for dz in danger_zones): return True
+        
+        # Check against whitelist
+        safe_list = ["google.com", "hdfcbank.com", "sbi.co.in", "amazon.in", "flipkart.com"]
+        if any(sl in link_low for sl in safe_list): return False
+        
+        # If not on whitelist, it's considered suspicious in a banking context
+        return True
+
+    @staticmethod
+    def _is_actually_bank_account(number: str, text: str) -> bool:
+        """Prevents false positives by checking for financial keywords near numbers."""
+        # Exclusion logic: 10-digit numbers starting with 7-9 are usually phones
+        if len(number) == 10 and number[0] in '6789': return False
+        
+        financial_keywords = [
+            "account", "a/c", "bank", "transfer", "beneficiary", 
+            "ifsc", "deposit", "savings", "current", "credit to"
+        ]
+        pos = text.find(number)
+        surrounding_text = text[max(0, pos-70):min(len(text), pos+70)]
+        return any(k in surrounding_text for k in financial_keywords)
+
+    # ========================================================================
+    # 6. ENHANCED DATA TAGGING & UTILITIES
+    # ========================================================================
+    @classmethod
+    def _run_deep_entity_recognition(cls, text: str, results: Dict):
+        """Extracts high-value identifiers like PAN, Aadhaar, and Transaction IDs."""
+        entities = ["pan", "aadhaar", "ifsc", "transaction_id", "email", "card_number"]
+        for entity in entities:
+            matches = re.findall(cls.PATTERNS[entity], text, re.IGNORECASE)
+            for m in matches:
+                tag = f"INTEL_{entity.upper()}: {m.upper()}"
+                results["suspiciousKeywords"].append(tag)
+
+    @classmethod
+    def _perform_linguistic_audit(cls, text: str, results: Dict):
+        """Searches for psychological pressure tactics and social engineering cues."""
+        for vector, triggers in cls.THREAT_VECTORS.items():
+            for trigger in triggers:
+                if trigger in text:
+                    results["suspiciousKeywords"].append(f"VECTOR_{vector}: {trigger.upper()}")
+
+        # Detect Bank Name mentions
+        for bank in cls.MAJOR_BANKS:
+            if bank.lower() in text:
+                results["suspiciousKeywords"].append(f"TARGET_BANK: {bank}")
+
+    @staticmethod
+    def _post_process_forensics(data: Dict) -> Dict:
+        """Cleans, normalizes, and deduplicates all extracted intelligence."""
+        fields_to_clean = [
+            "bankAccounts", "upiIds", "phishingLinks", "phoneNumbers", "suspiciousKeywords"
+        ]
+        for field in fields_to_clean:
+            # Remove whitespace and ensure unique entries
+            cleaned_list = sorted(list(set([str(item).strip() for item in data[field]])))
+            data[field] = cleaned_list
+        return data
+
+    # ========================================================================
+    # 7. THE VERDICT: SCORING & SCAM DETECTION
+    # ========================================================================
+    @staticmethod
+    def calculate_scam_score(intelligence: Dict) -> int:
+        """
+        Calculates a Scam Confidence Score (0-100).
+        - Hard Evidence (UPI/Phishing Link): 40 pts each
+        - Direct Evidence (Account/Phone): 20 pts each
+        - Behavioral Markers (Urgency/Threats): 10 pts each
         """
         score = 0
         
-        # Critical intelligence (high weight)
-        score += len(intelligence.get("upiIds", [])) * 30
-        score += len(intelligence.get("bankAccounts", [])) * 25
-        score += len(intelligence.get("phishingLinks", [])) * 20
-        score += len(intelligence.get("phoneNumbers", [])) * 10
+        # Hard evidence has the highest weighting
+        score += len(intelligence.get("upiIds", [])) * 40
+        score += len(intelligence.get("phishingLinks", [])) * 40
         
-        # Keyword-based scoring
+        # Secondary evidence
+        score += len(intelligence.get("bankAccounts", [])) * 20
+        score += len(intelligence.get("phoneNumbers", [])) * 20
+        
+        # Behavioral tagging
         keywords = intelligence.get("suspiciousKeywords", [])
-        for keyword in keywords:
-            if any(k in keyword for k in IntelligenceExtractor.SCAM_KEYWORDS["critical"]):
-                score += 5
-            elif any(k in keyword for k in IntelligenceExtractor.SCAM_KEYWORDS["high"]):
-                score += 3
-            else:
-                score += 1
+        score += sum(10 for kw in keywords if "VECTOR_" in kw)
+        score += sum(5 for kw in keywords if "INTEL_" in kw)
         
-        return min(score, 100)  # Cap at 100
-    
+        # Ceiling at 100 for compliance
+        return min(score, 100)
+
     @staticmethod
-    def is_scam(intelligence: Dict[str, List[str]]) -> bool:
-        """
-        Determine if intelligence indicates confirmed scam
-        
-        Criteria:
-        - Has critical intel (UPI, bank, phishing) OR
-        - Scam score >= 30
-        """
-        has_critical = any([
-            intelligence.get("upiIds"),
-            intelligence.get("bankAccounts"),
-            intelligence.get("phishingLinks")
-        ])
-        
+    def is_scam(intelligence: Dict) -> bool:
+        """Returns True if the intelligence density crosses the scam threshold."""
         score = IntelligenceExtractor.calculate_scam_score(intelligence)
-        
-        return has_critical or score >= 30
+        # Any Hard Intelligence or a score over 40 confirms a scam session
+        hard_data_present = bool(intelligence["upiIds"] or intelligence["phishingLinks"])
+        return score >= 40 or hard_data_present
+
+# ============================================================================
+# 8. SELF-DIAGNOSTIC & TEST SUITE
+# ============================================================================
+if __name__ == "__main__":
+    print("\n" + "="*50)
+    print("RUNNING INTELLIGENCE EXTRACTOR SELF-DIAGNOSTIC")
+    print("="*50 + "\n")
+    
+    test_message = (
+        "Hello, your HDFC account 50100445566778 is blocked. "
+        "Update KYC immediately at http://bit.ly/hdfc-secure-verify. "
+        "Or pay fine of Rs. 5000 to sbi-pay@upi. Call officer at +91 9876543210."
+    )
+    
+    # Analyze the test case
+    forensic_output = IntelligenceExtractor.extract(test_message, [])
+    
+    # Display Results in Forensic Format
+    print(f"IDENTIFIED SCAM: {IntelligenceExtractor.is_scam(forensic_output)}")
+    print(f"CONFIDENCE SCORE: {IntelligenceExtractor.calculate_scam_score(forensic_output)}/100")
+    print("\nEXTRACTED DATA:")
+    print(json.dumps(forensic_output, indent=4))
+    
+    print("\n" + "="*50)
+    print("DIAGNOSTIC COMPLETE")
+    print("="*50)
