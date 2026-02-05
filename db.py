@@ -88,3 +88,9 @@ class SessionManager:
     def get_session(self, session_id: str) -> Dict:
         """Safely get session (returns empty dict if not found)"""
         return self.sessions.get(session_id, {})
+
+# ============================================================================
+# CRITICAL: Export singleton instance (not the class)
+# This allows main.py to import: from db import session_manager
+# ============================================================================
+session_manager = SessionManager()
