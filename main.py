@@ -19,9 +19,8 @@ from datetime import datetime
 
 # Import your custom modules
 from config import config
-from db import SessionManager as session_manager # Ensure this matches your db.py instance name 
-# This creates the actual object that your code uses
-session_manager = session_manager()
+from db import SessionManager
+session_manager = SessionManager()
 from engine import agent_engine
 from intelligence import IntelligenceExtractor
 from callback import callback_manager
