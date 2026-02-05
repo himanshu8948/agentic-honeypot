@@ -19,7 +19,7 @@ from datetime import datetime
 
 # Import your custom modules
 from config import config
-from db import session_manager # Ensure this matches your db.py instance name
+from db import SessionManager as session_manager # Ensure this matches your db.py instance name
 from engine import agent_engine
 from intelligence import IntelligenceExtractor
 from callback import callback_manager
