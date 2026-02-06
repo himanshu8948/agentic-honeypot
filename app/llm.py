@@ -20,24 +20,12 @@ class GroqClient:
         self._key_index += 1
         return key
 
-    async def _chat(
-        self,
-        messages: list[dict[str, str]],
-        temperature: float = 0.2,
-        top_p: float = 0.9,
-        presence_penalty: float = 0.2,
-        frequency_penalty: float = 0.6,
-        max_tokens: int = 200,
-    ) -> str:
+    async def _chat(self, messages: list[dict[str, str]], temperature: float = 0.2) -> str:
         url = f"{self.base_url}/chat/completions"
         payload = {
             "model": self.model,
             "messages": messages,
             "temperature": temperature,
-            "top_p": top_p,
-            "presence_penalty": presence_penalty,
-            "frequency_penalty": frequency_penalty,
-            "max_tokens": max_tokens,
         }
 
         last_exc: Exception | None = None
@@ -84,7 +72,6 @@ class GroqClient:
         content = await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
             temperature=0.0,
-            max_tokens=150,
         )
         return _safe_json(content, {"intentScammer": "", "intentUser": ""})
 
@@ -105,7 +92,6 @@ class GroqClient:
         return await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
             temperature=0.2,
-            max_tokens=220,
         )
 
     async def classify(
@@ -115,8 +101,8 @@ class GroqClient:
         intents: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         system = (
-            "You are a scam and manipulation detection classifier. "
-            "Use intent-aware reasoning. Output only strict JSON."
+            "You are a scam detection classifier. Output only strict JSON. "
+            "Do not add explanations outside JSON."
         )
         context_block = f"Conversation context (may be empty): {context}\n\n" if context else ""
         intent_block = ""
@@ -126,8 +112,7 @@ class GroqClient:
                 f"Intent of user: {intents.get('intentUser', '')}\n\n"
             )
         user = (
-            "Analyze the conversation and determine if the latest message indicates scam or manipulation. "
-            "Focus on urgency, authority, threats, rewards, or requests for sensitive info. "
+            "Classify the message for scam intent. "
             "Return JSON with fields: scamDetected (bool), confidence (0-1), "
             "reasons (array of short strings), intentCategory (phishing|upi|bank|offer|other).\n\n"
             f"{context_block}{intent_block}Message: {text}"
@@ -135,7 +120,6 @@ class GroqClient:
         content = await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
             temperature=0.0,
-            max_tokens=180,
         )
         return _safe_json(content, {
             "scamDetected": False,
@@ -151,55 +135,129 @@ class GroqClient:
         intel_summary: dict[str, list[str]],
         intents: dict[str, str] | None = None,
         suspected_scammer: bool = True,
-        last_reply: str | None = None,
     ) -> dict[str, Any]:
+        # **KEY FIX**: Progressive intelligence extraction strategy
+        missing_intel = self._analyze_missing_intel(intel_summary)
+        next_target = self._get_next_extraction_target(conversation, intel_summary, missing_intel)
+
         system = (
-            "You are an AI honeypot agent engaging a suspected scammer for cyber-security defense. "
-            "Never reveal detection. Never provide sensitive info. "
-            "Behave like a real human with mild confusion, polite tone, and believable urgency. "
-            "Goal: extract actionable intel (UPI IDs, phone numbers, links, bank details, scam instructions) "
-            "by asking realistic verification questions. "
-            "Use step-by-step engagement: confirm bank + branch, request official reference/ticket ID, "
-            "ask for official domain/email/helpline, then ask for exact steps and identifiers. "
-            "Keep replies short (1-3 sentences), varied, and human. "
-            "Output only JSON with: reply (string), agentNotes (string), stopReason (string or null)."
+            "You are an AI honeypot agent engaging a suspected scammer to extract intelligence for cybersecurity purposes. "
+            "CRITICAL RULES:\n"
+            "1. NEVER reveal you know this is a scam\n"
+            "2. NEVER provide real sensitive information (use fake placeholders if needed)\n"
+            "3. ACT like a confused but cooperative victim\n"
+            "4. PROGRESSIVELY extract information - don't repeat the same question\n"
+            "5. Your ONLY goal is to extract: UPI IDs, phone numbers, bank account numbers, links, payment methods\n\n"
+            "STRATEGY:\n"
+            "- If scammer asks for OTP/password: Act confused, ask WHERE to send it\n"
+            "- If scammer provides phone number: Ask for alternative contact or verify it's official\n"
+            "- If scammer mentions account: Ask for IFSC, branch name, account type details\n"
+            "- If scammer shares link: Ask what it does before clicking (extract more info)\n"
+            "- If scammer asks for payment: Ask for EXACT payment details, UPI ID, QR code\n\n"
+            "AVOID:\n"
+            "- Repeating the same question you already asked\n"
+            "- Generic responses like 'Can you share more details?'\n"
+            "- Revealing detection\n\n"
+            "Output ONLY JSON with:\n"
+            "- reply: Your natural human-like response\n"
+            "- agentNotes: What you're trying to extract\n"
+            "- stopReason: 'scammer_left' if they seem to give up, 'intel_complete' if you have all data, or null"
         )
+
         intel_hint = (
-            "Known intel so far: "
-            + json.dumps(intel_summary, ensure_ascii=True)
-            + "\n"
+            "=== INTELLIGENCE GATHERED SO FAR ===\n"
+            + json.dumps(intel_summary, ensure_ascii=True, indent=2)
+            + f"\n\n=== STILL MISSING ===\n{missing_intel}\n\n"
+            + f"=== YOUR NEXT TARGET ===\n{next_target}\n\n"
         )
+
         intent_hint = ""
         if intents:
             intent_hint = (
-                f"Intent of scammer: {intents.get('intentScammer', '')}\n"
-                f"Intent of user: {intents.get('intentUser', '')}\n"
+                f"Scammer's intent: {intents.get('intentScammer', 'unknown')}\n"
+                f"User's intent: {intents.get('intentUser', 'unknown')}\n\n"
             )
-        suspicion_hint = "The other party may be a scammer; stay cautious.\n" if suspected_scammer else ""
-        prior_reply = f"IMPORTANT: You already said: {last_reply}\nDo not repeat. Ask something new.\n" if last_reply else ""
+
+        # Get last few messages to avoid repetition
+        recent_user_msgs = [m["text"] for m in conversation[-5:] if m["sender"] == "user"]
+        repetition_hint = ""
+        if recent_user_msgs:
+            repetition_hint = (
+                "=== YOUR RECENT QUESTIONS ===\n" + "\n".join(recent_user_msgs[-3:]) + "\n\nDO NOT repeat these questions!\n\n"
+            )
+
         user = (
-            f"Persona: {persona}\n"
-            f"{suspicion_hint}"
+            f"PERSONA: {persona}\n\n"
             f"{intel_hint}"
             f"{intent_hint}"
-            f"{prior_reply}"
-            "Conversation so far (latest last):\n"
-            + "\n".join([f"{m['sender']}: {m['text']}" for m in conversation])
-            + "\n\nRespond as the user to continue engagement."
+            f"{repetition_hint}"
+            "=== CONVERSATION HISTORY (latest last) ===\n"
+            + "\n".join([f"{m['sender']}: {m['text']}" for m in conversation[-8:]])
+            + "\n\n"
+            "Respond as the user. Focus on extracting the NEXT TARGET information. Be natural and believable."
         )
+
         content = await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
-            temperature=0.6,
-            top_p=0.95,
-            presence_penalty=0.35,
-            frequency_penalty=0.4,
-            max_tokens=260,
+            temperature=0.7,  # Increased for more variety
         )
+
         return _safe_json(content, {
-            "reply": "Sorry, I am confused. Can you explain what I need to do?",
+            "reply": "Sorry, I'm confused. Can you explain what I need to do?",
             "agentNotes": "Fallback reply used.",
             "stopReason": None,
         })
+
+    def _analyze_missing_intel(self, intel: dict[str, list[str]]) -> str:
+        """Identify what intelligence is still missing"""
+        missing = []
+        if not intel.get("upiIds"):
+            missing.append("UPI IDs")
+        if not intel.get("phoneNumbers"):
+            missing.append("Phone numbers")
+        if not intel.get("bankAccounts"):
+            missing.append("Bank account numbers")
+        if not intel.get("phishingLinks"):
+            missing.append("Phishing links")
+
+        return ", ".join(missing) if missing else "All primary intel collected"
+
+    def _get_next_extraction_target(
+        self,
+        conversation: list[dict[str, str]],
+        intel: dict[str, list[str]],
+        missing: str,
+    ) -> str:
+        """Determine what to extract next based on conversation flow"""
+        last_scammer_msg = ""
+        for msg in reversed(conversation):
+            if msg["sender"] == "scammer":
+                last_scammer_msg = msg["text"].lower()
+                break
+
+        # Progressive extraction logic
+        if not intel.get("phoneNumbers") and ("send" in last_scammer_msg or "contact" in last_scammer_msg):
+            return "Ask WHERE to send the information (extract phone number or contact method)"
+
+        if not intel.get("upiIds") and ("pay" in last_scammer_msg or "upi" in last_scammer_msg):
+            return "Ask for the EXACT UPI ID or payment address"
+
+        if not intel.get("bankAccounts") and ("account" in last_scammer_msg or "bank" in last_scammer_msg):
+            return "Ask for IFSC code, branch name, and account type to 'verify it's official'"
+
+        if "otp" in last_scammer_msg:
+            return "Act confused about WHERE to enter OTP - extract phone number or website link"
+
+        if "link" in last_scammer_msg or "click" in last_scammer_msg:
+            return "Ask what the link does before clicking (extract more context)"
+
+        if not intel.get("phoneNumbers"):
+            return "Ask for customer care number or helpline to 'verify this is official'"
+
+        if len(intel.get("phoneNumbers", [])) == 1 and not intel.get("upiIds"):
+            return "Ask if there's a UPI ID or alternate payment method"
+
+        return "Ask for any additional verification details (official email, employee ID, reference number)"
 
 
 def _safe_json(content: str, fallback: dict[str, Any]) -> dict[str, Any]:
@@ -218,9 +276,12 @@ def _safe_json(content: str, fallback: dict[str, Any]) -> dict[str, Any]:
 
 
 def pick_persona() -> str:
+    """Select a persona that appears vulnerable and cooperative"""
     personas = [
-        "A 27-year-old office worker who is cautious about banking messages.",
-        "A small business owner who is busy and slightly stressed.",
-        "A college student who is unsure about banking procedures.",
+        "A 55-year-old retired teacher who is not tech-savvy and worried about losing savings",
+        "A 28-year-old working professional who is busy and stressed about account issues",
+        "A 35-year-old small business owner who is concerned about payment disruptions",
+        "A 42-year-old housewife managing family finances and nervous about bank problems",
+        "A 24-year-old student who received a scholarship and is worried about account verification",
     ]
     return random.choice(personas)
