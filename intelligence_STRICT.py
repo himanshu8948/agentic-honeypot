@@ -1,8 +1,7 @@
 """
 FILE: intelligence.py
-VERSION: 6.0 - ENTERPRISE FORENSIC SUITE
-PURPOSE: Comprehensive Digital Footprint Extraction and Threat Analysis.
-Designed for: GUVI AI Impact India - Agentic Honey-Pot Project.
+VERSION: 7.0 - STRICT SCAM DETECTION (Innocent-Friendly)
+PURPOSE: Only activate master manipulator for CONFIRMED scams
 """
 
 import re
@@ -24,8 +23,8 @@ logger = logging.getLogger("ScamForensicsEngine")
 
 class IntelligenceExtractor:
     """
-    Master forensic engine utilizing layered RegEx, Contextual Heuristics,
-    and Linguistic Pattern matching to de-anonymize malicious actors.
+    Master forensic engine with STRICT scam detection
+    Only activates master manipulator for confirmed scams
     """
 
     # ========================================================================
@@ -130,13 +129,12 @@ class IntelligenceExtractor:
             "suspiciousKeywords": [],
             "forensic_metadata": {
                 "timestamp": datetime.now().isoformat(),
-                "analysis_version": "6.0-PRO",
+                "analysis_version": "7.0-STRICT",
                 "extracted_entities_count": 0
             }
         }
 
         # Step 1: Synthesize the Forensic Buffer
-        # We look at everything the scammer has ever said to find patterns.
         buffer = current_text.lower()
         for turn in history:
             if turn.get("sender") == "scammer":
@@ -159,7 +157,6 @@ class IntelligenceExtractor:
         raw_links = re.findall(cls.PATTERNS["url"], buffer)
         for l in raw_links:
             if cls._assess_url_threat(l):
-                # Ensure the link is actionable
                 clean_l = l if l.startswith('http') else f"http://{l}"
                 results["phishingLinks"].append(clean_l)
 
@@ -276,21 +273,17 @@ class IntelligenceExtractor:
             "bankAccounts", "upiIds", "phishingLinks", "phoneNumbers", "suspiciousKeywords"
         ]
         for field in fields_to_clean:
-            # Remove whitespace and ensure unique entries
             cleaned_list = sorted(list(set([str(item).strip() for item in data[field]])))
             data[field] = cleaned_list
         return data
 
     # ========================================================================
-    # 7. THE VERDICT: SCORING & SCAM DETECTION
+    # 7. THE VERDICT: SCORING & STRICT SCAM DETECTION
     # ========================================================================
     @staticmethod
     def calculate_scam_score(intelligence: Dict) -> int:
         """
         Calculates a Scam Confidence Score (0-100).
-        - Hard Evidence (UPI/Phishing Link): 40 pts each
-        - Direct Evidence (Account/Phone): 20 pts each
-        - Behavioral Markers (Urgency/Threats): 10 pts each
         """
         score = 0
         
@@ -307,40 +300,83 @@ class IntelligenceExtractor:
         score += sum(10 for kw in keywords if "VECTOR_" in kw)
         score += sum(5 for kw in keywords if "INTEL_" in kw)
         
-        # Ceiling at 100 for compliance
+        # Ceiling at 100
         return min(score, 100)
 
     @staticmethod
     def is_scam(intelligence: Dict) -> bool:
-        """Returns True if the intelligence density crosses the scam threshold."""
+        """
+        STRICT SCAM DETECTION - Only activates for CONFIRMED scams
+        
+        Activation criteria (prevents false positives):
+        1. Has UPI ID OR phishing link (hard evidence) - IMMEDIATE CONFIRMATION
+        2. OR: Score >= 50 AND has 2+ different threat vectors
+        
+        This prevents innocent queries from triggering the manipulator.
+        """
         score = IntelligenceExtractor.calculate_scam_score(intelligence)
-        # Any Hard Intelligence or a score over 40 confirms a scam session
-        hard_data_present = bool(intelligence["upiIds"] or intelligence["phishingLinks"])
-        return score >= 40 or hard_data_present
+        
+        # CRITICAL EVIDENCE (immediate scam confirmation)
+        has_upi = bool(intelligence.get("upiIds"))
+        has_phishing_link = bool(intelligence.get("phishingLinks"))
+        
+        # Count UNIQUE threat vectors (not just keywords)
+        keywords = intelligence.get("suspiciousKeywords", [])
+        threat_vectors_found = len(set(
+            kw.split(":")[0].replace("VECTOR_", "") 
+            for kw in keywords if "VECTOR_" in kw
+        ))
+        
+        # STRICT RULES:
+        # Rule 1: HARD EVIDENCE = Instant confirmation
+        critical_evidence = has_upi or has_phishing_link
+        
+        # Rule 2: High score (50+) + Multiple threat types (2+)
+        high_confidence = score >= 50 and threat_vectors_found >= 2
+        
+        is_confirmed_scam = critical_evidence or high_confidence
+        
+        if is_confirmed_scam:
+            logger.warning(
+                f"🚨 SCAM CONFIRMED - "
+                f"UPI: {has_upi}, Link: {has_phishing_link}, "
+                f"Score: {score}, Vectors: {threat_vectors_found}"
+            )
+        else:
+            logger.info(
+                f"✅ INNOCENT MESSAGE - "
+                f"Score: {score}, Vectors: {threat_vectors_found} "
+                f"(Need UPI/Link OR score 50+ with 2+ vectors)"
+            )
+        
+        return is_confirmed_scam
 
 # ============================================================================
 # 8. SELF-DIAGNOSTIC & TEST SUITE
 # ============================================================================
 if __name__ == "__main__":
     print("\n" + "="*50)
-    print("RUNNING INTELLIGENCE EXTRACTOR SELF-DIAGNOSTIC")
+    print("RUNNING STRICT SCAM DETECTION TEST")
     print("="*50 + "\n")
     
-    test_message = (
-        "Hello, your HDFC account 50100445566778 is blocked. "
-        "Update KYC immediately at http://bit.ly/hdfc-secure-verify. "
-        "Or pay fine of Rs. 5000 to sbi-pay@upi. Call officer at +91 9876543210."
+    # Test 1: Clear scam (should activate)
+    scam_message = (
+        "Your HDFC account blocked. "
+        "Pay Rs 5000 to scammer@upi. "
+        "Click: http://bit.ly/hdfc-scam"
     )
     
-    # Analyze the test case
-    forensic_output = IntelligenceExtractor.extract(test_message, [])
+    result1 = IntelligenceExtractor.extract(scam_message, [])
+    print(f"TEST 1 (Clear Scam):")
+    print(f"  SCAM DETECTED: {IntelligenceExtractor.is_scam(result1)}")
+    print(f"  SCORE: {IntelligenceExtractor.calculate_scam_score(result1)}/100\n")
     
-    # Display Results in Forensic Format
-    print(f"IDENTIFIED SCAM: {IntelligenceExtractor.is_scam(forensic_output)}")
-    print(f"CONFIDENCE SCORE: {IntelligenceExtractor.calculate_scam_score(forensic_output)}/100")
-    print("\nEXTRACTED DATA:")
-    print(json.dumps(forensic_output, indent=4))
+    # Test 2: Innocent query (should NOT activate)
+    innocent_message = "What is my account balance? How do I check?"
     
-    print("\n" + "="*50)
-    print("DIAGNOSTIC COMPLETE")
+    result2 = IntelligenceExtractor.extract(innocent_message, [])
+    print(f"TEST 2 (Innocent):")
+    print(f"  SCAM DETECTED: {IntelligenceExtractor.is_scam(result2)}")
+    print(f"  SCORE: {IntelligenceExtractor.calculate_scam_score(result2)}/100\n")
+    
     print("="*50)
