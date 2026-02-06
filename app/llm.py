@@ -26,6 +26,10 @@ class GroqClient:
             "model": self.model,
             "messages": messages,
             "temperature": temperature,
+            "top_p": 0.9,
+            "presence_penalty": 0.2,
+            "frequency_penalty": 0.2,
+            "max_tokens": 200,
         }
 
         last_exc: Exception | None = None

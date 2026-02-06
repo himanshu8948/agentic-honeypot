@@ -107,7 +107,7 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
 
     try:
-        recent_messages = list_messages(DB, payload.sessionId, limit=40)
+        recent_messages = list_messages(DB, payload.sessionId, limit=24)
         context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
         intents = await GROQ.summarize_intents(recent_messages)
         if int(session["total_messages"]) % 6 == 0:
@@ -136,15 +136,15 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     reply = "Thanks. Can you share more details?"
     stop_reason = None
     if should_engage:
-        conversation = list_messages(DB, payload.sessionId, limit=30)
+        conversation = list_messages(DB, payload.sessionId, limit=24)
         persona = pick_persona()
         try:
             agent = await GROQ.generate_reply(persona, conversation, intel, intents=intents, suspected_scammer=True)
-            reply = str(agent.get("reply", reply))
+            reply = _dedupe_reply(str(agent.get("reply", reply)), session.get("last_reply"))
             agent_notes = str(agent.get("agentNotes", agent_notes))
             stop_reason = agent.get("stopReason")
         except Exception:
-            reply = _fallback_reply(intel)
+            reply = _fallback_reply(intel, session.get("last_reply"), payload.message.text, total_messages)
             agent_notes = "LLM failure; rule-based fallback reply."
 
     # Engagement completion rules
@@ -240,13 +240,50 @@ async def _send_callback(
     return False
 
 
-def _fallback_reply(intel: dict[str, list[str]]) -> str:
+def _fallback_reply(
+    intel: dict[str, list[str]],
+    last_reply: str | None,
+    last_scam_text: str,
+    total_messages: int,
+) -> str:
+    options: list[str] = []
+    lower = (last_scam_text or "").lower()
+
+    if "otp" in lower:
+        options.append("I got an OTP, but I don't know where to enter it. Can you send the exact official steps?")
+        options.append("Is there an official website or app where I should enter the OTP? Please share the domain.")
+    if "account" in lower:
+        options.append("Which bank and branch is this for? Please share branch name and IFSC.")
+        options.append("Can you give a reference/ticket ID for this block? I need it for records.")
+    if "link" in lower or "http" in lower:
+        options.append("The link shows a warning. Do you have an official domain or alternate portal?")
+
     if intel.get("upiIds"):
-        return "Which UPI app is this for? Please confirm the UPI ID and the amount."
+        options.append("Which UPI app is this for? Please confirm the UPI ID and the amount.")
+        options.append("The UPI ID shows invalid. Do you have another UPI or QR?")
     if intel.get("phishingLinks"):
-        return "I clicked the link and it asks for details. Which details should I fill first?"
+        options.append("The page asks for details. Which fields are mandatory and which are optional?")
     if intel.get("bankAccounts"):
-        return "Is this for SBI? Please share the official customer care number or branch name."
+        options.append("Is this for SBI? Please share the official customer care number or branch name.")
+        options.append("I need the bank name and branch address to proceed. Please confirm.")
     if intel.get("phoneNumbers"):
-        return "I am on a call right now. Can you resend the exact steps and a reference ID?"
-    return "I am confused about the process. Can you explain the steps and the official verification method?"
+        options.append("I am on a call right now. Can you resend the exact steps and a reference ID?")
+        options.append("Please provide the official helpline number from the bank website.")
+
+    if total_messages <= 3:
+        options.append("I am confused about the process. Can you explain the steps and the official verification method?")
+    else:
+        options.append("I want to verify this is official. Can you share the bank's public helpline or website?")
+
+    for option in options:
+        if option != last_reply:
+            return option
+    return options[-1] if options else "Please explain the official steps again."
+
+
+def _dedupe_reply(reply: str, last_reply: str | None) -> str:
+    if not last_reply:
+        return reply
+    if reply.strip().lower() == last_reply.strip().lower():
+        return "Just to be sure, can you share the official steps and a reference ID?"
+    return reply
