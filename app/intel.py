@@ -40,6 +40,7 @@ UPI_RE = re.compile(r"[a-zA-Z0-9._-]{2,}@[a-zA-Z]{2,}")
 PHONE_RE = re.compile(r"\+?\d[\d -]{8,}\d")
 LINK_RE = re.compile(r"https?://\S+")
 BANK_RE = re.compile(r"\b\d{9,18}\b")
+ACCOUNT_CONTEXT_RE = re.compile(r"(account\s*(number|no\.?)|bank\s*account)", re.IGNORECASE)
 
 
 def _unique_extend(target: list[str], values: Iterable[str]) -> None:
@@ -52,11 +53,11 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
     lower = text.lower()
 
     upis = UPI_RE.findall(text)
-    phones = PHONE_RE.findall(text)
+    phones = [p for p in PHONE_RE.findall(text) if len(re.sub(r"\D", "", p)) <= 13]
     links = LINK_RE.findall(text)
     bank_candidates = BANK_RE.findall(text)
 
-    if bank_candidates and ("account" in lower or "acct" in lower or "bank" in lower):
+    if bank_candidates and ACCOUNT_CONTEXT_RE.search(text):
         _unique_extend(intel["bankAccounts"], bank_candidates)
 
     _unique_extend(intel["upiIds"], upis)

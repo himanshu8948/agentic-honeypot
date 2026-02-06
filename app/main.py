@@ -120,6 +120,8 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
             llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
         else:
             llm_result = await GROQ.classify(payload.message.text, context=context, intents=intents)
+        if combined_score >= SETTINGS.rule_threshold + 2 and float(llm_result.get("confidence", 0.0)) < 0.6:
+            llm_result["confidence"] = 0.6
         scam_detected = bool(llm_result.get("scamDetected", False))
         confidence = float(llm_result.get("confidence", 0.0))
         agent_notes = "; ".join(llm_result.get("reasons", []))
@@ -142,8 +144,8 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
             agent_notes = str(agent.get("agentNotes", agent_notes))
             stop_reason = agent.get("stopReason")
         except Exception:
-            reply = "I am not sure I understand. What should I do next?"
-            agent_notes = "LLM failure; fallback reply."
+            reply = _fallback_reply(intel)
+            agent_notes = "LLM failure; rule-based fallback reply."
 
     # Engagement completion rules
     session = get_or_create_session(DB, payload.sessionId)
@@ -236,3 +238,15 @@ async def _send_callback(
             pass
         await asyncio.sleep(2 ** attempt)
     return False
+
+
+def _fallback_reply(intel: dict[str, list[str]]) -> str:
+    if intel.get("upiIds"):
+        return "Which UPI app is this for? Please confirm the UPI ID and the amount."
+    if intel.get("phishingLinks"):
+        return "I clicked the link and it asks for details. Which details should I fill first?"
+    if intel.get("bankAccounts"):
+        return "Is this for SBI? Please share the official customer care number or branch name."
+    if intel.get("phoneNumbers"):
+        return "I am on a call right now. Can you resend the exact steps and a reference ID?"
+    return "I am confused about the process. Can you explain the steps and the official verification method?"

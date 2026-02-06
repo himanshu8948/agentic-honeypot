@@ -101,8 +101,8 @@ class GroqClient:
         intents: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         system = (
-            "You are a scam detection classifier. Output only strict JSON. "
-            "Do not add explanations outside JSON."
+            "You are a scam and manipulation detection classifier. "
+            "Use intent-aware reasoning. Output only strict JSON."
         )
         context_block = f"Conversation context (may be empty): {context}\n\n" if context else ""
         intent_block = ""
@@ -112,7 +112,8 @@ class GroqClient:
                 f"Intent of user: {intents.get('intentUser', '')}\n\n"
             )
         user = (
-            "Classify the message for scam intent. "
+            "Analyze the conversation and determine if the latest message indicates scam or manipulation. "
+            "Focus on urgency, authority, threats, rewards, or requests for sensitive info. "
             "Return JSON with fields: scamDetected (bool), confidence (0-1), "
             "reasons (array of short strings), intentCategory (phishing|upi|bank|offer|other).\n\n"
             f"{context_block}{intent_block}Message: {text}"
