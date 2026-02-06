@@ -28,7 +28,7 @@ class GroqClient:
             "temperature": temperature,
             "top_p": 0.9,
             "presence_penalty": 0.2,
-            "frequency_penalty": 0.2,
+            "frequency_penalty": 0.6,
             "max_tokens": 200,
         }
 
@@ -140,6 +140,7 @@ class GroqClient:
         intel_summary: dict[str, list[str]],
         intents: dict[str, str] | None = None,
         suspected_scammer: bool = True,
+        last_reply: str | None = None,
     ) -> dict[str, Any]:
         system = (
             "You are an AI honeypot agent engaging a suspected scammer. "
@@ -166,11 +167,13 @@ class GroqClient:
                 f"Intent of user: {intents.get('intentUser', '')}\n"
             )
         suspicion_hint = "The other party may be a scammer; stay cautious.\n" if suspected_scammer else ""
+        prior_reply = f"IMPORTANT: You already said: {last_reply}\nDo not repeat. Ask something new.\n" if last_reply else ""
         user = (
             f"Persona: {persona}\n"
             f"{suspicion_hint}"
             f"{intel_hint}"
             f"{intent_hint}"
+            f"{prior_reply}"
             "Conversation so far (latest last):\n"
             + "\n".join([f"{m['sender']}: {m['text']}" for m in conversation])
             + "\n\nRespond as the user to continue engagement."

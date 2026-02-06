@@ -139,7 +139,14 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
         conversation = list_messages(DB, payload.sessionId, limit=24)
         persona = pick_persona()
         try:
-            agent = await GROQ.generate_reply(persona, conversation, intel, intents=intents, suspected_scammer=True)
+            agent = await GROQ.generate_reply(
+                persona,
+                conversation,
+                intel,
+                intents=intents,
+                suspected_scammer=True,
+                last_reply=session.get("last_reply"),
+            )
             reply = _dedupe_reply(str(agent.get("reply", reply)), session.get("last_reply"))
             agent_notes = str(agent.get("agentNotes", agent_notes))
             stop_reason = agent.get("stopReason")
