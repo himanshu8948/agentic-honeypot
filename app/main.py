@@ -105,6 +105,8 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     agent_notes = ""
     intents = {"intentScammer": "", "intentUser": ""}
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
+    total_messages = int(session["total_messages"])
+    last_reply = session["last_reply"] if "last_reply" in session.keys() else None
 
     try:
         recent_messages = list_messages(DB, payload.sessionId, limit=24)
@@ -145,13 +147,13 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
                 intel,
                 intents=intents,
                 suspected_scammer=True,
-                last_reply=session.get("last_reply"),
+                last_reply=last_reply,
             )
-            reply = _dedupe_reply(str(agent.get("reply", reply)), session.get("last_reply"))
+            reply = _dedupe_reply(str(agent.get("reply", reply)), last_reply)
             agent_notes = str(agent.get("agentNotes", agent_notes))
             stop_reason = agent.get("stopReason")
         except Exception:
-            reply = _fallback_reply(intel, session.get("last_reply"), payload.message.text, total_messages)
+            reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
             agent_notes = "LLM failure; rule-based fallback reply."
 
     # Engagement completion rules
