@@ -26,22 +26,10 @@ def load_settings() -> Settings:
     if not service_api_key:
         raise RuntimeError("SERVICE_API_KEY is required")
 
-    groq_keys_raw = _get_env("GROQ_API_KEYS")
-    groq_api_keys: list[str] = []
-    if groq_keys_raw:
-        groq_api_keys = [k.strip() for k in groq_keys_raw.split(",") if k.strip()]
-    else:
-        # Support individual env vars: GROQ_API_KEY_1, GROQ_API_KEY_2, ...
-        idx = 1
-        while True:
-            key = _get_env(f"GROQ_API_KEY_{idx}")
-            if not key:
-                break
-            groq_api_keys.append(key)
-            idx += 1
-
-    if not groq_api_keys:
-        raise RuntimeError("GROQ_API_KEYS or GROQ_API_KEY_1..N is required")
+    groq_api_key = _get_env("GROQ_API_KEY")
+    if not groq_api_key:
+        raise RuntimeError("GROQ_API_KEY is required")
+    groq_api_keys = [groq_api_key]
 
     groq_model = _get_env("GROQ_MODEL", "llama3-70b-8192")
     groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
