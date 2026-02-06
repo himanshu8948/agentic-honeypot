@@ -200,6 +200,16 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     )
 
 
+@app.get("/")
+async def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@app.post("/analyze", response_model=MessageResponse)
+async def analyze_alias(payload: MessageRequest, _auth: None = Depends(require_api_key)) -> MessageResponse:
+    return await handle_message(payload, _auth)
+
+
 async def _send_callback(
     settings: Settings,
     session_id: str,
