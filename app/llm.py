@@ -20,16 +20,24 @@ class GroqClient:
         self._key_index += 1
         return key
 
-    async def _chat(self, messages: list[dict[str, str]], temperature: float = 0.2) -> str:
+    async def _chat(
+        self,
+        messages: list[dict[str, str]],
+        temperature: float = 0.2,
+        top_p: float = 0.9,
+        presence_penalty: float = 0.2,
+        frequency_penalty: float = 0.6,
+        max_tokens: int = 200,
+    ) -> str:
         url = f"{self.base_url}/chat/completions"
         payload = {
             "model": self.model,
             "messages": messages,
             "temperature": temperature,
-            "top_p": 0.9,
-            "presence_penalty": 0.2,
-            "frequency_penalty": 0.6,
-            "max_tokens": 200,
+            "top_p": top_p,
+            "presence_penalty": presence_penalty,
+            "frequency_penalty": frequency_penalty,
+            "max_tokens": max_tokens,
         }
 
         last_exc: Exception | None = None
@@ -76,6 +84,7 @@ class GroqClient:
         content = await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
             temperature=0.0,
+            max_tokens=150,
         )
         return _safe_json(content, {"intentScammer": "", "intentUser": ""})
 
@@ -96,6 +105,7 @@ class GroqClient:
         return await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
             temperature=0.2,
+            max_tokens=220,
         )
 
     async def classify(
@@ -125,6 +135,7 @@ class GroqClient:
         content = await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
             temperature=0.0,
+            max_tokens=180,
         )
         return _safe_json(content, {
             "scamDetected": False,
@@ -179,7 +190,11 @@ class GroqClient:
         )
         content = await self._chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}],
-            temperature=0.4,
+            temperature=0.6,
+            top_p=0.95,
+            presence_penalty=0.35,
+            frequency_penalty=0.4,
+            max_tokens=260,
         )
         return _safe_json(content, {
             "reply": "Sorry, I am confused. Can you explain what I need to do?",
