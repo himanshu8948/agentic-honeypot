@@ -26,9 +26,9 @@ def load_settings() -> Settings:
     if not service_api_key:
         raise RuntimeError("SERVICE_API_KEY is required")
 
-    deepseek_api_key = _get_env("DEEPSEEK_API_KEY")
+    deepseek_api_key = _get_env("agentic_key")
     if not deepseek_api_key:
-        raise RuntimeError("DEEPSEEK_API_KEY is required")
+        raise RuntimeError("agentic_key is required")
     groq_api_keys = [deepseek_api_key]
 
     groq_model = _get_env("DEEPSEEK_MODEL", "deepseek-chat")
