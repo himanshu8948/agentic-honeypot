@@ -263,7 +263,7 @@ def _fallback_reply(
     last_scam_text: str,
     total_messages: int,
 ) -> str:
-    phase = choose_phase(total_messages)
+    phase = choose_phase(total_messages, last_scam_text)
     return build_combinatorial_reply(phase, last_reply)
 
 

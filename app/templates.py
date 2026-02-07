@@ -60,81 +60,77 @@ GLOBAL_VARIABLES: Dict[str, List[str]] = {
         "Indore",
         "the village",
     ],
+    "large_amount": ["50 Lakhs", "2 Crores", "85 Lakhs", "1.5 Crores", "40 Lakhs"],
+    "limit_amount": ["5 Lakhs", "10 Lakhs", "2 Lakhs"],
+    "pension_amount": ["45,000", "60,000", "1 Lakh"],
+    "fd_amount": ["12 Lakhs", "8 Lakhs", "25 Lakhs"],
+    "gold_loan": ["15 Lakhs", "5 Lakhs", "20 Lakhs"],
+    "rbi_clause": ["Section 402", "Clause 12-B", "Guideline 9", "The Cyber Act 2024"],
+    "spam_label": ["Scam Likely", "Fraud", "Telemarketer", "Unknown Caller", "Risk"],
+    "bank_domain": ["sbi", "hdfcbank", "icicibank", "rbi.org", "pnb"],
+    "household_item": ["Pressure Cooker", "Washing Machine", "Ceiling Fan", "Mixer Grinder"],
+    "pet_animal": ["Cat", "Dog", "Parrot", "Grandson"],
+    "activity": ["Puja", "Afternoon Nap", "Yoga", "TV Serial", "Lunch"],
+    "delivery_person": ["Zomato guy", "Amazon delivery", "Milkman", "Postman"],
+    "indian_food": ["Jalebi", "Samosa", "Dal Rice", "Mango", "Paratha"],
+    "body_part": ["Leg", "Hand", "Saree", "Kurta", "Table"],
+    "random_icon": ["Blue Shield", "Red Cross", "Green Arrow", "Smiling Face", "Gear Icon"],
+    "city_name": ["Mumbai", "Delhi", "Patna", "Lucknow", "Jaipur", "Indore"],
+    "store_name": ["DMart", "Big Bazaar", "Reliance Fresh", "Medical Store", "Mobile Shop"],
+    "app_name": ["AnyDesk", "TeamViewer", "QuickSupport", "Paytm", "Google Pay"],
+    "language": ["Hindi", "Marathi", "Tamil", "Telugu", "Bengali"],
 }
 
-PHASE_TEMPLATES: Dict[str, List[str]] = {
-    "hook": [
-        "Hello? Who is this? Is this {relatives}?",
-        "Can you speak louder? My {ailments} today.",
-        "I was just waiting for a call from {banks}. Are you them?",
-        "Beta, don't shout. I am an old man living in {cities}.",
-        "Is this regarding the money I sent to {relatives}?",
-        "Wait, let me turn off the TV. [Sound of static] Hello?",
-        "Who? {banks}? Which branch? The one near the market?",
-        "I don't have an account there. Or maybe I do... I forget things due to my {ailments}.",
-        "Are you the same person who called yesterday about my {technologies}?",
-        "Hold on, let me put on my glasses. Who did you say you are?",
+MODULE_TEMPLATES: Dict[str, List[str]] = {
+    "intelligent_resistance": [
+        "I am reading the RBI guidelines on my screen. Clause {rbi_clause} says you cannot ask for this.",
+        "Your number is showing as '{spam_label}' on Truecaller. Why is that?",
+        "If you are from {banks}, tell me the last transaction I made at {store_name}.",
+        "I cannot install {app_name} because my firewall is blocking unverified publishers.",
+        "Send me an official email from your @{bank_domain} domain first.",
+        "My nephew works in the Cyber Cell. He said I should ask for your Employee ID.",
+        "Why are you calling from a personal mobile number? Official calls come from landlines.",
+        "I am recording this call for quality and training purposes. Is that okay?",
+        "The IP address of the request is from {city_name}. But your branch is in Mumbai?",
+        "I will not share the OTP verbally. I can enter it into the IVR system only.",
     ],
-    "stall": [
-        "I am looking for my card. It is in the cupboard... or maybe {relatives} took it.",
-        "The number is rubbed off. I can only see the last 4 digits: 4... 5... wait, is that a 6?",
-        "Oh no! I dropped the card behind the sofa. My {ailments} make it hard to bend down.",
-        "Can I just give you my passbook number? It is a {banks} passbook.",
-        "Wait, {distractions}. Please hold for one minute... [Silence for 20 seconds]... Hello?",
-        "I found the card! Oh wait, this is my library card. Let me check the other drawer.",
-        "Why do you need the number? {relatives} told me never to share it.",
-        "I am reading the number: 5... 2... no, 8... sorry, my eyes are bad.",
-        "The card is blue color. Is that the right one?",
-        "Can you call me back in 10 minutes? {distractions}.",
-    ],
-    "trap": [
-        "I opened the Play Store. It is asking for a password. Is it my birthday?",
-        "I see an app called 'Candy Crush'. Do I download that?",
-        "You want me to download AnyDesk? Is that for fixing the fan?",
-        "It says 'Download Pending' for the last 10 minutes. The internet in {cities} is very bad.",
-        "I clicked 'Allow' but now the screen is black. Did I break the phone?",
-        "Where is the 'Support' button? I only see a picture of a cat.",
-        "My {relatives} installed something yesterday. Should I delete it?",
-        "It is asking for my fingerprint. But my hands are oily from eating.",
-        "QuickSupport? Is that the red icon or the blue one?",
-        "I cannot find the TeamViewer. Can I just send you a photo on WhatsApp?",
-    ],
-    "bait": [
-        "Okay, write down the OTP. It is 4... 5... wait, the message disappeared.",
-        "The message says 'Do not share this code'. Should I still give it?",
-        "My OTP is 1... 2... 3... 4. Is that correct? It seems too simple.",
-        "I didn't get an SMS. I got an email from {banks}. Should I read that?",
-        "The code is 894... oh wait, that is the time on the clock.",
-        "I sent the money to the UPI ID you gave, but it failed. It says 'Wrong Receiver'.",
-        "My name on the card is {fake_names}. Spell it? S-U-R-E...",
-        "The expiry date is 02/1980. Is that expired?",
-        "The CVV is the number on the front or the back?",
-        "I typed the amount 10,000 but I think I added an extra zero. Did you get 1 lakh?",
-    ],
-    "intel": [
-        "I cannot type your UPI ID. Can you send me a QR code instead?",
-        "What is your employee ID? I need to write it in my diary for {relatives}.",
-        "Which branch of {banks} are you calling from? I can come there personally.",
-        "Give me your manager's number. My phone is not working, I will call from the landline.",
+    "honeypot_extraction": [
+        "I have two accounts. One has 10,000 and the other has {large_amount}. Which one do you need?",
+        "I am trying to transfer the money, but it says Limit Exceeded. My daily limit is {limit_amount}.",
+        "If I download {app_name}, will it help me transfer the Fixed Deposit of {fd_amount}?",
+        "I am an old man, I have {pension_amount} pension coming today. Please help me secure it.",
+        "Wait, I have a Corporate Account with {banks}. Can we use that instead?",
+        "My CA usually handles this. He is on holiday. Can I trust you?",
+        "The screen says Enter Beneficiary Name. What name should I type? Yours or the company?",
+        "I have a Gold Loan of {gold_loan} pending. Can you clear that too?",
+        "I pressed Send but it asks for a Manager Code for amounts over 1 Lakh. Do you have it?",
         "If I send the money, will I get a receipt? Send me your WhatsApp number first.",
-        "I have a lot of money in my {banks} account. 50 lakhs. Is it safe?",
-        "Can you verify my address? Do you have my address in {cities}?",
-        "What is the IFSC code of your bank? I need to authorize the transfer.",
-        "I am pressing the button but nothing is happening. Can you do it from your side?",
-        "Send me a test message on WhatsApp so I know it's you.",
+    ],
+    "human_chaos": [
+        "Hang on, the {household_item} is making a strange noise. Let me check.",
+        "My {pet_animal} just jumped on the keyboard! Everything is typing gibberish.",
+        "Who is this? Ramesh? I told you not to call me during my {activity}!",
+        "I am in the bathroom right now. Can you call back in 20 minutes?",
+        "My screen is very dark. I think the battery is low. Where is the charger...",
+        "Wait, the doorbell is ringing. It must be the {delivery_person}. Hold on!",
+        "I am pressing the button but my finger is sticky from eating {indian_food}.",
+        "Can you speak in {language}? I am not very good at English.",
+        "Oh my god! I just spilled hot tea on my {body_part}! Ouch!",
+        "I cannot find the app. Is it the one with the picture of a {random_icon}?",
     ],
 }
 
 
 def _fill(template: str) -> str:
     for key, values in GLOBAL_VARIABLES.items():
-        if "{" + key + "}" in template:
-            template = template.replace("{" + key + "}", random.choice(values))
+        token = "{" + key + "}"
+        if token in template:
+            template = template.replace(token, random.choice(values))
     return template
 
 
 def build_combinatorial_reply(phase: str, last_reply: str | None) -> str:
-    pool = PHASE_TEMPLATES.get(phase, PHASE_TEMPLATES["hook"])
+    pool = MODULE_TEMPLATES.get(phase, MODULE_TEMPLATES["human_chaos"])
     random.shuffle(pool)
     for t in pool:
         line = _fill(t)
@@ -143,13 +139,18 @@ def build_combinatorial_reply(phase: str, last_reply: str | None) -> str:
     return _fill(pool[0])
 
 
-def choose_phase(total_messages: int) -> str:
-    if total_messages <= 2:
-        return "hook"
-    if total_messages <= 5:
-        return "stall"
-    if total_messages <= 8:
-        return "trap"
-    if total_messages <= 12:
-        return "bait"
-    return "intel"
+def choose_phase(total_messages: int, last_scam_text: str) -> str:
+    lower = (last_scam_text or "").lower()
+    heat = 0
+    if any(k in lower for k in ["urgent", "immediately", "now", "blocked", "suspended"]):
+        heat += 2
+    if any(k in lower for k in ["otp", "pin", "password", "upi"]):
+        heat += 2
+    if "link" in lower or "click" in lower:
+        heat += 1
+
+    if heat >= 3:
+        return "intelligent_resistance"
+    if total_messages % 3 == 0:
+        return "human_chaos"
+    return "honeypot_extraction"
