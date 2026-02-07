@@ -20,6 +20,7 @@ from .db import (
 )
 from .intel import extract_intel, infer_sender_role, intent_signal_score, rule_score
 from .llm import GroqClient, pick_persona
+from .templates import build_reply_from_state
 
 app = FastAPI(title="himanshu_agentic_honeypot")
 
@@ -262,65 +263,15 @@ def _fallback_reply(
     last_scam_text: str,
     total_messages: int,
 ) -> str:
-    options: list[tuple[str, str]] = []
-    lower = (last_scam_text or "").lower()
-    last_lower = (last_reply or "").lower()
-
-    def _add(tag: str, text: str) -> None:
-        options.append((tag, text))
-
-    if "otp" in lower:
-        _add("otp_steps", "I got an OTP, but I don't know where to enter it. Can you send the exact official steps?")
-        _add("otp_domain", "Is there an official website or app where I should enter the OTP? Please share the domain.")
-    if "account" in lower:
-        _add("branch_ifsc", "Which bank and branch is this for? Please share branch name and IFSC.")
-        _add("ref_id", "Can you give a reference/ticket ID for this block? I need it for records.")
-    if "link" in lower or "http" in lower:
-        _add("alt_portal", "The link shows a warning. Do you have an official domain or alternate portal?")
-
-    if intel.get("upiIds"):
-        _add("upi_confirm", "Which UPI app is this for? Please confirm the UPI ID and the amount.")
-        _add("upi_alt", "The UPI ID shows invalid. Do you have another UPI or QR?")
-    if intel.get("phishingLinks"):
-        _add("fields", "The page asks for details. Which fields are mandatory and which are optional?")
-    if intel.get("bankAccounts"):
-        _add("official_number", "Is this for SBI? Please share the official customer care number or branch name.")
-        _add("branch_addr", "I need the bank name and branch address to proceed. Please confirm.")
-    if intel.get("phoneNumbers"):
-        _add("resend_steps", "I am on a call right now. Can you resend the exact steps and a reference ID?")
-        _add("helpline", "Please provide the official helpline number from the bank website.")
-
-    if total_messages <= 3:
-        _add("process", "I am confused about the process. Can you explain the steps and the official verification method?")
-    else:
-        _add("verify_public", "I want to verify this is official. Can you share the bank's public helpline or website?")
-
-    def _tag_used(tag: str) -> bool:
-        if not last_lower:
-            return False
-        tag_map = {
-            "otp_steps": ["otp", "steps"],
-            "otp_domain": ["otp", "website", "domain", "app"],
-            "branch_ifsc": ["branch", "ifsc"],
-            "ref_id": ["reference", "ticket"],
-            "alt_portal": ["warning", "alternate", "portal", "domain"],
-            "upi_confirm": ["upi", "amount"],
-            "upi_alt": ["upi", "another", "qr"],
-            "fields": ["fields", "mandatory", "optional"],
-            "official_number": ["customer care", "official", "number"],
-            "branch_addr": ["branch", "address"],
-            "resend_steps": ["resend", "steps", "reference"],
-            "helpline": ["helpline", "website"],
-            "process": ["process", "verification"],
-            "verify_public": ["public", "helpline", "website"],
-        }
-        keywords = tag_map.get(tag, [])
-        return any(k in last_lower for k in keywords)
-
-    for tag, text in options:
-        if text != last_reply and not _tag_used(tag):
-            return text
-    return options[-1][1] if options else "Please explain the official steps again."
+    return build_reply_from_state(
+        last_scam_text=last_scam_text,
+        last_reply=last_reply,
+        has_upi=bool(intel.get("upiIds")),
+        has_phone=bool(intel.get("phoneNumbers")),
+        has_link=bool(intel.get("phishingLinks")),
+        has_bank=bool(intel.get("bankAccounts")),
+        total_messages=total_messages,
+    )
 
 
 def _dedupe_reply(reply: str, last_reply: str | None) -> str:
