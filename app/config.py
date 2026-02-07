@@ -31,10 +31,23 @@ def load_settings() -> Settings:
 
     groq_api_keys: list[str] = []
     if use_llm:
-        groq_key = _get_env("GROQ_API_KEY")
-        if not groq_key:
-            raise RuntimeError("GROQ_API_KEY is required when USE_LLM=1")
-        groq_api_keys = [groq_key]
+        groq_keys_raw = _get_env("GROQ_API_KEYS")
+        if groq_keys_raw:
+            groq_api_keys = [k.strip() for k in groq_keys_raw.split(",") if k.strip()]
+        else:
+            idx = 1
+            while True:
+                key = _get_env(f"GROQ_API_KEY_{idx}")
+                if not key:
+                    break
+                groq_api_keys.append(key)
+                idx += 1
+        if not groq_api_keys:
+            groq_key = _get_env("GROQ_API_KEY")
+            if groq_key:
+                groq_api_keys = [groq_key]
+        if not groq_api_keys:
+            raise RuntimeError("GROQ_API_KEYS or GROQ_API_KEY_1..N is required when USE_LLM=1")
 
     groq_model = _get_env("GROQ_MODEL", "mistral-7b-instruct")
     groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
