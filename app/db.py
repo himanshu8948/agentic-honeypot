@@ -55,6 +55,18 @@ def init_db(conn: sqlite3.Connection) -> None:
         )
         """
     )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS user_intel (
+            session_id TEXT PRIMARY KEY,
+            bank_accounts TEXT,
+            upi_ids TEXT,
+            phishing_links TEXT,
+            phone_numbers TEXT,
+            FOREIGN KEY (session_id) REFERENCES sessions (session_id)
+        )
+        """
+    )
     conn.commit()
     _ensure_session_columns(conn)
 
@@ -93,6 +105,13 @@ def get_or_create_session(conn: sqlite3.Connection, session_id: str) -> sqlite3.
         VALUES (?, ?, ?, ?, ?, ?)
         """,
         (session_id, "[]", "[]", "[]", "[]", "[]"),
+    )
+    conn.execute(
+        """
+        INSERT INTO user_intel (session_id, bank_accounts, upi_ids, phishing_links, phone_numbers)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (session_id, "[]", "[]", "[]", "[]"),
     )
     conn.commit()
     return conn.execute(
@@ -191,6 +210,39 @@ def save_intel(conn: sqlite3.Connection, session_id: str, intel: dict[str, list[
             json.dumps(intel.get("phishingLinks", [])),
             json.dumps(intel.get("phoneNumbers", [])),
             json.dumps(intel.get("suspiciousKeywords", [])),
+            session_id,
+        ),
+    )
+    conn.commit()
+
+
+def load_user_intel(conn: sqlite3.Connection, session_id: str) -> dict[str, list[str]]:
+    row = conn.execute(
+        "SELECT * FROM user_intel WHERE session_id = ?",
+        (session_id,),
+    ).fetchone()
+    if not row:
+        return {"bankAccounts": [], "upiIds": [], "phishingLinks": [], "phoneNumbers": []}
+    return {
+        "bankAccounts": json.loads(row["bank_accounts"] or "[]"),
+        "upiIds": json.loads(row["upi_ids"] or "[]"),
+        "phishingLinks": json.loads(row["phishing_links"] or "[]"),
+        "phoneNumbers": json.loads(row["phone_numbers"] or "[]"),
+    }
+
+
+def save_user_intel(conn: sqlite3.Connection, session_id: str, intel: dict[str, list[str]]) -> None:
+    conn.execute(
+        """
+        UPDATE user_intel
+        SET bank_accounts = ?, upi_ids = ?, phishing_links = ?, phone_numbers = ?
+        WHERE session_id = ?
+        """,
+        (
+            json.dumps(intel.get("bankAccounts", [])),
+            json.dumps(intel.get("upiIds", [])),
+            json.dumps(intel.get("phishingLinks", [])),
+            json.dumps(intel.get("phoneNumbers", [])),
             session_id,
         ),
     )
