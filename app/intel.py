@@ -68,7 +68,7 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
             continue
         filtered_bank.append(cand)
 
-    if filtered_bank and ACCOUNT_CONTEXT_RE.search(text):
+    if filtered_bank and (ACCOUNT_CONTEXT_RE.search(text) or IFSC_RE.search(text)):
         _unique_extend(intel["bankAccounts"], filtered_bank)
 
     _unique_extend(intel["upiIds"], upis)
