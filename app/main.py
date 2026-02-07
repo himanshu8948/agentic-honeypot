@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import time
 from typing import Any, Optional
 
@@ -25,6 +26,7 @@ app = FastAPI(title="himanshu_agentic_honeypot")
 SETTINGS: Settings | None = None
 DB = None
 GROQ: GroqClient | None = None
+logger = logging.getLogger("api")
 
 
 class Message(BaseModel):
@@ -152,7 +154,8 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
             reply = _dedupe_reply(str(agent.get("reply", reply)), last_reply)
             agent_notes = str(agent.get("agentNotes", agent_notes))
             stop_reason = agent.get("stopReason")
-        except Exception:
+        except Exception as exc:
+            logger.exception("LLM reply failed: %s", exc)
             reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
             agent_notes = "LLM failure; rule-based fallback reply."
 

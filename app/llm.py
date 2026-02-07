@@ -1,8 +1,12 @@
 import json
+import logging
 import random
 from typing import Any
 
 import httpx
+
+
+logger = logging.getLogger("llm")
 
 
 class GroqClient:
@@ -45,6 +49,7 @@ class GroqClient:
                 last_exc = exc
                 status = exc.response.status_code
                 body = exc.response.text.lower() if exc.response is not None else ""
+                logger.error("LLM HTTP error %s: %s", status, exc.response.text if exc.response is not None else "")
                 retryable = status in {401, 403, 429, 500, 502, 503, 504}
                 quota_like = any(k in body for k in ["rate limit", "quota", "insufficient", "exceeded"])
                 if retryable or quota_like:
@@ -52,6 +57,7 @@ class GroqClient:
                 raise
             except httpx.RequestError as exc:
                 last_exc = exc
+                logger.error("LLM request error: %s", exc)
                 continue
 
         if last_exc:
