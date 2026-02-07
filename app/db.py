@@ -80,6 +80,8 @@ def _ensure_session_columns(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE sessions ADD COLUMN conversation_summary TEXT")
     if "persona" not in existing:
         conn.execute("ALTER TABLE sessions ADD COLUMN persona TEXT")
+    if "api_calls" not in existing:
+        conn.execute("ALTER TABLE sessions ADD COLUMN api_calls INTEGER DEFAULT 0")
     conn.commit()
 
 
@@ -139,6 +141,24 @@ def append_message(
         (int(time.time()), session_id),
     )
     conn.commit()
+
+
+def increment_api_calls(conn: sqlite3.Connection, session_id: str) -> None:
+    conn.execute(
+        "UPDATE sessions SET api_calls = COALESCE(api_calls, 0) + 1, updated_at = ? WHERE session_id = ?",
+        (int(time.time()), session_id),
+    )
+    conn.commit()
+
+
+def get_api_calls(conn: sqlite3.Connection, session_id: str) -> int:
+    row = conn.execute(
+        "SELECT api_calls FROM sessions WHERE session_id = ?",
+        (session_id,),
+    ).fetchone()
+    if not row:
+        return 0
+    return int(row["api_calls"] or 0)
 
 
 def update_session(

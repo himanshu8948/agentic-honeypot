@@ -211,6 +211,13 @@ SAFE_MODULES: Dict[str, List[str]] = {
         "Please send the exact handle one more time and the steps after that.",
         "If you want a reply, should I send to a number or to a UPI handle?",
     ],
+    "extraction": [
+        "I want to do this correctly. Please repeat the exact UPI handle and number.",
+        "I do not want to make a mistake. Please confirm the exact destination.",
+        "Please tell me the exact number or handle to use.",
+        "I want to be safe. Please share the exact link or domain.",
+        "Please confirm the exact contact and method to send it.",
+    ],
     "verification": [
         "Before I continue, I need the exact {proof} for my records.",
         "Please share the exact {proof} so I can verify this safely.",
@@ -359,6 +366,16 @@ if _exclaim_path.exists():
 if _EXTRA_EXCLAIM:
     SAFE_MODULES["opening_exclaim"].extend(_EXTRA_EXCLAIM)
 
+_EXTRA_EXTRACT: List[str] = []
+_extract_path = Path(__file__).with_name("extraction_1000.json")
+if _extract_path.exists():
+    try:
+        _EXTRA_EXTRACT = json.loads(_extract_path.read_text(encoding="utf-8"))
+    except Exception:
+        _EXTRA_EXTRACT = []
+if _EXTRA_EXTRACT:
+    SAFE_MODULES["extraction"].extend(_EXTRA_EXTRACT)
+
 
 def _fill(template: str) -> str:
     for key, values in GLOBAL_VARIABLES.items():
@@ -383,7 +400,7 @@ def choose_phase(total_messages: int, last_scam_text: str) -> str:
     if total_messages <= 1:
         return "opening_exclaim"
     if any(k in lower for k in ["upi", "account", "send", "transfer", "payment", "beneficiary"]):
-        return "payment_path"
+        return "extraction" if total_messages % 2 == 0 else "payment_path"
     if any(k in lower for k in ["urgent", "immediately", "blocked", "suspended"]):
         return "verification"
     if any(k in lower for k in ["otp", "link", "click", "verify"]):

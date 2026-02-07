@@ -12,8 +12,10 @@ from .db import (
     append_message,
     connect,
     count_messages,
+    get_api_calls,
     get_or_create_session,
     init_db,
+    increment_api_calls,
     list_messages,
     load_intel,
     load_user_intel,
@@ -88,6 +90,7 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
         raise HTTPException(status_code=500, detail="Service not initialized")
 
     session = get_or_create_session(DB, payload.sessionId)
+    increment_api_calls(DB, payload.sessionId)
     if int(session["total_messages"]) == 0 and payload.conversationHistory:
         for msg in payload.conversationHistory:
             append_message(DB, payload.sessionId, msg.sender, msg.text, msg.timestamp)
@@ -223,24 +226,20 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
 
     # Normalize agent notes for hackathon format (behavior + intent signals)
     if scam_detected:
-        base_notes = _build_agent_notes(
+        agent_notes = _build_agent_notes(
             intel,
             combined_score,
             intent_score,
             score,
             effective_sender,
-        )
-        if agent_notes and base_notes not in agent_notes:
-            agent_notes = f"{agent_notes} | {base_notes}"
-        else:
-            agent_notes = base_notes
-        agent_notes = agent_notes.replace("Rule-based reply.", "").strip(" |")
+        ).strip()
 
     # Engagement completion rules
     stored_count = count_messages(DB, payload.sessionId)
+    api_calls = get_api_calls(DB, payload.sessionId)
     history_count = len(payload.conversationHistory) if payload.conversationHistory else 0
     computed_count = history_count + 1 + (1 if reply else 0)
-    total_messages = max(stored_count, computed_count)
+    total_messages = max(stored_count, computed_count, api_calls * 2)
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
