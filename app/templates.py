@@ -69,6 +69,35 @@ GLOBAL_VARIABLES: Dict[str, List[str]] = {
         "kripya",
         "sir",
     ],
+    "ages": [
+        "58",
+        "62",
+        "67",
+        "71",
+        "74",
+    ],
+    "roles": [
+        "retired teacher",
+        "small shop owner",
+        "pensioner",
+        "retired clerk",
+        "housewife",
+        "farmer",
+    ],
+    "skills": [
+        "new to smartphones",
+        "not very tech-savvy",
+        "still learning apps",
+        "slow with typing",
+        "not comfortable with online banking",
+    ],
+    "tones": [
+        "polite and nervous",
+        "respectful and worried",
+        "soft-spoken and confused",
+        "anxious but cooperative",
+        "patient but unsure",
+    ],
 }
 
 SAFE_MODULES: Dict[str, List[str]] = {
@@ -145,3 +174,11 @@ def choose_phase(total_messages: int, last_scam_text: str) -> str:
     if total_messages % 3 == 0:
         return "context"
     return "cooperative"
+
+
+def build_persona() -> str:
+    return (
+        f"{random.choice(GLOBAL_VARIABLES['polite'])}, I am {random.choice(GLOBAL_VARIABLES['ages'])} years old "
+        f"{random.choice(GLOBAL_VARIABLES['roles'])}. I am {random.choice(GLOBAL_VARIABLES['skills'])} and "
+        f"{random.choice(GLOBAL_VARIABLES['tones'])}."
+    )

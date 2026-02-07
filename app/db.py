@@ -24,6 +24,7 @@ def init_db(conn: sqlite3.Connection) -> None:
             agent_notes TEXT,
             callback_pending INTEGER DEFAULT 0,
             conversation_summary TEXT,
+            persona TEXT,
             created_at INTEGER,
             updated_at INTEGER
         )
@@ -65,6 +66,8 @@ def _ensure_session_columns(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE sessions ADD COLUMN callback_pending INTEGER DEFAULT 0")
     if "conversation_summary" not in existing:
         conn.execute("ALTER TABLE sessions ADD COLUMN conversation_summary TEXT")
+    if "persona" not in existing:
+        conn.execute("ALTER TABLE sessions ADD COLUMN persona TEXT")
     conn.commit()
 
 
@@ -129,11 +132,12 @@ def update_session(
     agent_notes: str | None,
     callback_pending: bool,
     conversation_summary: str | None,
+    persona: str | None,
 ) -> None:
     conn.execute(
         """
         UPDATE sessions
-        SET scam_detected = ?, confidence = ?, last_reply = ?, engagement_complete = ?, agent_notes = ?, callback_pending = ?, conversation_summary = ?, updated_at = ?
+        SET scam_detected = ?, confidence = ?, last_reply = ?, engagement_complete = ?, agent_notes = ?, callback_pending = ?, conversation_summary = ?, persona = ?, updated_at = ?
         WHERE session_id = ?
         """,
         (
@@ -144,6 +148,7 @@ def update_session(
             agent_notes,
             int(callback_pending),
             conversation_summary,
+            persona,
             int(time.time()),
             session_id,
         ),

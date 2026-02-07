@@ -20,7 +20,7 @@ from .db import (
 )
 from .intel import extract_intel, infer_sender_role, intent_signal_score, rule_score
 from .llm import GroqClient, pick_persona
-from .templates import build_safe_reply, choose_phase
+from .templates import build_persona, build_safe_reply, choose_phase
 
 app = FastAPI(title="himanshu_agentic_honeypot")
 
@@ -111,6 +111,9 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
     total_messages = int(session["total_messages"])
     last_reply = session["last_reply"] if "last_reply" in session.keys() else None
+    persona = session["persona"] if "persona" in session.keys() else None
+    if not persona:
+        persona = build_persona()
 
     if SETTINGS.use_llm and GROQ is not None:
         try:
@@ -147,7 +150,7 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     stop_reason = None
     if should_engage:
         conversation = list_messages(DB, payload.sessionId, limit=24)
-        persona = pick_persona()
+        persona = pick_persona() if SETTINGS.use_llm else persona
         if SETTINGS.use_llm and GROQ is not None:
             try:
                 agent = await GROQ.generate_reply(
@@ -212,6 +215,7 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
         agent_notes,
         callback_pending,
         conversation_summary,
+        persona,
     )
 
     return MessageResponse(
