@@ -22,7 +22,7 @@ from .db import (
     update_session,
 )
 from .intel import extract_intel, infer_sender_role, intent_signal_score, rule_score
-from .llm import GeminiClient, GroqClient, pick_persona
+from .llm import GroqClient, pick_persona
 from .templates import build_persona, build_safe_reply, choose_phase
 
 app = FastAPI(title="himanshu_agentic_honeypot")
@@ -75,20 +75,11 @@ async def startup() -> None:
     DB = connect(SETTINGS.db_path)
     init_db(DB)
     if SETTINGS.use_llm:
-        if SETTINGS.llm_provider == "gemini":
-            if not SETTINGS.google_api_key:
-                raise RuntimeError("GOOGLE_API_KEY is required when LLM_PROVIDER=gemini")
-            GROQ = GeminiClient(
-                base_url=SETTINGS.gemini_base_url,
-                api_key=SETTINGS.google_api_key,
-                model=SETTINGS.gemini_model,
-            )
-        else:
-            GROQ = GroqClient(
-                base_url=SETTINGS.groq_base_url,
-                api_keys=SETTINGS.groq_api_keys,
-                model=SETTINGS.groq_model,
-            )
+        GROQ = GroqClient(
+            base_url=SETTINGS.groq_base_url,
+            api_keys=SETTINGS.groq_api_keys,
+            model=SETTINGS.groq_model,
+        )
 
 
 @app.post("/api/message", response_model=MessageResponse)
