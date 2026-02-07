@@ -19,7 +19,7 @@ from .db import (
     update_session,
 )
 from .intel import extract_intel, infer_sender_role, intent_signal_score, rule_score
-from .llm import GroqClient, pick_persona
+from .llm import GroqClient, OllamaClient, pick_persona
 from .templates import build_persona, build_safe_reply, choose_phase
 
 app = FastAPI(title="himanshu_agentic_honeypot")
@@ -72,11 +72,17 @@ async def startup() -> None:
     DB = connect(SETTINGS.db_path)
     init_db(DB)
     if SETTINGS.use_llm:
-        GROQ = GroqClient(
-            base_url=SETTINGS.groq_base_url,
-            api_keys=SETTINGS.groq_api_keys,
-            model=SETTINGS.groq_model,
-        )
+        if SETTINGS.llm_provider == "ollama":
+            GROQ = OllamaClient(
+                base_url=SETTINGS.ollama_base_url,
+                model=SETTINGS.ollama_model,
+            )
+        else:
+            GROQ = GroqClient(
+                base_url=SETTINGS.groq_base_url,
+                api_keys=SETTINGS.groq_api_keys,
+                model=SETTINGS.groq_model,
+            )
 
 
 @app.post("/api/message", response_model=MessageResponse)
