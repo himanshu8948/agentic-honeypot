@@ -26,13 +26,13 @@ def load_settings() -> Settings:
     if not service_api_key:
         raise RuntimeError("SERVICE_API_KEY is required")
 
-    groq_api_key = _get_env("GROQ_API_KEY")
-    if not groq_api_key:
-        raise RuntimeError("GROQ_API_KEY is required")
-    groq_api_keys = [groq_api_key]
+    deepseek_api_key = _get_env("DEEPSEEK_API_KEY")
+    if not deepseek_api_key:
+        raise RuntimeError("DEEPSEEK_API_KEY is required")
+    groq_api_keys = [deepseek_api_key]
 
-    groq_model = _get_env("GROQ_MODEL", "llama3-70b-8192")
-    groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
+    groq_model = _get_env("DEEPSEEK_MODEL", "deepseek-chat")
+    groq_base_url = _get_env("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
     db_path = _get_env("DB_PATH", "./himanshu_agentic_honeypot.db")
 
     rule_threshold = int(_get_env("RULE_THRESHOLD", "3"))
