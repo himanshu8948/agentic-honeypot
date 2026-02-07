@@ -20,7 +20,7 @@ from .db import (
 )
 from .intel import extract_intel, infer_sender_role, intent_signal_score, rule_score
 from .llm import GroqClient, pick_persona
-from .templates import build_reply_from_state
+from .templates import build_combinatorial_reply, choose_phase
 
 app = FastAPI(title="himanshu_agentic_honeypot")
 
@@ -263,15 +263,8 @@ def _fallback_reply(
     last_scam_text: str,
     total_messages: int,
 ) -> str:
-    return build_reply_from_state(
-        last_scam_text=last_scam_text,
-        last_reply=last_reply,
-        has_upi=bool(intel.get("upiIds")),
-        has_phone=bool(intel.get("phoneNumbers")),
-        has_link=bool(intel.get("phishingLinks")),
-        has_bank=bool(intel.get("bankAccounts")),
-        total_messages=total_messages,
-    )
+    phase = choose_phase(total_messages)
+    return build_combinatorial_reply(phase, last_reply)
 
 
 def _dedupe_reply(reply: str, last_reply: str | None) -> str:
