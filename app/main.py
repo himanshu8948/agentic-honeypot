@@ -178,9 +178,9 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
-    if total_messages >= 10:
+    if total_messages >= 12:
         engagement_complete = True
-    if total_messages >= 6 and has_intel:
+    if total_messages >= 10 and has_intel:
         engagement_complete = True
     if stop_reason == "scammer_left":
         engagement_complete = True

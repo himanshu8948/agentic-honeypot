@@ -56,9 +56,16 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
     phones = [p for p in PHONE_RE.findall(text) if len(re.sub(r"\D", "", p)) <= 13]
     links = LINK_RE.findall(text)
     bank_candidates = BANK_RE.findall(text)
+    # Avoid treating common 10-digit phone numbers as bank accounts
+    filtered_bank: list[str] = []
+    for cand in bank_candidates:
+        digits = re.sub(r"\D", "", cand)
+        if len(digits) == 10 and digits.startswith(("6", "7", "8", "9")):
+            continue
+        filtered_bank.append(cand)
 
-    if bank_candidates and ACCOUNT_CONTEXT_RE.search(text):
-        _unique_extend(intel["bankAccounts"], bank_candidates)
+    if filtered_bank and ACCOUNT_CONTEXT_RE.search(text):
+        _unique_extend(intel["bankAccounts"], filtered_bank)
 
     _unique_extend(intel["upiIds"], upis)
     _unique_extend(intel["phoneNumbers"], phones)
