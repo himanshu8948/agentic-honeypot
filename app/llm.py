@@ -141,6 +141,7 @@ class GroqClient:
         intel_summary: dict[str, list[str]],
         intents: dict[str, str] | None = None,
         suspected_scammer: bool = True,
+        last_reply: str | None = None,
     ) -> dict[str, Any]:
         # **KEY FIX**: Progressive intelligence extraction strategy
         missing_intel = self._analyze_missing_intel(intel_summary)
@@ -191,6 +192,8 @@ class GroqClient:
             repetition_hint = (
                 "=== YOUR RECENT QUESTIONS ===\n" + "\n".join(recent_user_msgs[-3:]) + "\n\nDO NOT repeat these questions!\n\n"
             )
+        if last_reply:
+            repetition_hint += f"=== LAST REPLY ===\n{last_reply}\n\nDO NOT repeat it.\n\n"
 
         user = (
             f"PERSONA: {persona}\n\n"
