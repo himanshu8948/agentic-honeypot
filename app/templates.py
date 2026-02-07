@@ -1,4 +1,6 @@
+import json
 import random
+from pathlib import Path
 from typing import Dict, List
 
 GLOBAL_VARIABLES: Dict[str, List[str]] = {
@@ -69,6 +71,38 @@ GLOBAL_VARIABLES: Dict[str, List[str]] = {
         "kripya",
         "sir",
     ],
+    "female_polite": [
+        "beta",
+        "beti",
+        "ji",
+        "please",
+        "kripya",
+    ],
+    "family": [
+        "my daughter",
+        "my son",
+        "my sister",
+        "my niece",
+        "my grandson",
+    ],
+    "story_topics": [
+        "doctor appointment",
+        "medicine schedule",
+        "bank passbook update",
+        "grocery delivery",
+        "electricity bill",
+        "phone recharge",
+        "bus timing",
+        "post office visit",
+        "grandchild's school",
+        "temple visit",
+        "home nurse call",
+        "water bill payment",
+        "gas cylinder booking",
+        "ration shop queue",
+        "power cut",
+        "clinic follow-up",
+    ],
     "ages": [
         "58",
         "62",
@@ -101,6 +135,11 @@ GLOBAL_VARIABLES: Dict[str, List[str]] = {
 }
 
 SAFE_MODULES: Dict[str, List[str]] = {
+    "opening_exclaim": [
+        "Oh my goodness, I just got this message and I am really worried. Please explain what I should do.",
+        "What is happening? I am confused and scared. Please tell me the official steps.",
+        "How is this possible? I did nothing wrong. Please guide me carefully from the start.",
+    ],
     "cooperative": [
         "{polite}, I will do it. Which {channels} should I use?",
         "{polite}, I am ready. Please confirm the official {forms} first.",
@@ -185,21 +224,22 @@ SAFE_MODULES: Dict[str, List[str]] = {
         "Please wait, I am restarting the app.",
     ],
     "indirect_request": [
-        "If there is an official portal, what is the correct domain?",
-        "If you have a public helpline, please share it so I can confirm.",
-        "If there is an official email, can you send a note from it?",
+        "If there is an official portal, what is the correct domain? I can only type it manually.",
+        "If you have a public helpline, please share it so I can confirm and save it.",
         "If there is a case ID, please share it so I can note it down.",
-        "{polite}, can you give the official helpline so I feel safe?",
-        "If this is genuine, please share the official website domain.",
-        "If there is a support portal, please tell me the domain name.",
-        "If you have a case number, please share it for my records.",
-        "If I need help later, what is the official contact number?",
-        "If your team has an official email, please share it.",
-        "If there is a step guide, can you tell me where to find it?",
-        "If there is a verification page, what is the exact URL?",
-        "If there is an official app name, please confirm it.",
-        "If there is a helpline option in the app, where is it?",
-        "If there is a complaint ID, please share it now.",
+        "{polite}, can you give the official helpline so I feel safe? I will call once and return.",
+        "If this is genuine, please share the official website domain and the exact page name.",
+        "If there is a support portal, please tell me the domain name and which page to open.",
+        "If you have a case number, please share it for my records and diary.",
+        "If I need help later, what is the official contact number or WhatsApp? I am slow with apps.",
+        "If there is a step guide, can you tell me where to find it and the menu path?",
+        "If there is a verification page, what is the exact URL and the page title?",
+        "If there is an official app name, please confirm the exact name so I do not install wrong one.",
+        "If there is a helpline option in the app, where is it located?",
+        "If there is a complaint ID, please share it now so I can write it down.",
+        "Where exactly should I send the verification? Which number or handle does it go to?",
+        "I do not want to type the wrong address. Please repeat the exact handle or number you want me to use.",
+        "If you want me to send something, please tell me the exact place to send it.",
     ],
     "elderly": [
         "{polite}, I am old and new to smartphones. Please be patient.",
@@ -221,15 +261,78 @@ SAFE_MODULES: Dict[str, List[str]] = {
         "I am confused. What exactly should I do now?",
         "I do not know this process. Please explain simply.",
         "I tried, but it did not work. What should I do next?",
-        "Please wait, I need to recharge my phone to continue.",
-        "My internet is not working. Please hold for a minute.",
+        "Please wait, I need to recharge my phone to continue. I will come back in a minute.",
+        "My internet is not working. Please hold for a minute and tell me the step again.",
         "The app closed suddenly. Should I open it again?",
         "My screen froze. Should I restart the phone?",
         "I am getting an error. What should I click now?",
         "I pressed back. How do I return to the previous page?",
         "I am not sure what the correct step is. Please guide me.",
     ],
+    "storytelling": [
+        "Please wait, {polite}. I am just finishing my {story_topics}.",
+        "I was about to go for my {story_topics}, but I will do this first.",
+        "My {family} just called about the {story_topics}, I will be quick.",
+        "I am in the middle of my {story_topics}. Please stay on the line.",
+        "I am telling you honestly, I am busy with {story_topics}, but I will try.",
+        "I stepped away for {story_topics}. I am back now, please repeat the last step.",
+        "Sorry, I had to handle {story_topics}. I am ready now, what should I do next?",
+        "I was dealing with {story_topics}. Please guide me again from where we left.",
+        "I got distracted by {story_topics}. Please explain the next step once more.",
+        "I paused because of {story_topics}. I am back and ready to continue.",
+    ],
+    "story_bridge": [
+        "I just finished {story_topics}. I am back now, please tell me the next step and where to send it.",
+        "I had to check {story_topics}. Now I am free, can you repeat the last instruction and the exact address?",
+        "I was busy with {story_topics}. I am ready now; what should I click and where does it go?",
+        "I had a small delay with {story_topics}. Please continue from the last step and the exact place to send it.",
+        "Sorry for the delay, {polite}. The {story_topics} came up. What should I do now and which handle is correct?",
+        "I am back after {story_topics}. Please tell me which screen to open next and the exact contact to use.",
+        "The {story_topics} needed my attention. I am ready again. Please guide me and repeat the exact number.",
+        "I went to check {story_topics}. Now I am here, please explain the steps again and the exact ID.",
+        "Just returned from {story_topics}. Please confirm the official process again and the exact destination.",
+        "I finished {story_topics}. Please show me the correct way to proceed and where to send it.",
+    ],
+    "self_correction": [
+        "I might have misunderstood earlier. Please repeat the correct step.",
+        "Sorry, I said it wrong. I am on the main screen now. What next?",
+        "I got confused. I am ready to follow your steps again.",
+        "Please forgive me, I clicked the wrong thing. What should I do now?",
+        "I think I made a mistake. Please guide me from the last step.",
+        "I may have pressed back by mistake. Please tell me where to go now.",
+        "I got mixed up. Please tell me the step again in simple words.",
+        "I was unsure, so I stopped. Please guide me carefully now.",
+        "I am sorry, I lost the page. Please tell me the correct screen.",
+        "I am not sure I did it right. Please confirm the proper step.",
+    ],
+    "female_cooperative": [
+        "{female_polite}, I will do it. Please guide me properly.",
+        "{female_polite}, I am new to this phone. Please be patient with me.",
+        "I want to do the right thing. Please tell me the official steps.",
+        "I will follow your steps, {female_polite}. Please explain slowly.",
+        "Please guide me carefully. I am not very fast with apps.",
+    ],
 }
+
+_EXTRA_STORY_BRIDGES: List[str] = []
+_story_path = Path(__file__).with_name("story_bridges.json")
+if _story_path.exists():
+    try:
+        _EXTRA_STORY_BRIDGES = json.loads(_story_path.read_text(encoding="utf-8"))
+    except Exception:
+        _EXTRA_STORY_BRIDGES = []
+if _EXTRA_STORY_BRIDGES:
+    SAFE_MODULES["story_bridge"].extend(_EXTRA_STORY_BRIDGES)
+
+_EXTRA_EXCLAIM: List[str] = []
+_exclaim_path = Path(__file__).with_name("exclamations.json")
+if _exclaim_path.exists():
+    try:
+        _EXTRA_EXCLAIM = json.loads(_exclaim_path.read_text(encoding="utf-8"))
+    except Exception:
+        _EXTRA_EXCLAIM = []
+if _EXTRA_EXCLAIM:
+    SAFE_MODULES["opening_exclaim"].extend(_EXTRA_EXCLAIM)
 
 
 def _fill(template: str) -> str:
@@ -252,16 +355,28 @@ def build_safe_reply(phase: str, last_reply: str | None) -> str:
 
 def choose_phase(total_messages: int, last_scam_text: str) -> str:
     lower = (last_scam_text or "").lower()
+    if total_messages <= 1:
+        return "opening_exclaim"
     if any(k in lower for k in ["urgent", "immediately", "blocked", "suspended"]):
         return "verification"
     if any(k in lower for k in ["otp", "link", "click", "verify"]):
         return "clarification"
+    if 4 <= total_messages <= 14 and total_messages % 4 == 0:
+        return "storytelling"
+    if total_messages >= 15 and total_messages % 5 == 0:
+        return "story_bridge"
+    if total_messages % 9 == 0:
+        return "self_correction"
     if total_messages % 4 == 0:
         return "elderly"
     if total_messages % 3 == 0:
         return "context"
     if total_messages % 5 == 0:
         return "issue_focused"
+    if total_messages % 6 == 0:
+        return "storytelling"
+    if total_messages % 7 == 0:
+        return "female_cooperative"
     return "cooperative"
 
 

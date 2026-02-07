@@ -167,10 +167,40 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
             except Exception as exc:
                 logger.exception("LLM reply failed: %s", exc)
                 reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
-                agent_notes = "LLM failure; rule-based fallback reply."
+                agent_notes = (
+                    "LLM failure; "
+                    + _build_agent_notes(
+                        intel,
+                        combined_score,
+                        intent_score,
+                        score,
+                        effective_sender,
+                    )
+                )
         else:
             reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
-            agent_notes = "Rule-based reply."
+            agent_notes = _build_agent_notes(
+                intel,
+                combined_score,
+                intent_score,
+                score,
+                effective_sender,
+            )
+
+    # Normalize agent notes for hackathon format (behavior + intent signals)
+    if scam_detected:
+        base_notes = _build_agent_notes(
+            intel,
+            combined_score,
+            intent_score,
+            score,
+            effective_sender,
+        )
+        if agent_notes:
+            agent_notes = f"{agent_notes} | {base_notes}"
+        else:
+            agent_notes = base_notes
+        agent_notes = agent_notes.replace("Rule-based reply.", "").strip(" |")
 
     # Engagement completion rules
     session = get_or_create_session(DB, payload.sessionId)
@@ -178,9 +208,9 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
-    if total_messages >= 12:
+    if total_messages >= 6:
         engagement_complete = True
-    if total_messages >= 10 and has_intel:
+    if total_messages >= 4 and has_intel:
         engagement_complete = True
     if stop_reason == "scammer_left":
         engagement_complete = True
@@ -277,3 +307,31 @@ def _dedupe_reply(reply: str, last_reply: str | None) -> str:
     if reply.strip().lower() == last_reply.strip().lower():
         return "Just to be sure, can you share the official steps and a reference ID?"
     return reply
+
+
+def _build_agent_notes(
+    intel: dict[str, list[str]],
+    combined_score: int,
+    intent_score: int,
+    rule_score_value: int,
+    inferred_sender: str,
+) -> str:
+    signals = intel.get("suspiciousKeywords", [])
+    signal_text = ", ".join(signals[:6]) if signals else "none"
+    intel_bits = []
+    for key, label in [
+        ("upiIds", "upi"),
+        ("phoneNumbers", "phone"),
+        ("bankAccounts", "bank"),
+        ("phishingLinks", "link"),
+    ]:
+        if intel.get(key):
+            intel_bits.append(label)
+    intel_text = ", ".join(intel_bits) if intel_bits else "none"
+    return (
+        "Rule-based reply; "
+        f"inferred_sender={inferred_sender}; "
+        f"signals={signal_text}; "
+        f"intel={intel_text}; "
+        f"scores(rule={rule_score_value}, intent={intent_score}, total={combined_score})"
+    )
