@@ -360,9 +360,4 @@ def _build_agent_notes(
         tactics.append("payment redirection")
     tactics_text = " and ".join(tactics) if tactics else "suspicious messaging"
 
-    return (
-        f"Scammer used {tactics_text}. "
-        f"Extracted: {extracted_text}. "
-        f"Signals={', '.join(signals[:6]) if signals else 'none'}. "
-        f"scores(rule={rule_score_value}, intent={intent_score}, total={combined_score})"
-    )
+    return f"Scammer used {tactics_text}."
