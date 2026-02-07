@@ -11,6 +11,7 @@ from .config import Settings, load_settings
 from .db import (
     append_message,
     connect,
+    count_messages,
     get_or_create_session,
     init_db,
     list_messages,
@@ -214,15 +215,14 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
             score,
             effective_sender,
         )
-        if agent_notes:
+        if agent_notes and base_notes not in agent_notes:
             agent_notes = f"{agent_notes} | {base_notes}"
         else:
             agent_notes = base_notes
         agent_notes = agent_notes.replace("Rule-based reply.", "").strip(" |")
 
     # Engagement completion rules
-    session = get_or_create_session(DB, payload.sessionId)
-    total_messages = int(session["total_messages"]) + 0
+    total_messages = count_messages(DB, payload.sessionId)
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
@@ -316,6 +316,10 @@ def _fallback_reply(
     total_messages: int,
 ) -> str:
     phase = choose_phase(total_messages, last_scam_text)
+    if last_reply and phase == "payment_path":
+        lower = last_reply.lower()
+        if any(k in lower for k in ["exact", "handle", "destination", "number", "upi"]):
+            phase = "clarification"
     return build_safe_reply(phase, last_reply)
 
 

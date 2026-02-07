@@ -212,3 +212,11 @@ def list_messages(conn: sqlite3.Connection, session_id: str, limit: int = 30) ->
         {"sender": row["sender"], "text": row["text"], "timestamp": row["timestamp_ms"]}
         for row in rows
     ]
+
+
+def count_messages(conn: sqlite3.Connection, session_id: str) -> int:
+    row = conn.execute(
+        "SELECT COUNT(*) as cnt FROM messages WHERE session_id = ?",
+        (session_id,),
+    ).fetchone()
+    return int(row["cnt"]) if row else 0
