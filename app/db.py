@@ -222,12 +222,19 @@ def load_user_intel(conn: sqlite3.Connection, session_id: str) -> dict[str, list
         (session_id,),
     ).fetchone()
     if not row:
-        return {"bankAccounts": [], "upiIds": [], "phishingLinks": [], "phoneNumbers": []}
+        return {
+            "bankAccounts": [],
+            "upiIds": [],
+            "phishingLinks": [],
+            "phoneNumbers": [],
+            "suspiciousKeywords": [],
+        }
     return {
         "bankAccounts": json.loads(row["bank_accounts"] or "[]"),
         "upiIds": json.loads(row["upi_ids"] or "[]"),
         "phishingLinks": json.loads(row["phishing_links"] or "[]"),
         "phoneNumbers": json.loads(row["phone_numbers"] or "[]"),
+        "suspiciousKeywords": [],
     }
 
 

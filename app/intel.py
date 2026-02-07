@@ -50,6 +50,10 @@ def _unique_extend(target: list[str], values: Iterable[str]) -> None:
 
 
 def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]]:
+    # Ensure required keys exist
+    for key in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers", "suspiciousKeywords"]:
+        if key not in intel:
+            intel[key] = []
     lower = text.lower()
 
     upis = UPI_RE.findall(text)
