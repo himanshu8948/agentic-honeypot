@@ -35,14 +35,23 @@ def load_settings() -> Settings:
     llm_provider = (_get_env("LLM_PROVIDER", "deepseek") or "deepseek").lower()
 
     groq_api_keys: list[str] = []
-    if use_llm and llm_provider != "gemini":
-        deepseek_api_key = _get_env("agentic_key")
-        if not deepseek_api_key:
-            raise RuntimeError("agentic_key is required when USE_LLM=1 and LLM_PROVIDER != gemini")
-        groq_api_keys = [deepseek_api_key]
+    if use_llm and llm_provider not in {"gemini"}:
+        if llm_provider == "groq":
+            groq_key = _get_env("GROQ_API_KEY")
+            if not groq_key:
+                raise RuntimeError("GROQ_API_KEY is required when LLM_PROVIDER=groq")
+            groq_api_keys = [groq_key]
+        else:
+            deepseek_api_key = _get_env("agentic_key")
+            if not deepseek_api_key:
+                raise RuntimeError("agentic_key is required when USE_LLM=1 and LLM_PROVIDER=deepseek")
+            groq_api_keys = [deepseek_api_key]
 
     groq_model = _get_env("DEEPSEEK_MODEL", "deepseek-chat")
     groq_base_url = _get_env("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+    if llm_provider == "groq":
+        groq_model = _get_env("GROQ_MODEL", "mistral-7b-instruct")
+        groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
     google_api_key = _get_env("GOOGLE_API_KEY")
     gemini_model = _get_env("GEMINI_MODEL", "gemini-2.0-flash")
     gemini_base_url = _get_env("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com")
