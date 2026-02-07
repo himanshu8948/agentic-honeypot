@@ -15,6 +15,7 @@ class Settings:
     groq_api_keys: list[str]
     groq_model: str
     groq_base_url: str
+    use_llm: bool
     db_path: str
     rule_threshold: int
     llm_threshold: float
@@ -26,10 +27,14 @@ def load_settings() -> Settings:
     if not service_api_key:
         raise RuntimeError("SERVICE_API_KEY is required")
 
-    deepseek_api_key = _get_env("agentic_key")
-    if not deepseek_api_key:
-        raise RuntimeError("agentic_key is required")
-    groq_api_keys = [deepseek_api_key]
+    use_llm = _get_env("USE_LLM", "0").lower() in {"1", "true", "yes"}
+
+    groq_api_keys: list[str] = []
+    if use_llm:
+        deepseek_api_key = _get_env("agentic_key")
+        if not deepseek_api_key:
+            raise RuntimeError("agentic_key is required when USE_LLM=1")
+        groq_api_keys = [deepseek_api_key]
 
     groq_model = _get_env("DEEPSEEK_MODEL", "deepseek-chat")
     groq_base_url = _get_env("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
@@ -48,6 +53,7 @@ def load_settings() -> Settings:
         groq_api_keys=groq_api_keys,
         groq_model=groq_model,
         groq_base_url=groq_base_url,
+        use_llm=use_llm,
         db_path=db_path,
         rule_threshold=rule_threshold,
         llm_threshold=llm_threshold,

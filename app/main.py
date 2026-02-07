@@ -70,16 +70,17 @@ async def startup() -> None:
     SETTINGS = load_settings()
     DB = connect(SETTINGS.db_path)
     init_db(DB)
-    GROQ = GroqClient(
-        base_url=SETTINGS.groq_base_url,
-        api_keys=SETTINGS.groq_api_keys,
-        model=SETTINGS.groq_model,
-    )
+    if SETTINGS.use_llm:
+        GROQ = GroqClient(
+            base_url=SETTINGS.groq_base_url,
+            api_keys=SETTINGS.groq_api_keys,
+            model=SETTINGS.groq_model,
+        )
 
 
 @app.post("/api/message", response_model=MessageResponse)
 async def handle_message(payload: MessageRequest, _auth: None = Depends(require_api_key)) -> MessageResponse:
-    if SETTINGS is None or DB is None or GROQ is None:
+    if SETTINGS is None or DB is None:
         raise HTTPException(status_code=500, detail="Service not initialized")
 
     session = get_or_create_session(DB, payload.sessionId)
@@ -110,26 +111,30 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     total_messages = int(session["total_messages"])
     last_reply = session["last_reply"] if "last_reply" in session.keys() else None
 
-    try:
-        recent_messages = list_messages(DB, payload.sessionId, limit=24)
-        context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
-        intents = await GROQ.summarize_intents(recent_messages)
-        if int(session["total_messages"]) % 6 == 0:
-            conversation_summary = await GROQ.summarize_conversation(
-                recent_messages[-12:],
-                conversation_summary,
-            )
-        context = f"Summary: {conversation_summary}\n\n{context}" if conversation_summary else context
-        if combined_score >= SETTINGS.rule_threshold + 4:
-            llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
-        else:
-            llm_result = await GROQ.classify(payload.message.text, context=context, intents=intents)
-        if combined_score >= SETTINGS.rule_threshold + 2 and float(llm_result.get("confidence", 0.0)) < 0.6:
-            llm_result["confidence"] = 0.6
-        scam_detected = bool(llm_result.get("scamDetected", False))
-        confidence = float(llm_result.get("confidence", 0.0))
-        agent_notes = "; ".join(llm_result.get("reasons", []))
-    except Exception:
+    if SETTINGS.use_llm and GROQ is not None:
+        try:
+            recent_messages = list_messages(DB, payload.sessionId, limit=24)
+            context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
+            intents = await GROQ.summarize_intents(recent_messages)
+            if int(session["total_messages"]) % 6 == 0:
+                conversation_summary = await GROQ.summarize_conversation(
+                    recent_messages[-12:],
+                    conversation_summary,
+                )
+            context = f"Summary: {conversation_summary}\n\n{context}" if conversation_summary else context
+            if combined_score >= SETTINGS.rule_threshold + 4:
+                llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
+            else:
+                llm_result = await GROQ.classify(payload.message.text, context=context, intents=intents)
+            if combined_score >= SETTINGS.rule_threshold + 2 and float(llm_result.get("confidence", 0.0)) < 0.6:
+                llm_result["confidence"] = 0.6
+            scam_detected = bool(llm_result.get("scamDetected", False))
+            confidence = float(llm_result.get("confidence", 0.0))
+            agent_notes = "; ".join(llm_result.get("reasons", []))
+        except Exception as exc:
+            logger.exception("LLM classify failed: %s", exc)
+            llm_result = {"scamDetected": False, "confidence": 0.0, "reasons": []}
+    else:
         llm_result = {"scamDetected": False, "confidence": 0.0, "reasons": []}
 
     if combined_score >= SETTINGS.rule_threshold or confidence >= SETTINGS.llm_threshold:
@@ -142,22 +147,26 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     if should_engage:
         conversation = list_messages(DB, payload.sessionId, limit=24)
         persona = pick_persona()
-        try:
-            agent = await GROQ.generate_reply(
-                persona,
-                conversation,
-                intel,
-                intents=intents,
-                suspected_scammer=True,
-                last_reply=last_reply,
-            )
-            reply = _dedupe_reply(str(agent.get("reply", reply)), last_reply)
-            agent_notes = str(agent.get("agentNotes", agent_notes))
-            stop_reason = agent.get("stopReason")
-        except Exception as exc:
-            logger.exception("LLM reply failed: %s", exc)
+        if SETTINGS.use_llm and GROQ is not None:
+            try:
+                agent = await GROQ.generate_reply(
+                    persona,
+                    conversation,
+                    intel,
+                    intents=intents,
+                    suspected_scammer=True,
+                    last_reply=last_reply,
+                )
+                reply = _dedupe_reply(str(agent.get("reply", reply)), last_reply)
+                agent_notes = str(agent.get("agentNotes", agent_notes))
+                stop_reason = agent.get("stopReason")
+            except Exception as exc:
+                logger.exception("LLM reply failed: %s", exc)
+                reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
+                agent_notes = "LLM failure; rule-based fallback reply."
+        else:
             reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
-            agent_notes = "LLM failure; rule-based fallback reply."
+            agent_notes = "Rule-based reply."
 
     # Engagement completion rules
     session = get_or_create_session(DB, payload.sessionId)
