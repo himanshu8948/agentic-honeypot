@@ -101,17 +101,28 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
 
     intel = load_intel(DB, payload.sessionId)
     user_intel = load_user_intel(DB, payload.sessionId)
+
+    # Extract from provided conversation history as well (scammer only)
+    if payload.conversationHistory:
+        for msg in payload.conversationHistory:
+            if msg.sender == "scammer":
+                intel = extract_intel(msg.text, intel)
+            else:
+                user_intel = extract_intel(msg.text, user_intel)
+
     if effective_sender == "scammer":
         intel = extract_intel(payload.message.text, intel)
-        # Remove any identifiers previously seen in user messages
-        intel["upiIds"] = [x for x in intel["upiIds"] if x not in user_intel.get("upiIds", [])]
-        intel["phoneNumbers"] = [x for x in intel["phoneNumbers"] if x not in user_intel.get("phoneNumbers", [])]
-        intel["bankAccounts"] = [x for x in intel["bankAccounts"] if x not in user_intel.get("bankAccounts", [])]
-        intel["phishingLinks"] = [x for x in intel["phishingLinks"] if x not in user_intel.get("phishingLinks", [])]
-        save_intel(DB, payload.sessionId, intel)
     else:
         user_intel = extract_intel(payload.message.text, user_intel)
-        save_user_intel(DB, payload.sessionId, user_intel)
+
+    # Remove any identifiers previously seen in user messages
+    intel["upiIds"] = [x for x in intel["upiIds"] if x not in user_intel.get("upiIds", [])]
+    intel["phoneNumbers"] = [x for x in intel["phoneNumbers"] if x not in user_intel.get("phoneNumbers", [])]
+    intel["bankAccounts"] = [x for x in intel["bankAccounts"] if x not in user_intel.get("bankAccounts", [])]
+    intel["phishingLinks"] = [x for x in intel["phishingLinks"] if x not in user_intel.get("phishingLinks", [])]
+
+    save_intel(DB, payload.sessionId, intel)
+    save_user_intel(DB, payload.sessionId, user_intel)
 
     score = rule_score(payload.message.text)
     intent_score = intent_signal_score(payload.message.text)
