@@ -57,11 +57,12 @@ GLOBAL_VARIABLES: Dict[str, List[str]] = {
         "support form",
     ],
     "proof": [
-        "reference ID",
-        "ticket number",
         "case number",
-        "official email",
-        "public helpline",
+        "reference ID",
+        "recipient number",
+        "UPI handle",
+        "payment address",
+        "official link",
     ],
     "polite": [
         "beta",
@@ -183,23 +184,37 @@ SAFE_MODULES: Dict[str, List[str]] = {
         "I cannot find the button you said. Where is it usually?",
         "It is asking for a code. Is that from SMS or email?",
         "The text is too small. Can you tell me the exact label?",
+        "If there is a link, please repeat the exact URL so I can type it correctly.",
+        "If I must open a page, please tell me the exact domain and page name.",
+        "If this needs a reply, which exact number or handle should I use?",
+        "If this is through WhatsApp or SMS, please confirm the exact number to send to.",
+    ],
+    "payment_path": [
+        "I want to send it correctly. Where exactly should I send it, and what is the exact handle?",
+        "Please tell me the exact number or handle where I should send this, so I do not make a mistake.",
+        "I am ready to send it, but I need the exact destination. Which number or UPI handle is correct?",
+        "I do not want to send to the wrong place. Please repeat the exact handle or number to use.",
+        "Before I proceed, please confirm the exact address/handle and the method to send it.",
+        "I can only do this once. Please give me the exact UPI ID or number to send to.",
+        "I am confused about where to send this. Please tell me the exact contact/handle.",
+        "If this is via UPI, please share the exact UPI ID and the amount to send.",
+        "If I must send something, tell me the exact destination and which app to use.",
+        "Please confirm the exact number and the steps to send it safely.",
     ],
     "verification": [
-        "Before I continue, I need your {proof} for my records.",
-        "Please share an official {proof} so I can verify this request.",
-        "Can you provide the public {proof} for this case?",
-        "I want to confirm this is official. Please share the {proof}.",
-        "{polite}, my family told me to note the {proof} for safety.",
-        "Please give the official {proof} so I can trust this.",
-        "I need a {proof} to write down in my diary.",
-        "Kindly share the {proof} to verify the request.",
-        "Do you have an official {proof} for this issue?",
-        "Please provide a {proof} so I can confirm you are from the bank.",
-        "Please share the official helpline or website to confirm.",
+        "Before I continue, I need the exact {proof} for my records.",
+        "Please share the exact {proof} so I can verify this safely.",
+        "Can you provide the exact {proof} and where to find it?",
+        "I want to confirm this is official. Please share the {proof} and the exact destination.",
+        "{polite}, my family told me to note the exact {proof} before I proceed.",
+        "Please give the exact {proof} so I can trust this and continue.",
+        "I need the {proof} written down before I do any step.",
+        "Kindly share the exact {proof} to verify the request and destination.",
+        "Do you have the exact {proof} for this issue?",
+        "Please provide the exact {proof} so I can confirm you are from the bank.",
         "If there is a case number, please share it for my note.",
-        "I want to confirm through official channels first.",
-        "Please share public verification details for this request.",
-        "I was told to keep a record, please share a reference.",
+        "Please share verification details and the exact destination.",
+        "I was told to keep a record, please share the exact {proof} again.",
     ],
     "context": [
         "I am in {cities} and the {channels} is slow at this {times}.",
@@ -357,6 +372,8 @@ def choose_phase(total_messages: int, last_scam_text: str) -> str:
     lower = (last_scam_text or "").lower()
     if total_messages <= 1:
         return "opening_exclaim"
+    if any(k in lower for k in ["upi", "account", "send", "transfer", "payment", "beneficiary"]):
+        return "payment_path"
     if any(k in lower for k in ["urgent", "immediately", "blocked", "suspended"]):
         return "verification"
     if any(k in lower for k in ["otp", "link", "click", "verify"]):

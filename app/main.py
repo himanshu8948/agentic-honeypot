@@ -103,8 +103,10 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
     append_message(DB, payload.sessionId, effective_sender, payload.message.text, payload.message.timestamp)
 
     intel = load_intel(DB, payload.sessionId)
-    intel = extract_intel(payload.message.text, intel)
-    save_intel(DB, payload.sessionId, intel)
+    # Only extract intelligence from scammer messages to avoid capturing user data
+    if effective_sender == "scammer":
+        intel = extract_intel(payload.message.text, intel)
+        save_intel(DB, payload.sessionId, intel)
 
     score = rule_score(payload.message.text)
     intent_score = intent_signal_score(payload.message.text)
@@ -192,6 +194,16 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
                 score,
                 effective_sender,
             )
+
+    # Store the agent reply as a user message for accurate total_messages
+    if reply:
+        append_message(
+            DB,
+            payload.sessionId,
+            "user",
+            reply,
+            int(time.time() * 1000),
+        )
 
     # Normalize agent notes for hackathon format (behavior + intent signals)
     if scam_detected:
@@ -322,22 +334,31 @@ def _build_agent_notes(
     rule_score_value: int,
     inferred_sender: str,
 ) -> str:
-    signals = intel.get("suspiciousKeywords", [])
-    signal_text = ", ".join(signals[:6]) if signals else "none"
-    intel_bits = []
-    for key, label in [
-        ("upiIds", "upi"),
-        ("phoneNumbers", "phone"),
-        ("bankAccounts", "bank"),
-        ("phishingLinks", "link"),
-    ]:
-        if intel.get(key):
-            intel_bits.append(label)
-    intel_text = ", ".join(intel_bits) if intel_bits else "none"
+    signals = [s.lower() for s in intel.get("suspiciousKeywords", [])]
+    urgency = any(k in signals for k in ["urgent", "immediately", "account blocked", "account suspended", "account freeze"])
+    payment_redirection = bool(intel.get("upiIds") or intel.get("phoneNumbers") or intel.get("phishingLinks"))
+
+    extracted = []
+    if intel.get("upiIds"):
+        extracted.append("UPI IDs")
+    if intel.get("phoneNumbers"):
+        extracted.append("phone numbers")
+    if intel.get("bankAccounts"):
+        extracted.append("bank accounts")
+    if intel.get("phishingLinks"):
+        extracted.append("links")
+    extracted_text = ", ".join(extracted) if extracted else "no identifiers yet"
+
+    tactics = []
+    if urgency:
+        tactics.append("urgency tactics")
+    if payment_redirection:
+        tactics.append("payment redirection")
+    tactics_text = " and ".join(tactics) if tactics else "suspicious messaging"
+
     return (
-        "Rule-based reply; "
-        f"inferred_sender={inferred_sender}; "
-        f"signals={signal_text}; "
-        f"intel={intel_text}; "
+        f"Scammer used {tactics_text}. "
+        f"Extracted: {extracted_text}. "
+        f"Signals={', '.join(signals[:6]) if signals else 'none'}. "
         f"scores(rule={rule_score_value}, intent={intent_score}, total={combined_score})"
     )
