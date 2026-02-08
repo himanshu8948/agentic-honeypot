@@ -333,6 +333,11 @@ def _fallback_reply(
     total_messages: int,
 ) -> str:
     phase = choose_phase(total_messages, last_scam_text)
+    lower = (last_scam_text or "").lower()
+    if not intel.get("bankAccounts") and any(
+        k in lower for k in ["account", "bank", "transfer", "send", "upi", "payment", "beneficiary"]
+    ):
+        phase = "bank_extract"
     if last_reply and phase == "payment_path":
         lower = last_reply.lower()
         if any(k in lower for k in ["exact", "handle", "destination", "number", "upi"]):

@@ -315,6 +315,11 @@ SAFE_MODULES: Dict[str, List[str]] = {
         "Please share verification details and the exact destination.",
         "I was told to keep a record, please share the exact {proof} again.",
     ],
+    "bank_extract": [
+        "If this is bank transfer, please share the exact account number and IFSC.",
+        "I can do NEFT/IMPS. Please give the beneficiary account number and IFSC.",
+        "Please confirm the exact bank account number where I should send it.",
+    ],
     "context": [
         "I am in {cities} and the {channels} is slow at this {times}.",
         "I am using a {devices} and it is not very fast right now.",
@@ -467,6 +472,7 @@ if _extract_bank_path.exists():
         _EXTRA_EXTRACT_BANK = []
 if _EXTRA_EXTRACT_BANK:
     SAFE_MODULES["extraction"].extend(_EXTRA_EXTRACT_BANK)
+    SAFE_MODULES["bank_extract"].extend(_EXTRA_EXTRACT_BANK)
 
 _EXTRA_DUMB: List[str] = []
 _dumb_path = Path(__file__).with_name("dumb_confused_2000.json")
