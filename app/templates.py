@@ -468,6 +468,16 @@ if _dumb_path.exists():
 if _EXTRA_DUMB:
     SAFE_MODULES["dumb_confused"].extend(_EXTRA_DUMB)
 
+_EXTRA_FOOL: List[str] = []
+_fool_path = Path(__file__).with_name("fool_confused_bundle.json")
+if _fool_path.exists():
+    try:
+        _EXTRA_FOOL = json.loads(_fool_path.read_text(encoding="utf-8"))
+    except Exception:
+        _EXTRA_FOOL = []
+if _EXTRA_FOOL:
+    SAFE_MODULES["dumb_confused"].extend(_EXTRA_FOOL)
+
 
 def _fill(template: str) -> str:
     for key, values in GLOBAL_VARIABLES.items():
