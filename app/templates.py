@@ -458,6 +458,16 @@ if _extract_path.exists():
 if _EXTRA_EXTRACT:
     SAFE_MODULES["extraction"].extend(_EXTRA_EXTRACT)
 
+_EXTRA_EXTRACT_BANK: List[str] = []
+_extract_bank_path = Path(__file__).with_name("extraction_bank_details.json")
+if _extract_bank_path.exists():
+    try:
+        _EXTRA_EXTRACT_BANK = json.loads(_extract_bank_path.read_text(encoding="utf-8"))
+    except Exception:
+        _EXTRA_EXTRACT_BANK = []
+if _EXTRA_EXTRACT_BANK:
+    SAFE_MODULES["extraction"].extend(_EXTRA_EXTRACT_BANK)
+
 _EXTRA_DUMB: List[str] = []
 _dumb_path = Path(__file__).with_name("dumb_confused_2000.json")
 if _dumb_path.exists():
