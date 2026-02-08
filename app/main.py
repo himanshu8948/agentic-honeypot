@@ -35,6 +35,16 @@ GROQ: GroqClient | None = None
 logger = logging.getLogger("api")
 
 
+@app.get("/")
+async def root() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@app.get("/health")
+async def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 class Message(BaseModel):
     sender: str = Field(..., pattern="^(scammer|user)$")
     text: str
