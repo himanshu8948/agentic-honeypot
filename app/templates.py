@@ -257,6 +257,13 @@ SAFE_MODULES: Dict[str, List[str]] = {
         "I can do it now. Please share the exact UPI handle and how long it takes.",
         "Please tell me the exact process and where to send the verification so I don't make a mistake.",
     ],
+    "dumb_confused": [
+        "Arre yaar, I am confused and not good with phones. Please explain very slowly.",
+        "I keep pressing the wrong thing. Can you tell me in very small steps?",
+        "My phone is old and the screen is dim. I don't know what to do next.",
+        "I'm panicking and can't think. Please be patient and guide me like a child.",
+        "I am not understanding anything. Should I just wait for now?",
+    ],
     "chatty_oversharer": [
         "Oh no, this is terrible. I just came back from a family function and I'm already stressed. Please tell me exactly where to send the verification so I don't make a mistake.",
         "I'm a talker, sorry. I'm just nervous. Please give me the exact handle/number so I can do it correctly.",
@@ -451,6 +458,16 @@ if _extract_path.exists():
 if _EXTRA_EXTRACT:
     SAFE_MODULES["extraction"].extend(_EXTRA_EXTRACT)
 
+_EXTRA_DUMB: List[str] = []
+_dumb_path = Path(__file__).with_name("dumb_confused_2000.json")
+if _dumb_path.exists():
+    try:
+        _EXTRA_DUMB = json.loads(_dumb_path.read_text(encoding="utf-8"))
+    except Exception:
+        _EXTRA_DUMB = []
+if _EXTRA_DUMB:
+    SAFE_MODULES["dumb_confused"].extend(_EXTRA_DUMB)
+
 
 def _fill(template: str) -> str:
     for key, values in GLOBAL_VARIABLES.items():
@@ -474,6 +491,8 @@ def choose_phase(total_messages: int, last_scam_text: str) -> str:
     lower = (last_scam_text or "").lower()
     if total_messages <= 1:
         return "opening_exclaim"
+    if total_messages % 2 == 1:
+        return "dumb_confused"
     if any(k in lower for k in ["fees", "school", "exam", "tuition", "child", "daughter", "son"]):
         return "panicked_parent"
     if any(k in lower for k in ["app", "install", "link", "click", "anydesk", "teamviewer"]):
