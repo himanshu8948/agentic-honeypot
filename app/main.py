@@ -235,11 +235,8 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
         ).strip()
 
     # Engagement completion rules
-    stored_count = count_messages(DB, payload.sessionId)
     api_calls = get_api_calls(DB, payload.sessionId)
-    history_count = len(payload.conversationHistory) if payload.conversationHistory else 0
-    computed_count = history_count + 1 + (1 if reply else 0)
-    total_messages = max(stored_count, computed_count, api_calls * 2)
+    total_messages = api_calls * 2
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False

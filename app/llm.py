@@ -154,13 +154,15 @@ class GroqClient:
             "2. NEVER provide real sensitive information (use fake placeholders if needed)\n"
             "3. ACT like a confused but cooperative victim\n"
             "4. PROGRESSIVELY extract information - don't repeat the same question\n"
-            "5. Your ONLY goal is to extract: UPI IDs, phone numbers, bank account numbers, links, payment methods\n\n"
+            "5. Your ONLY goal is to extract: UPI IDs, phone numbers, bank account numbers, links, payment methods\n"
+            "6. Keep replies SHORT (1-2 sentences)\n\n"
             "STRATEGY:\n"
-            "- If scammer asks for OTP/password: Act confused, ask WHERE to send it\n"
+            "- If scammer asks for OTP/password: Act confused, ask WHERE to send it (exact number/UPI/handle)\n"
             "- If scammer provides phone number: Ask for alternative contact or verify it's official\n"
             "- If scammer mentions account: Ask for IFSC, branch name, account type details\n"
             "- If scammer shares link: Ask what it does before clicking (extract more info)\n"
-            "- If scammer asks for payment: Ask for EXACT payment details, UPI ID, QR code\n\n"
+            "- If scammer asks for payment: Ask for EXACT payment details, UPI ID, QR code\n"
+            "- Prefer direct questions for UPI ID / phone / handle when missing\n\n"
             "AVOID:\n"
             "- Repeating the same question you already asked\n"
             "- Generic responses like 'Can you share more details?'\n"
@@ -246,25 +248,25 @@ class GroqClient:
 
         # Progressive extraction logic
         if not intel.get("phoneNumbers") and ("send" in last_scammer_msg or "contact" in last_scammer_msg):
-            return "Ask WHERE to send the information (extract phone number or contact method)"
+            return "Ask for the exact phone number or contact handle to send the OTP"
 
         if not intel.get("upiIds") and ("pay" in last_scammer_msg or "upi" in last_scammer_msg):
-            return "Ask for the EXACT UPI ID or payment address"
+            return "Ask for the exact UPI ID / handle to send it"
 
         if not intel.get("bankAccounts") and ("account" in last_scammer_msg or "bank" in last_scammer_msg):
             return "Ask for IFSC code, branch name, and account type to 'verify it's official'"
 
         if "otp" in last_scammer_msg:
-            return "Act confused about WHERE to enter OTP - extract phone number or website link"
+            return "Ask the exact destination for the OTP (phone number or UPI handle)"
 
         if "link" in last_scammer_msg or "click" in last_scammer_msg:
             return "Ask what the link does before clicking (extract more context)"
 
         if not intel.get("phoneNumbers"):
-            return "Ask for customer care number or helpline to 'verify this is official'"
+            return "Ask for the exact phone number to send/confirm the OTP"
 
         if len(intel.get("phoneNumbers", [])) == 1 and not intel.get("upiIds"):
-            return "Ask if there's a UPI ID or alternate payment method"
+            return "Ask for the exact UPI ID as an alternate method"
 
         return "Ask for any additional verification details (official email, employee ID, reference number)"
 

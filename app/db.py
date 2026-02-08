@@ -19,6 +19,7 @@ def init_db(conn: sqlite3.Connection) -> None:
             scam_detected INTEGER DEFAULT 0,
             confidence REAL DEFAULT 0.0,
             total_messages INTEGER DEFAULT 0,
+            api_calls INTEGER DEFAULT 0,
             last_reply TEXT,
             engagement_complete INTEGER DEFAULT 0,
             agent_notes TEXT,
@@ -68,6 +69,11 @@ def init_db(conn: sqlite3.Connection) -> None:
         """
     )
     conn.commit()
+    try:
+        conn.execute("ALTER TABLE sessions ADD COLUMN api_calls INTEGER DEFAULT 0")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
     _ensure_session_columns(conn)
 
 
@@ -141,6 +147,24 @@ def append_message(
         (int(time.time()), session_id),
     )
     conn.commit()
+
+
+def increment_api_calls(conn: sqlite3.Connection, session_id: str) -> None:
+    conn.execute(
+        "UPDATE sessions SET api_calls = api_calls + 1, updated_at = ? WHERE session_id = ?",
+        (int(time.time()), session_id),
+    )
+    conn.commit()
+
+
+def get_api_calls(conn: sqlite3.Connection, session_id: str) -> int:
+    row = conn.execute(
+        "SELECT api_calls FROM sessions WHERE session_id = ?",
+        (session_id,),
+    ).fetchone()
+    if not row:
+        return 0
+    return int(row["api_calls"] or 0)
 
 
 def increment_api_calls(conn: sqlite3.Connection, session_id: str) -> None:
