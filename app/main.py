@@ -313,6 +313,7 @@ async def _send_callback(
         "extractedIntelligence": intel,
         "agentNotes": agent_notes,
     }
+    logger.info("Callback payload: %s", payload)
 
     for attempt in range(3):
         try:

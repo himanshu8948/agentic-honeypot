@@ -103,6 +103,9 @@ GLOBAL_VARIABLES: Dict[str, List[str]] = {
         "ration shop queue",
         "power cut",
         "clinic follow-up",
+        "school fees",
+        "exam schedule",
+        "tuition payment",
     ],
     "ages": [
         "58",
@@ -217,6 +220,78 @@ SAFE_MODULES: Dict[str, List[str]] = {
         "Please tell me the exact number or handle to use.",
         "I want to be safe. Please share the exact link or domain.",
         "Please confirm the exact contact and method to send it.",
+    ],
+    "panicked_parent": [
+        "Oh God, I just got my child's school fees deposited. Which account are you talking about? Please confirm the exact account and where to send verification.",
+        "I am very worried. I have salary, savings, and a joint account. Which one is blocked? Please tell me the exact account number and the exact destination to send OTP.",
+        "I got multiple OTP messages. Which exact one do you want and where should I send it? Please give the exact number or UPI handle.",
+        "My child has exams soon and I cannot lose this money. Please confirm the exact account details and the exact handle to send to.",
+        "I am panicking. Please tell me the exact branch/IFSC and the exact contact to send the OTP so I do not make a mistake.",
+        "I just paid school fees and I am scared. Please confirm the exact account number and where you want me to send verification.",
+        "Which account is affected? I have three accounts. Please confirm the exact account and the exact number/handle to use.",
+        "I received 3 OTPs. Which exact code and where should I send it? Please repeat the exact destination.",
+        "Please tell me your exact contact/handle so I can verify safely. I cannot risk my child's fees.",
+        "I need to note this down for my spouse. Please confirm the exact account and exact destination to send OTP.",
+    ],
+    "tech_confused_elder": [
+        "Arre beta, I don't know how to click the link. Can you explain step by step? The page shows a warning—should I still proceed? Please tell me the exact safe way.",
+        "My phone is old and the link shows a red warning. Is this normal? Can you tell me the exact steps without the link?",
+        "I don't understand these apps. It's showing a strange name. Is this your bank's app? What will happen after I install?",
+        "My phone is asking for permissions like photos and contacts. Should I allow everything? Please explain safely and slowly.",
+        "Can I do this on my computer instead? It's an old Windows machine. Will it work? Please guide me carefully.",
+        "I'm scared to click the link. Can you tell me the exact domain and what should appear on the page?",
+        "I don't know where to tap. Is it the blue button or the underlined text? Please explain clearly.",
+        "The link is not opening. Can you give me the exact number or handle to verify instead?",
+        "I want to verify this is official. Please share the exact contact/handle so I don't make a mistake.",
+        "I am confused about the app name. Is it safe? Please tell me the exact steps and what I should see.",
+    ],
+    "trusting_student": [
+        "Sir, thank you for helping. I'm a final year student and this refund is important. Please tell me exactly where to send verification so I don't do it wrong.",
+        "I trust you, sir. Should I send the details to a number or a UPI handle? Please confirm the exact destination.",
+        "I have two accounts for fees and hostel. Which one should I use, and what exact handle should I send to?",
+        "Please guide me step by step. If I need to send anything, tell me the exact number or UPI ID.",
+        "I'm worried about the deadline. Can you share the exact link or contact so I can do it quickly?",
+        "If there's a verification page, please send the exact domain and the exact step to follow.",
+        "I want to do this correctly. Please confirm the exact contact, number, or handle to use.",
+        "I'm ready to proceed. Should I use UPI or SMS? Please give the exact destination.",
+        "I can do it now. Please share the exact UPI handle and how long it takes.",
+        "Please tell me the exact process and where to send the verification so I don't make a mistake.",
+    ],
+    "chatty_oversharer": [
+        "Oh no, this is terrible. I just came back from a family function and I'm already stressed. Please tell me exactly where to send the verification so I don't make a mistake.",
+        "I'm a talker, sorry. I'm just nervous. Please give me the exact handle/number so I can do it correctly.",
+        "I was about to pay a bill and saw this alert. Please guide me step by step and tell me the exact destination.",
+        "I don't understand these banking things. Please tell me exactly where to send it and which app to use.",
+        "I'm worried and a bit confused. Please repeat the exact number/handle and the correct steps.",
+        "I want to be cooperative and do this fast. Please give me the exact link or UPI ID.",
+    ],
+    "deal_maker": [
+        "Okay, I'll do it, but please confirm the exact handle/number first so I can trust this.",
+        "I will proceed if you give me the exact destination and the official steps.",
+        "I want to do this correctly; please share the exact UPI handle or number to use.",
+        "I'm ready to cooperate. Please confirm the exact contact and method.",
+        "I'll follow your steps if you repeat the exact handle and the link/domain.",
+    ],
+    "family_drama": [
+        "This is so stressful. Please tell me exactly where to send the OTP so I don't do it wrong.",
+        "I'm worried about my family savings. Please repeat the exact number or UPI handle to send to.",
+        "I need to act fast. Please give me the exact link and the exact destination.",
+        "I'm anxious and confused. Please guide me step by step and confirm the exact handle.",
+        "Please help me quickly; tell me the exact contact/handle to use.",
+    ],
+    "medical_emergency": [
+        "Please don't block my account; I need this money urgently. Tell me exactly where to send verification.",
+        "I'm at a hospital and very stressed. Please repeat the exact number or UPI handle so I can act fast.",
+        "I can do it now if you tell me the exact destination and steps.",
+        "I'm scared and cooperative. Please confirm the exact handle and link to use.",
+        "I need to do this quickly—please give the exact contact/handle.",
+    ],
+    "tech_savvy_skeptic": [
+        "I want to verify safely. Please share the exact domain and the exact destination handle/number.",
+        "I will proceed once you confirm the exact URL and the exact contact to send to.",
+        "Please give me the exact UPI handle and the official domain, so I can verify.",
+        "I need the exact link and destination to proceed correctly.",
+        "Share the exact handle/number and the exact steps, then I'll continue.",
     ],
     "verification": [
         "Before I continue, I need the exact {proof} for my records.",
@@ -399,6 +474,22 @@ def choose_phase(total_messages: int, last_scam_text: str) -> str:
     lower = (last_scam_text or "").lower()
     if total_messages <= 1:
         return "opening_exclaim"
+    if any(k in lower for k in ["fees", "school", "exam", "tuition", "child", "daughter", "son"]):
+        return "panicked_parent"
+    if any(k in lower for k in ["app", "install", "link", "click", "anydesk", "teamviewer"]):
+        return "tech_confused_elder"
+    if any(k in lower for k in ["scholarship", "refund", "student", "fee", "semester"]):
+        return "trusting_student"
+    if any(k in lower for k in ["frozen", "blocked", "transaction", "unauthorized"]):
+        return "family_drama"
+    if any(k in lower for k in ["suspend", "security", "emergency", "urgent"]):
+        return "medical_emergency"
+    if any(k in lower for k in ["cashback", "offer", "reward", "prize", "lottery"]):
+        return "deal_maker"
+    if any(k in lower for k in ["digital signature", "certificate", "domain", "ssl"]):
+        return "tech_savvy_skeptic"
+    if total_messages % 5 == 0:
+        return "chatty_oversharer"
     if any(k in lower for k in ["upi", "account", "send", "transfer", "payment", "beneficiary"]):
         return "extraction" if total_messages % 2 == 0 else "payment_path"
     if any(k in lower for k in ["urgent", "immediately", "blocked", "suspended"]):
