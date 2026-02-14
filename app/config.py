@@ -39,7 +39,7 @@ def load_settings() -> Settings:
     groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
     db_path = _get_env("DB_PATH", "./honeypot.db")
 
-    rule_threshold = int(_get_env("RULE_THRESHOLD", "3"))
+    rule_threshold = int(_get_env("RULE_THRESHOLD", "6"))
     llm_threshold = float(_get_env("LLM_THRESHOLD", "0.6"))
 
     guvi_callback_url = _get_env(

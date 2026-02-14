@@ -24,30 +24,30 @@ def assess_sender_signals(
     if p in {"sms", "telecom", "rcs"}:
         if header:
             if header not in trusted_headers:
-                delta += 12
+                delta += 2
                 reasons.append("unknown_sms_header")
             else:
                 reasons.append("trusted_sms_header")
         elif number:
-            delta += 10
+            delta += 2
             reasons.append("sender_number_without_header")
         else:
-            delta += 8
+            delta += 1
             reasons.append("missing_sender_identity")
 
         if in_contacts is False:
-            delta += 8
+            delta += 1
             reasons.append("sender_not_in_contacts")
         elif in_contacts is True:
-            delta = max(0, delta - 3)
+            delta = max(0, delta - 1)
             reasons.append("sender_in_contacts")
     elif p in {"whatsapp", "telegram", "signal", "ott"}:
         if in_contacts is False:
-            delta += 6
+            delta += 1
             reasons.append("unknown_ott_sender")
     elif p in {"email", "mail"}:
         if not header and not number:
-            delta += 5
+            delta += 1
             reasons.append("email_without_sender_identity")
 
     return SignalAssessment(delta=delta, reasons=reasons)
