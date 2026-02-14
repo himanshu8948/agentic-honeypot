@@ -86,6 +86,7 @@ class Metadata(BaseModel):
     channel: Optional[str] = None
     language: Optional[str] = None
     locale: Optional[str] = None
+    verbosity: Optional[str] = None  # e.g. "low" | "high"
     platform: Optional[str] = None
     senderHeader: Optional[str] = None
     senderNumber: Optional[str] = None
@@ -337,12 +338,14 @@ async def handle_message(
                 # Deterministic persona for long honeypot sessions (matches your Bittu script).
                 persona_tag = "bittu_shopkeeper"
                 language = (payload.metadata.language if payload.metadata else None) or "en"
+                verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
                 pb = build_reply(
                     domain=detect_domain(payload.message.text),
                     next_target=next_target,
                     persona=persona_tag,
                     conversation=conversation,
                     language=language,
+                    verbosity=verbosity,
                 )
                 reply = pb.reply
                 agent_notes = pb.agent_notes
@@ -352,12 +355,14 @@ async def handle_message(
             used_rule_fallback = True
             next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
             language = (payload.metadata.language if payload.metadata else None) or "en"
+            verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
             pb = build_reply(
                 domain=detect_domain(payload.message.text),
                 next_target=next_target,
                 persona="bittu_shopkeeper",
                 conversation=conversation,
                 language=language,
+                verbosity=verbosity,
             )
             reply = pb.reply
             agent_notes = pb.agent_notes

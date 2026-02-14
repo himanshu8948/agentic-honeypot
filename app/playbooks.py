@@ -52,6 +52,7 @@ def build_reply(
     persona: str,
     conversation: list[dict[str, str]],
     language: str = "en",
+    verbosity: str = "low",
 ) -> PlaybookReply:
     templates = _load_templates(language=language)
     domain_bank = templates.get(domain, templates["generic"])
@@ -67,6 +68,8 @@ def build_reply(
 
     reply = random.choice(options)
     reply = _apply_persona(reply, persona)
+    if str(verbosity).strip().lower() == "high":
+        reply = _make_verbose(reply=reply, domain=domain, stage=stage, language=language)
 
     return PlaybookReply(
         reply=reply,
@@ -95,6 +98,82 @@ def _apply_persona(text: str, persona: str) -> str:
         )
         return prefix + text
     return text
+
+
+def _make_verbose(*, reply: str, domain: str, stage: str, language: str) -> str:
+    # Add 1-2 believable filler sentences to sustain long conversations without LLM.
+    lang = (language or "en").strip().lower()
+    if lang.startswith("hi"):
+        lang = "hi"
+    else:
+        lang = "en"
+
+    addons_en = {
+        "hook": [
+            "I am not very good with mobile apps, so please guide me step by step.",
+            "I do not want any trouble, so I am trying to cooperate calmly.",
+        ],
+        "friction": [
+            "The signal looks fine but the app keeps acting strange, so I am moving slowly.",
+            "I am trying not to press the wrong button because then it becomes more confusing.",
+        ],
+        "tangent": [
+            "I only started using UPI recently because customers insist on it nowadays.",
+            "If UPI stops, my shop will face problems, so I am worried.",
+        ],
+        "near_miss": [
+            "This makes me nervous because money matters should not be rushed.",
+            "These systems become strict when there is pressure, so I am being careful.",
+        ],
+        "extract": [
+            "If you type it clearly in message, I can write it down and cross-check properly.",
+            "Switching screens on this new phone is confusing for me, so a text message helps.",
+        ],
+        "endurance": [
+            "Between the server issues and slow internet, it is taking longer than expected.",
+            "Let us wait a few minutes and then try again when the system is stable.",
+        ],
+        "default": [
+            "Please explain in simple words, I will follow carefully.",
+        ],
+    }
+
+    addons_hi = {
+        "hook": [
+            "Main mobile apps mein weak hoon, isliye step by step guide karna.",
+            "Main cooperate kar raha hoon, bas calmly batao kya karna hai.",
+        ],
+        "friction": [
+            "Signal theek dikh raha hai par app ajeeb behave kar raha hai, isliye dheere chal raha hoon.",
+            "Galat button dab gaya toh aur confuse ho jaunga, isliye carefully kar raha hoon.",
+        ],
+        "tangent": [
+            "UPI main recently hi use karna start kiya, customer bolte hain zaroori hai.",
+            "UPI band hua toh shop pe problem ho jayegi, isliye ghabra gaya hoon.",
+        ],
+        "near_miss": [
+            "Paise ka matter hai toh jaldi mein galti ho jaati hai, isliye dhyan se kar raha hoon.",
+            "Pressure mein haath kaanp jata hai, par main try kar raha hoon.",
+        ],
+        "extract": [
+            "Message mein clearly likh doge toh main note karke cross-check kar lunga.",
+            "New phone pe screen switch karna confusing hai, isliye text help karta hai.",
+        ],
+        "endurance": [
+            "Server aur internet dono issue kar rahe hain, isliye time lag raha hai.",
+            "5 minute ruk ke phir try karte hain, shayad system stable ho jaaye.",
+        ],
+        "default": [
+            "Simple words mein batao beta, main follow karunga.",
+        ],
+    }
+
+    bank = addons_hi if lang == "hi" else addons_en
+    pool = bank.get(stage, []) or bank.get("default", [])
+    extra = " ".join(random.sample(pool, k=min(2, len(pool)))) if pool else ""
+    out = (reply.strip() + (" " + extra.strip() if extra else "")).strip()
+    # Prevent runaway verbosity.
+    return out[:420]
 
 
 def _load_templates(*, language: str) -> dict[str, Any]:
