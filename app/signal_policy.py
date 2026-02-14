@@ -54,11 +54,11 @@ def assess_sender_signals(
 
 
 def risk_to_zone(risk: int) -> str:
-    if risk >= 75:
+    if risk >= 90:
         return "lethal"
-    if risk >= 50:
+    if risk >= 65:
         return "block_high_risk_actions"
-    if risk >= 30:
+    if risk >= 35:
         return "warn_and_confirm"
     return "observe"
 

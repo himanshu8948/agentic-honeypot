@@ -5,6 +5,11 @@
 pip install -r requirements.txt
 ```
 
+For local tests and PDF header extraction script:
+```
+pip install -r requirements-dev.txt
+```
+
 Create `.env` from `.env.example` and set keys.
 Use a single Groq key via `GROQ_API_KEY`.
 For local fallback, enable Ollama with `LOCAL_LLM_ENABLED=true` and set `OLLAMA_MODEL=qwen2.5:3b`.
@@ -17,7 +22,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ## Test
 ```
-pytest
+python -m pytest
 ```
 
 ## Endpoints

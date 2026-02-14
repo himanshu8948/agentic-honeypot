@@ -187,7 +187,8 @@ async def handle_message(
     score = rule_score(payload.message.text)
     intent_score = intent_signal_score(payload.message.text)
     combined_score = score + intent_score + interpreter.risk_boost + signal_assessment.delta
-    risk_percent = min(100, combined_score * 6)
+    # Calibrated for demo/evaluation flow: avoid premature lethal zone on early turns.
+    risk_percent = min(100, combined_score * 4)
     policy_zone = risk_to_zone(risk_percent)
 
     scam_detected = False
@@ -218,7 +219,7 @@ async def handle_message(
                     conversation_summary,
                 )
         context = f"Summary: {conversation_summary}\n\n{context}" if conversation_summary else context
-        if combined_score >= SETTINGS.rule_threshold + 4:
+        if combined_score >= SETTINGS.rule_threshold + 6:
             llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
         elif interpreter.route == "lightweight" and combined_score < SETTINGS.rule_threshold:
             llm_result = {"scamDetected": False, "confidence": 0.2, "reasons": ["lightweight_route"]}

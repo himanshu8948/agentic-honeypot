@@ -43,7 +43,7 @@ def load_settings() -> Settings:
     firebase_enabled = _get_bool_env("FIREBASE_ENABLED", False)
     firebase_project_id = _get_env("FIREBASE_PROJECT_ID")
 
-    rule_threshold = int(_get_env("RULE_THRESHOLD", "6"))
+    rule_threshold = int(_get_env("RULE_THRESHOLD", "8"))
     llm_threshold = float(_get_env("LLM_THRESHOLD", "0.6"))
 
     guvi_callback_url = _get_env(
