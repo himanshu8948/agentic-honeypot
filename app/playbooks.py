@@ -74,7 +74,8 @@ def build_reply(
     verbosity: str = "low",
 ) -> PlaybookReply:
     templates = _load_templates(language=language)
-    domain_bank = templates.get(domain, templates["generic"])
+    persona_key = f"{domain}__{persona}"
+    domain_bank = templates.get(persona_key, templates.get(domain, templates["generic"]))
 
     target_lower = (next_target or "").lower()
     stage = _infer_stage(domain=domain, conversation=conversation, next_target=next_target)
@@ -123,6 +124,15 @@ def _apply_persona(text: str, persona: str) -> str:
                 "Yes, officer. ",
                 "Officer sir, ",
                 "Namaste, officer. ",
+            ]
+        )
+        return prefix + text
+    if persona == "bittu_truck_owner":
+        prefix = random.choice(
+            [
+                "Good evening, officer. ",
+                "Yes officer, ",
+                "Officer ji, ",
             ]
         )
         return prefix + text
@@ -330,7 +340,7 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Simple steps mein batao, next kya dabana hai?",
             ],
         },
-        "upi_authority": {
+        "upi_authority__bittu_vet_doctor": {
             # Fake RBI/Police/Cyber Crime authority pressure scam (Veterinary doctor persona compatible).
             "hook": [
                 "Good evening, officer. I am feeling quite anxious hearing this because I have always followed rules and regulations throughout my life. I am a retired veterinary doctor and I only use UPI to receive small consultation fees and medicine payments from farmers. Please guide me calmly, step by step.",
@@ -369,6 +379,47 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             ],
             "ask_more": [
                 "Sir, explain in very simple steps. I will follow carefully.",
+            ],
+        },
+        "upi_authority__bittu_truck_owner": {
+            "hook": [
+                "Good evening, officer. I run a small truck business and I only use UPI for diesel payments and driver expenses. Hearing words like 'blocked' worries me because my work depends on daily payments. Please guide me properly; I want to cooperate and clear this quickly.",
+                "Yes officer, I understand the urgency. I respect procedures because transport work involves permits and paperwork. I am not comfortable with mobile apps, but I will follow the steps you explain.",
+            ],
+            "friction": [
+                "I am near the yard where trucks are parked. Network here is not always stable due to open area and movement. If it is slow, please don’t think I’m avoiding.",
+                "I am opening the UPI app, but it is taking longer than usual to load. Sometimes it hangs when signal is weak.",
+                "Signal bars show full, but speed feels slow. I am switching mobile data off and on to refresh it.",
+                "I closed and reopened the app carefully. I don’t want to press anything wrong because this is a business account.",
+            ],
+            "tangent": [
+                "Officer, I run three trucks on highway routes. Payments happen daily for fuel, tolls, and drivers. If UPI stops even for one day, everything gets delayed.",
+                "Transport work already has tension with permits and deadlines, so I am concerned. I am focusing, just explaining why this matters.",
+                "Please give me a minute. One driver is calling about a breakdown near the toll. I will return immediately.",
+            ],
+            "near_miss": [
+                "It is asking for my UPI PIN. I am entering it slowly because I do not want to make a mistake with a business account.",
+                "It says 'Incorrect PIN'. This is making me uneasy because I rarely enter the PIN myself; usually my nephew helps me.",
+                "Now it shows 'Too many attempts, please wait'. These systems become very strict under pressure.",
+                "I restarted the phone. It is back on, but the internet seems even slower now and signal keeps fluctuating.",
+            ],
+            "extract": [
+                "Before I try again, officer, please type the UPI ID clearly in the message so I can note it down properly. Switching between screens confuses me under pressure.",
+                "I prefer to write it down like I do with truck numbers and permits. Please send the UPI ID once in text so I can confirm calmly.",
+            ],
+            "endurance": [
+                "Now it says 'Bank server temporarily unavailable'. Looks like today the banking system itself is having issues.",
+                "I understand the seriousness, which is why I am not rushing blindly. Between network problems, app issues, and my limited phone knowledge, it is taking time.",
+                "Please give me five minutes. If the server becomes stable, I will try again immediately. I have the UPI ID safely written down.",
+            ],
+            "ask_upi": [
+                "Please type the UPI ID clearly in message so I can verify before approving anything.",
+            ],
+            "ask_phone": [
+                "Officer, please share an official contact number as well, so I can keep a proper record for verification.",
+            ],
+            "ask_more": [
+                "Please tell me the next step clearly. These apps have too many options.",
             ],
         },
         "otp": {
@@ -499,7 +550,7 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Simple steps mein batao beta, next kya karna hai?",
             ],
         },
-        "upi_authority": {
+        "upi_authority__bittu_vet_doctor": {
             "hook": [
                 "Officer saab namaste. Main retired veterinary doctor hoon aur clinic ke chhote payments ke liye UPI use karta hoon. Darr lag raha hai, par main cooperate karunga. Calmly batao kya karna hai.",
                 "Legal action aur block? Saab main rule-following aadmi hoon. Apps ka zyada gyaan nahi, par step by step follow kar lunga.",
@@ -537,6 +588,47 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             ],
             "ask_more": [
                 "Simple steps mein samjhao saab, main follow kar lunga.",
+            ],
+        },
+        "upi_authority__bittu_truck_owner": {
+            "hook": [
+                "Officer saab namaste. Main chhota truck business chalata hoon aur UPI diesel aur driver expenses ke liye use karta hoon. 'Block' sun ke tension ho rahi hai. Please sahi se guide karo, main cooperate karunga.",
+                "Ji officer, urgency samajh raha hoon. Transport mein permits/paperwork hota hai, main procedures respect karta hoon. Apps mein weak hoon, par step by step follow kar lunga.",
+            ],
+            "friction": [
+                "Main yard ke paas hoon jahan trucks parked hain. Network idhar stable nahi rehta. Slow ho toh non-cooperation mat samajhna.",
+                "UPI app open kar raha hoon, load hone mein time lag raha hai. Signal weak ho toh hang ho jata hai.",
+                "Bars full hain par speed slow lag rahi. Data off-on karke refresh kar raha hoon.",
+                "App band karke phir khola. Business account hai isliye galat button nahi dabana chahta.",
+            ],
+            "tangent": [
+                "Saab meri 3 trucks highway route pe chalti hain. Fuel, toll, drivers ka payment daily hota hai. UPI ruk gaya toh kaam delay ho jayega.",
+                "Transport mein already permits/deadlines ka tension hota hai, isliye ghabra gaya hoon. Main focus kar raha hoon.",
+                "Ek minute saab, driver call kar raha breakdown ke liye. Main turant aata hoon.",
+            ],
+            "near_miss": [
+                "UPI PIN maang raha hai. Business account hai, isliye slowly type kar raha hoon.",
+                "'Incorrect PIN' aa gaya. Usually nephew help karta hai, main kam dalta hoon.",
+                "Ab 'Too many attempts, please wait'. System pressure mein strict ho jata hai.",
+                "Phone restart kar diya. On ho gaya par internet aur slow lag raha hai, signal fluctuate ho raha.",
+            ],
+            "extract": [
+                "Officer saab, UPI ID message mein clearly likh do. Screens switch karna pressure mein confusing hota hai.",
+                "Main truck numbers/permits jaise likh ke rakhta hoon. UPI ID text mein bhejo, main calmly confirm kar lunga.",
+            ],
+            "endurance": [
+                "'Bank server temporarily unavailable' aa raha. Aaj banking system hi issue kar raha hai.",
+                "Seriousness samajh raha hoon, isliye blindly rush nahi kar raha. Network/app issues ke saath time lag raha hai.",
+                "5 minute de do saab. Server stable hote hi try karunga. UPI ID safe likh liya hai.",
+            ],
+            "ask_upi": [
+                "UPI ID message mein clearly bhejo, main verify karke hi approve karunga.",
+            ],
+            "ask_phone": [
+                "Official contact number bhi bhejo saab, record ke liye.",
+            ],
+            "ask_more": [
+                "Next step clearly batao saab, apps mein options bahut hain.",
             ],
         },
     }

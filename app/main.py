@@ -87,6 +87,7 @@ class Metadata(BaseModel):
     language: Optional[str] = None
     locale: Optional[str] = None
     verbosity: Optional[str] = None  # e.g. "low" | "high"
+    persona: Optional[str] = None  # e.g. "vet_doctor" | "truck_owner" | "shopkeeper"
     platform: Optional[str] = None
     senderHeader: Optional[str] = None
     senderNumber: Optional[str] = None
@@ -336,8 +337,17 @@ async def handle_message(
                 used_rule_fallback = True
                 next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
                 domain = detect_domain(payload.message.text)
-                # Deterministic persona per scenario domain.
-                persona_tag = "bittu_vet_doctor" if domain == "upi_authority" else "bittu_shopkeeper"
+                meta_persona = (payload.metadata.persona if payload.metadata else None) or ""
+                meta_persona = meta_persona.strip().lower()
+                # Deterministic persona per scenario domain, overridable by metadata.persona.
+                if meta_persona in {"vet", "vet_doctor", "doctor"}:
+                    persona_tag = "bittu_vet_doctor"
+                elif meta_persona in {"truck", "truck_owner", "transport", "business"}:
+                    persona_tag = "bittu_truck_owner"
+                elif meta_persona in {"shop", "shopkeeper"}:
+                    persona_tag = "bittu_shopkeeper"
+                else:
+                    persona_tag = "bittu_vet_doctor" if domain == "upi_authority" else "bittu_shopkeeper"
                 language = (payload.metadata.language if payload.metadata else None) or "en"
                 verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
                 pb = build_reply(
@@ -358,7 +368,16 @@ async def handle_message(
             language = (payload.metadata.language if payload.metadata else None) or "en"
             verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
             domain = detect_domain(payload.message.text)
-            persona_tag = "bittu_vet_doctor" if domain == "upi_authority" else "bittu_shopkeeper"
+            meta_persona = (payload.metadata.persona if payload.metadata else None) or ""
+            meta_persona = meta_persona.strip().lower()
+            if meta_persona in {"vet", "vet_doctor", "doctor"}:
+                persona_tag = "bittu_vet_doctor"
+            elif meta_persona in {"truck", "truck_owner", "transport", "business"}:
+                persona_tag = "bittu_truck_owner"
+            elif meta_persona in {"shop", "shopkeeper"}:
+                persona_tag = "bittu_shopkeeper"
+            else:
+                persona_tag = "bittu_vet_doctor" if domain == "upi_authority" else "bittu_shopkeeper"
             pb = build_reply(
                 domain=domain,
                 next_target=next_target,
