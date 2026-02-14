@@ -387,24 +387,53 @@ async def _send_callback(
     intel: dict[str, list[str]],
     agent_notes: str,
 ) -> bool:
-    payload = {
-        "sessionId": session_id,
-        "scamDetected": scam_detected,
-        "totalMessagesExchanged": total_messages,
-        "extractedIntelligence": intel,
-        "agentNotes": agent_notes,
-    }
+    payload = _build_competition_payload(
+        session_id=session_id,
+        scam_detected=scam_detected,
+        total_messages=total_messages,
+        intel=intel,
+        agent_notes=agent_notes,
+    )
+    log_event(
+        "callback_payload_ready",
+        sessionId=payload["sessionId"],
+        totalMessagesExchanged=payload["totalMessagesExchanged"],
+        suspiciousKeywords=len(payload["extractedIntelligence"].get("suspiciousKeywords", [])),
+    )
 
     for attempt in range(3):
         try:
             async with httpx.AsyncClient(timeout=5) as client:
                 resp = await client.post(settings.guvi_callback_url, json=payload)
                 if 200 <= resp.status_code < 300:
+                    log_event("callback_sent", statusCode=resp.status_code, attempt=attempt + 1)
                     return True
+                log_event("callback_non_2xx", statusCode=resp.status_code, attempt=attempt + 1)
         except Exception:
-            pass
+            log_event("callback_exception", attempt=attempt + 1)
         await asyncio.sleep(2 ** attempt)
     return False
+
+
+def _build_competition_payload(
+    *,
+    session_id: str,
+    scam_detected: bool,
+    total_messages: int,
+    intel: dict[str, list[str]],
+    agent_notes: str,
+) -> dict[str, Any]:
+    safe_session_id = _normalize_session_id(session_id)
+    safe_total = max(1, int(total_messages))
+    safe_intel = _sanitize_intelligence(intel)
+    safe_notes = str(agent_notes).strip() or "No additional agent notes."
+    return {
+        "sessionId": safe_session_id,
+        "scamDetected": bool(scam_detected),
+        "totalMessagesExchanged": safe_total,
+        "extractedIntelligence": safe_intel,
+        "agentNotes": safe_notes,
+    }
 
 
 def _sanitize_intelligence(intel: dict[str, list[str]]) -> dict[str, list[str]]:
