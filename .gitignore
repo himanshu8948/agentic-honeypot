@@ -1,5 +1,4 @@
-﻿ .env
+*.db
 __pycache__/
 *.pyc
-honeypot.log
-*.db
+.env

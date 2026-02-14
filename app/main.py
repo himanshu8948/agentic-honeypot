@@ -1,53 +1,78 @@
 import asyncio
-import logging
 import time
 from typing import Any, Optional
 
 import httpx
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from .config import Settings, load_settings
 from .db import (
     append_message,
     connect,
-    count_messages,
-    get_api_calls,
     get_or_create_session,
+    get_api_calls,
     init_db,
     increment_api_calls,
     list_messages,
     load_intel,
-    load_user_intel,
     save_intel,
-    save_user_intel,
     update_session,
 )
 from .intel import extract_intel, infer_sender_role, intent_signal_score, rule_score
+from .hardening import (
+    CircuitBreaker,
+    SlidingWindowLimiter,
+    log_event,
+    setup_logging,
+    validate_agent_result,
+    validate_llm_result,
+)
+from .layers import interpret_message, merge_intelligence, normalize_intelligence
 from .llm import GroqClient, pick_persona
-from .templates import build_persona, build_safe_reply, choose_phase
+from .signal_policy import assess_sender_signals, risk_to_zone
 
-app = FastAPI(title="himanshu_agentic_honeypot")
+app = FastAPI(title="Agentic Honeypot API")
 
 SETTINGS: Settings | None = None
 DB = None
 GROQ: GroqClient | None = None
-logger = logging.getLogger("api")
+LLM_CIRCUIT = CircuitBreaker(failure_threshold=4, recovery_seconds=45)
+REQ_LIMITER = SlidingWindowLimiter(max_requests=80, window_seconds=60)
+
+
+def _health_payload() -> dict[str, str]:
+    return {"status": "ok"}
 
 
 @app.get("/")
 async def root() -> dict[str, str]:
-    return {"status": "ok"}
+    return _health_payload()
+
+
+@app.get("/healthz")
+async def healthz() -> dict[str, str]:
+    return _health_payload()
 
 
 @app.get("/health")
 async def health() -> dict[str, str]:
-    return {"status": "ok"}
+    return _health_payload()
+
+
+@app.api_route("/healthz", methods=["HEAD"])
+async def healthz_head() -> None:
+    return None
+
+
+@app.api_route("/health", methods=["HEAD"])
+async def health_head() -> None:
+    return None
 
 
 class Message(BaseModel):
     sender: str = Field(..., pattern="^(scammer|user)$")
-    text: str
+    text: str = Field(..., min_length=1, max_length=4000)
     timestamp: int
 
 
@@ -55,6 +80,10 @@ class Metadata(BaseModel):
     channel: Optional[str] = None
     language: Optional[str] = None
     locale: Optional[str] = None
+    platform: Optional[str] = None
+    senderHeader: Optional[str] = None
+    senderNumber: Optional[str] = None
+    inContacts: Optional[bool] = None
 
 
 class MessageRequest(BaseModel):
@@ -83,24 +112,38 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
 @app.on_event("startup")
 async def startup() -> None:
     global SETTINGS, DB, GROQ
+    setup_logging()
     SETTINGS = load_settings()
     DB = connect(SETTINGS.db_path)
     init_db(DB)
-    if SETTINGS.use_llm:
-        GROQ = GroqClient(
-            base_url=SETTINGS.groq_base_url,
-            api_keys=SETTINGS.groq_api_keys,
-            model=SETTINGS.groq_model,
-        )
+    GROQ = GroqClient(
+        base_url=SETTINGS.groq_base_url,
+        api_keys=SETTINGS.groq_api_keys,
+        model=SETTINGS.groq_model,
+    )
+    log_event("startup_complete", model=SETTINGS.groq_model, db_path=SETTINGS.db_path)
 
 
 @app.post("/api/message", response_model=MessageResponse)
-async def handle_message(payload: MessageRequest, _auth: None = Depends(require_api_key)) -> MessageResponse:
-    if SETTINGS is None or DB is None:
+@app.post("/analyze", response_model=MessageResponse)
+async def handle_message(
+    payload: MessageRequest,
+    request: Request,
+    _auth: None = Depends(require_api_key),
+) -> MessageResponse:
+    if SETTINGS is None or DB is None or GROQ is None:
         raise HTTPException(status_code=500, detail="Service not initialized")
+    request_start = time.time()
+    client_host = request.client.host if request.client else "unknown"
+    limiter_key = f"{client_host}:{payload.sessionId}"
+    if not REQ_LIMITER.allow(limiter_key):
+        log_event("rate_limited", sessionId=payload.sessionId, client=client_host)
+        raise HTTPException(status_code=429, detail="Too many requests")
 
     session = get_or_create_session(DB, payload.sessionId)
     increment_api_calls(DB, payload.sessionId)
+    api_calls = get_api_calls(DB, payload.sessionId)
+    total_messages_exchanged = max(2, api_calls * 2)
     if int(session["total_messages"]) == 0 and payload.conversationHistory:
         for msg in payload.conversationHistory:
             append_message(DB, payload.sessionId, msg.sender, msg.text, msg.timestamp)
@@ -112,149 +155,115 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
 
     append_message(DB, payload.sessionId, effective_sender, payload.message.text, payload.message.timestamp)
 
+    interpreter = interpret_message(payload.message.text, effective_sender)
+    signal_assessment = assess_sender_signals(
+        platform=payload.metadata.platform if payload.metadata else None,
+        sender_header=payload.metadata.senderHeader if payload.metadata else None,
+        sender_number=payload.metadata.senderNumber if payload.metadata else None,
+        in_contacts=payload.metadata.inContacts if payload.metadata else None,
+        trusted_headers=SETTINGS.trusted_sms_headers,
+    )
     intel = load_intel(DB, payload.sessionId)
-    user_intel = load_user_intel(DB, payload.sessionId)
-
-    # Extract from provided conversation history as well (scammer only)
-    if payload.conversationHistory:
-        for msg in payload.conversationHistory:
-            if msg.sender == "scammer":
-                intel = extract_intel(msg.text, intel)
-            else:
-                user_intel = extract_intel(msg.text, user_intel)
-
-    if effective_sender == "scammer":
-        intel = extract_intel(payload.message.text, intel)
-    else:
-        user_intel = extract_intel(payload.message.text, user_intel)
-
-    # Remove any identifiers previously seen in user messages
-    intel["upiIds"] = [x for x in intel["upiIds"] if x not in user_intel.get("upiIds", [])]
-    intel["phoneNumbers"] = [x for x in intel["phoneNumbers"] if x not in user_intel.get("phoneNumbers", [])]
-    intel["bankAccounts"] = [x for x in intel["bankAccounts"] if x not in user_intel.get("bankAccounts", [])]
-    intel["phishingLinks"] = [x for x in intel["phishingLinks"] if x not in user_intel.get("phishingLinks", [])]
-
-    save_intel(DB, payload.sessionId, intel)
-    save_user_intel(DB, payload.sessionId, user_intel)
+    intel = extract_intel(payload.message.text, intel)
 
     score = rule_score(payload.message.text)
     intent_score = intent_signal_score(payload.message.text)
-    combined_score = score + intent_score
+    combined_score = score + intent_score + interpreter.risk_boost + signal_assessment.delta
+    risk_percent = min(100, combined_score * 6)
+    policy_zone = risk_to_zone(risk_percent)
 
     scam_detected = False
     confidence = 0.0
-    agent_notes = ""
+    layer_reasons = list(interpreter.reasons) + list(signal_assessment.reasons)
+    layer_reasons.append(f"policy_zone:{policy_zone}")
+    layer_reasons.append(f"risk_percent:{risk_percent}")
+    agent_notes = "; ".join(layer_reasons)
     intents = {"intentScammer": "", "intentUser": ""}
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
-    total_messages = int(session["total_messages"])
-    last_reply = session["last_reply"] if "last_reply" in session.keys() else None
-    persona = session["persona"] if "persona" in session.keys() else None
-    if not persona:
-        persona = build_persona()
 
-    if SETTINGS.use_llm and GROQ is not None:
-        try:
-            recent_messages = list_messages(DB, payload.sessionId, limit=24)
-            context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
+    used_rule_fallback = False
+    try:
+        recent_messages = list_messages(DB, payload.sessionId, limit=40)
+        context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
+        if LLM_CIRCUIT.allow_request():
             intents = await GROQ.summarize_intents(recent_messages)
-            if int(session["total_messages"]) % 6 == 0:
+            if hasattr(GROQ, "extract_structured_intel"):
+                raw_intel = await GROQ.extract_structured_intel(payload.message.text, context=context)
+                intel = merge_intelligence(intel, normalize_intelligence(raw_intel))
+        else:
+            layer_reasons.append("circuit_open")
+            used_rule_fallback = True
+        if int(session["total_messages"]) % 6 == 0:
+            if LLM_CIRCUIT.allow_request():
                 conversation_summary = await GROQ.summarize_conversation(
                     recent_messages[-12:],
                     conversation_summary,
                 )
-            context = f"Summary: {conversation_summary}\n\n{context}" if conversation_summary else context
-            if combined_score >= SETTINGS.rule_threshold + 4:
-                llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
-            else:
-                llm_result = await GROQ.classify(payload.message.text, context=context, intents=intents)
-            if combined_score >= SETTINGS.rule_threshold + 2 and float(llm_result.get("confidence", 0.0)) < 0.6:
-                llm_result["confidence"] = 0.6
-            scam_detected = bool(llm_result.get("scamDetected", False))
-            confidence = float(llm_result.get("confidence", 0.0))
-            agent_notes = "; ".join(llm_result.get("reasons", []))
-        except Exception as exc:
-            logger.exception("LLM classify failed: %s", exc)
-            llm_result = {"scamDetected": False, "confidence": 0.0, "reasons": []}
-    else:
+        context = f"Summary: {conversation_summary}\n\n{context}" if conversation_summary else context
+        if combined_score >= SETTINGS.rule_threshold + 4:
+            llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
+        elif interpreter.route == "lightweight" and combined_score < SETTINGS.rule_threshold:
+            llm_result = {"scamDetected": False, "confidence": 0.2, "reasons": ["lightweight_route"]}
+        elif not LLM_CIRCUIT.allow_request():
+            llm_result = {"scamDetected": combined_score >= SETTINGS.rule_threshold, "confidence": 0.25, "reasons": ["rule_only_mode"]}
+            used_rule_fallback = True
+        else:
+            llm_result = await GROQ.classify(payload.message.text, context=context, intents=intents)
+        llm_result = validate_llm_result(llm_result)
+        scam_detected = bool(llm_result["scamDetected"])
+        confidence = float(llm_result["confidence"])
+        layer_reasons.extend(llm_result.get("reasons", []))
+        agent_notes = "; ".join(layer_reasons)
+        LLM_CIRCUIT.record_success()
+    except Exception:
         llm_result = {"scamDetected": False, "confidence": 0.0, "reasons": []}
+        LLM_CIRCUIT.record_failure()
+        used_rule_fallback = True
+        if not agent_notes:
+            agent_notes = "llm_layer_failed"
+
+    save_intel(DB, payload.sessionId, intel)
 
     if combined_score >= SETTINGS.rule_threshold or confidence >= SETTINGS.llm_threshold:
         scam_detected = True
 
-    should_engage = scam_detected and effective_sender == "scammer"
+    should_engage = scam_detected and effective_sender == "scammer" and policy_zone != "lethal"
 
     reply = "Thanks. Can you share more details?"
     stop_reason = None
     if should_engage:
-        conversation = list_messages(DB, payload.sessionId, limit=24)
-        persona = pick_persona() if SETTINGS.use_llm else persona
-        if SETTINGS.use_llm and GROQ is not None:
-            try:
-                agent = await GROQ.generate_reply(
-                    persona,
-                    conversation,
-                    intel,
-                    intents=intents,
-                    suspected_scammer=True,
-                    last_reply=last_reply,
-                )
-                reply = _dedupe_reply(str(agent.get("reply", reply)), last_reply)
-                agent_notes = str(agent.get("agentNotes", agent_notes))
-                stop_reason = agent.get("stopReason")
-            except Exception as exc:
-                logger.exception("LLM reply failed: %s", exc)
-                reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
-                agent_notes = (
-                    "LLM failure; "
-                    + _build_agent_notes(
-                        intel,
-                        combined_score,
-                        intent_score,
-                        score,
-                        effective_sender,
-                    )
-                )
-        else:
-            reply = _fallback_reply(intel, last_reply, payload.message.text, total_messages)
-            agent_notes = _build_agent_notes(
-                intel,
-                combined_score,
-                intent_score,
-                score,
-                effective_sender,
-            )
-
-    # Store the agent reply as a user message for accurate total_messages
-    if reply:
-        append_message(
-            DB,
-            payload.sessionId,
-            "user",
-            reply,
-            int(time.time() * 1000),
-        )
-
-    # Normalize agent notes for hackathon format (behavior + intent signals)
-    if scam_detected:
-        agent_notes = _build_agent_notes(
-            intel,
-            combined_score,
-            intent_score,
-            score,
-            effective_sender,
-        ).strip()
+        conversation = list_messages(DB, payload.sessionId, limit=30)
+        persona = pick_persona()
+        try:
+            if LLM_CIRCUIT.allow_request():
+                agent = await GROQ.generate_reply(persona, conversation, intel, intents=intents, suspected_scammer=True)
+                safe_agent = validate_agent_result(agent, reply, agent_notes)
+                reply = safe_agent["reply"]
+                agent_notes = safe_agent["agentNotes"]
+                stop_reason = safe_agent["stopReason"]
+                LLM_CIRCUIT.record_success()
+            else:
+                used_rule_fallback = True
+                reply = "I could not verify yet. Please share official contact details."
+                agent_notes = (agent_notes + "; reply_rule_fallback").strip("; ")
+        except Exception:
+            LLM_CIRCUIT.record_failure()
+            used_rule_fallback = True
+            reply = "I am not sure I understand. What should I do next?"
+            agent_notes = "LLM failure; fallback reply."
+    elif scam_detected and policy_zone == "lethal":
+        reply = "Security alert detected. I cannot proceed with this request."
+        agent_notes = (agent_notes + "; lethal_zone_block").strip("; ")
 
     # Engagement completion rules
-    stored_count = count_messages(DB, payload.sessionId)
-    history_count = len(payload.conversationHistory) if payload.conversationHistory else 0
-    computed_count = history_count + 1 + (1 if reply else 0)
-    total_messages = max(stored_count, computed_count)
+    session = get_or_create_session(DB, payload.sessionId)
+    total_messages = total_messages_exchanged
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
-    if total_messages >= 12:
+    if total_messages >= 10:
         engagement_complete = True
-    if total_messages >= 10 and has_intel:
+    if total_messages >= 6 and has_intel:
         engagement_complete = True
     if stop_reason == "scammer_left":
         engagement_complete = True
@@ -268,7 +277,7 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
             SETTINGS,
             payload.sessionId,
             scam_detected,
-            total_messages,
+            total_messages_exchanged,
             intel,
             agent_notes,
         )
@@ -289,7 +298,23 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
         agent_notes,
         callback_pending,
         conversation_summary,
-        persona,
+    )
+    latency_ms = int((time.time() - request_start) * 1000)
+    log_event(
+        "message_processed",
+        sessionId=payload.sessionId,
+        client=client_host,
+        sender=effective_sender,
+        scamDetected=scam_detected,
+        shouldEngage=should_engage,
+        confidence=confidence,
+        riskScore=combined_score,
+        riskPercent=risk_percent,
+        policyZone=policy_zone,
+        route=interpreter.route,
+        fallbackUsed=used_rule_fallback,
+        circuit=LLM_CIRCUIT.snapshot(),
+        latencyMs=latency_ms,
     )
 
     return MessageResponse(
@@ -300,11 +325,6 @@ async def handle_message(payload: MessageRequest, _auth: None = Depends(require_
         extractedIntelligence=intel,
         agentNotes=agent_notes,
     )
-
-
-@app.post("/analyze", response_model=MessageResponse)
-async def analyze_alias(payload: MessageRequest, _auth: None = Depends(require_api_key)) -> MessageResponse:
-    return await handle_message(payload, _auth)
 
 
 async def _send_callback(
@@ -322,7 +342,6 @@ async def _send_callback(
         "extractedIntelligence": intel,
         "agentNotes": agent_notes,
     }
-    logger.info("Callback payload: %s", payload)
 
     for attempt in range(3):
         try:
@@ -334,62 +353,3 @@ async def _send_callback(
             pass
         await asyncio.sleep(2 ** attempt)
     return False
-
-
-def _fallback_reply(
-    intel: dict[str, list[str]],
-    last_reply: str | None,
-    last_scam_text: str,
-    total_messages: int,
-) -> str:
-    phase = choose_phase(total_messages, last_scam_text)
-    lower = (last_scam_text or "").lower()
-    if not intel.get("bankAccounts") and any(
-        k in lower for k in ["account", "bank", "transfer", "send", "upi", "payment", "beneficiary"]
-    ):
-        phase = "bank_extract"
-    if last_reply and phase == "payment_path":
-        lower = last_reply.lower()
-        if any(k in lower for k in ["exact", "handle", "destination", "number", "upi"]):
-            phase = "clarification"
-    return build_safe_reply(phase, last_reply)
-
-
-def _dedupe_reply(reply: str, last_reply: str | None) -> str:
-    if not last_reply:
-        return reply
-    if reply.strip().lower() == last_reply.strip().lower():
-        return "Just to be sure, can you share the official steps and a reference ID?"
-    return reply
-
-
-def _build_agent_notes(
-    intel: dict[str, list[str]],
-    combined_score: int,
-    intent_score: int,
-    rule_score_value: int,
-    inferred_sender: str,
-) -> str:
-    signals = [s.lower() for s in intel.get("suspiciousKeywords", [])]
-    urgency = any(k in signals for k in ["urgent", "immediately", "account blocked", "account suspended", "account freeze"])
-    payment_redirection = bool(intel.get("upiIds") or intel.get("phoneNumbers") or intel.get("phishingLinks"))
-
-    extracted = []
-    if intel.get("upiIds"):
-        extracted.append("UPI IDs")
-    if intel.get("phoneNumbers"):
-        extracted.append("phone numbers")
-    if intel.get("bankAccounts"):
-        extracted.append("bank accounts")
-    if intel.get("phishingLinks"):
-        extracted.append("links")
-    extracted_text = ", ".join(extracted) if extracted else "no identifiers yet"
-
-    tactics = []
-    if urgency:
-        tactics.append("urgency tactics")
-    if payment_redirection:
-        tactics.append("payment redirection")
-    tactics_text = " and ".join(tactics) if tactics else "suspicious messaging"
-
-    return f"Scammer used {tactics_text}."

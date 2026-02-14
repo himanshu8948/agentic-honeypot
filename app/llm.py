@@ -134,6 +134,33 @@ class GroqClient:
             "intentCategory": "other",
         })
 
+    async def extract_structured_intel(self, text: str, context: str | None = None) -> dict[str, list[str]]:
+        system = (
+            "You are an intelligence extraction model for scam analysis. "
+            "Output only strict JSON. No prose."
+        )
+        user = (
+            "Extract the following fields from the message and context:\n"
+            "bankAccounts (list), upiIds (list), phishingLinks (list), phoneNumbers (list), suspiciousKeywords (list).\n"
+            "If unknown, return empty lists.\n\n"
+            f"Context: {context or ''}\n\n"
+            f"Message: {text}"
+        )
+        content = await self._chat(
+            [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            temperature=0.0,
+        )
+        return _safe_json(
+            content,
+            {
+                "bankAccounts": [],
+                "upiIds": [],
+                "phishingLinks": [],
+                "phoneNumbers": [],
+                "suspiciousKeywords": [],
+            },
+        )
+
     async def generate_reply(
         self,
         persona: str,

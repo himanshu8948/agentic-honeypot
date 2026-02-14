@@ -1,4 +1,4 @@
-# himanshu_agentic_honeypot
+# Agentic Honeypot API
 
 ## Setup
 ```
@@ -6,6 +6,7 @@ pip install -r requirements.txt
 ```
 
 Create `.env` from `.env.example` and set keys.
+Use a single Groq key via `GROQ_API_KEY`.
 
 ## Run
 ```
@@ -17,5 +18,33 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 pytest
 ```
 
-## Endpoint
-`POST /api/message` with `x-api-key` header.
+## Endpoints
+- `POST /api/message` with `x-api-key` header
+- `POST /analyze` with `x-api-key` header (alias for compatibility)
+- `GET /healthz` for health checks
+- `GET /health` health-check alias (compatibility)
+
+## Runtime Hardening
+- Structured JSON logs for each request (latency, route, fallback usage, circuit status)
+- LLM circuit breaker with automatic rule-only fallback on repeated failures
+- Request rate limiting per client/session window
+- Strict validation of LLM classifier and reply payloads before use
+- Deterministic sender signal policy (SMS/OTT/Email) with risk-zone mapping
+- Trusted SMS header intelligence via `TRUSTED_SMS_HEADERS` or `TRUSTED_SMS_HEADERS_PATH`
+
+## Optional Metadata Signals
+`metadata` can include:
+- `platform` (`sms|telecom|rcs|whatsapp|telegram|signal|ott|email`)
+- `senderHeader` (e.g., `AX-HDFCBK`)
+- `senderNumber`
+- `inContacts` (`true|false`)
+
+## Trusted SMS Header Dataset
+- Default file path: `trusted_sms_headers.txt`
+- Configure path via `.env`: `TRUSTED_SMS_HEADERS_PATH=./trusted_sms_headers.txt`
+- Re-generate from PDF:
+`python scripts/extract_sms_headers.py "C:\\path\\List_SMS_Headers.pdf" trusted_sms_headers.txt`
+
+## Flutter App
+- Flutter UI app is in `bittu_demo_app`
+- See `bittu_demo_app/README.md` for local run and backend wiring
