@@ -25,6 +25,7 @@ class Settings:
     ollama_model: str
     firebase_enabled: bool
     firebase_project_id: str | None
+    llm_enabled: bool
 
 
 def load_settings() -> Settings:
@@ -32,10 +33,11 @@ def load_settings() -> Settings:
     if not service_api_key:
         raise RuntimeError("SERVICE_API_KEY is required")
 
+    llm_enabled = _get_bool_env("LLM_ENABLED", True)
     local_llm_enabled = _get_bool_env("LOCAL_LLM_ENABLED", False)
     ollama_base_url = _get_env("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
     ollama_model = _get_env("OLLAMA_MODEL", "qwen2.5:3b")
-    groq_api_keys = _load_groq_api_keys(require_if_no_local=not local_llm_enabled)
+    groq_api_keys = _load_groq_api_keys(require_if_no_local=(llm_enabled and not local_llm_enabled))
 
     groq_model = _get_env("GROQ_MODEL", "llama3-70b-8192")
     groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
@@ -67,6 +69,7 @@ def load_settings() -> Settings:
         ollama_model=ollama_model,
         firebase_enabled=firebase_enabled,
         firebase_project_id=firebase_project_id,
+        llm_enabled=llm_enabled,
     )
 
 

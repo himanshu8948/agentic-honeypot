@@ -33,6 +33,7 @@ from .hardening import (
 )
 from .layers import interpret_message, merge_intelligence, normalize_intelligence
 from .llm import GroqClient, pick_persona
+from .playbooks import build_reply, detect_domain
 from .signal_policy import assess_sender_signals, risk_to_zone
 from .fraud_corpus import best_match, load_corpus_lines
 
@@ -138,6 +139,7 @@ async def startup() -> None:
         firebaseEnabled=SETTINGS.firebase_enabled,
         firebaseProjectId=SETTINGS.firebase_project_id,
         fraudCorpusLines=len(FRAUD_CORPUS),
+        llmEnabled=SETTINGS.llm_enabled,
         localLlmEnabled=SETTINGS.local_llm_enabled,
         ollamaModel=SETTINGS.ollama_model,
     )
@@ -225,7 +227,7 @@ async def handle_message(
                 layer_reasons.append("opening_route:corpus_match")
                 layer_reasons.append(f"corpus_score:{match.score:.2f}")
             else:
-                if LLM_CIRCUIT.allow_request():
+                if SETTINGS.llm_enabled and LLM_CIRCUIT.allow_request():
                     detector = await GROQ.detect_opening_route(payload.message.text)
                     detector_route = str(detector.get("route", "uncertain"))
                     detector_confidence = float(detector.get("confidence", 0.0))
@@ -247,6 +249,13 @@ async def handle_message(
                 "confidence": detector_confidence,
                 "reasons": ["opening_normal_short_circuit"],
             }
+        elif not SETTINGS.llm_enabled:
+            llm_result = {
+                "scamDetected": combined_score >= SETTINGS.rule_threshold,
+                "confidence": 0.25,
+                "reasons": ["llm_disabled"],
+            }
+            used_rule_fallback = True
         else:
             recent_messages = list_messages(DB, session_id, limit=40)
             context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
@@ -309,7 +318,7 @@ async def handle_message(
         conversation = list_messages(DB, session_id, limit=30)
         persona_used = pick_persona()
         try:
-            if LLM_CIRCUIT.allow_request():
+            if SETTINGS.llm_enabled and LLM_CIRCUIT.allow_request():
                 agent = await GROQ.generate_reply(
                     persona_used,
                     conversation,
@@ -324,27 +333,30 @@ async def handle_message(
                 LLM_CIRCUIT.record_success()
             else:
                 used_rule_fallback = True
-                fallback_agent = GROQ.generate_rule_based_reply(
-                    conversation,
-                    intel,
-                    intents=intents,
+                next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
+                persona_tag = "busy" if "busy" in (persona_used or "").lower() else "neutral"
+                pb = build_reply(
+                    domain=detect_domain(payload.message.text),
+                    next_target=next_target,
+                    persona=persona_tag,
+                    asked=set(),
                 )
-                safe_agent = validate_agent_result(fallback_agent, reply, agent_notes)
-                reply = safe_agent["reply"]
-                agent_notes = safe_agent["agentNotes"]
-                stop_reason = safe_agent["stopReason"]
+                reply = pb.reply
+                agent_notes = pb.agent_notes
+                stop_reason = pb.stop_reason
         except Exception:
             LLM_CIRCUIT.record_failure()
             used_rule_fallback = True
-            fallback_agent = GROQ.generate_rule_based_reply(
-                conversation,
-                intel,
-                intents=intents,
+            next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
+            pb = build_reply(
+                domain=detect_domain(payload.message.text),
+                next_target=next_target,
+                persona="neutral",
+                asked=set(),
             )
-            safe_agent = validate_agent_result(fallback_agent, reply, agent_notes)
-            reply = safe_agent["reply"]
-            agent_notes = safe_agent["agentNotes"]
-            stop_reason = safe_agent["stopReason"]
+            reply = pb.reply
+            agent_notes = pb.agent_notes
+            stop_reason = pb.stop_reason
     elif scam_detected and policy_zone == "lethal":
         reply = "Security alert detected. I cannot proceed with this request."
         agent_notes = (agent_notes + "; lethal_zone_block").strip("; ")
