@@ -20,6 +20,9 @@ class Settings:
     llm_threshold: float
     guvi_callback_url: str
     trusted_sms_headers: set[str]
+    local_llm_enabled: bool
+    ollama_base_url: str
+    ollama_model: str
 
 
 def load_settings() -> Settings:
@@ -27,7 +30,10 @@ def load_settings() -> Settings:
     if not service_api_key:
         raise RuntimeError("SERVICE_API_KEY is required")
 
-    groq_api_keys = _load_groq_api_keys()
+    local_llm_enabled = _get_bool_env("LOCAL_LLM_ENABLED", False)
+    ollama_base_url = _get_env("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+    ollama_model = _get_env("OLLAMA_MODEL", "qwen2.5:3b")
+    groq_api_keys = _load_groq_api_keys(require_if_no_local=not local_llm_enabled)
 
     groq_model = _get_env("GROQ_MODEL", "llama3-70b-8192")
     groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
@@ -52,10 +58,13 @@ def load_settings() -> Settings:
         llm_threshold=llm_threshold,
         guvi_callback_url=guvi_callback_url,
         trusted_sms_headers=trusted_sms_headers,
+        local_llm_enabled=local_llm_enabled,
+        ollama_base_url=ollama_base_url,
+        ollama_model=ollama_model,
     )
 
 
-def _load_groq_api_keys() -> list[str]:
+def _load_groq_api_keys(require_if_no_local: bool) -> list[str]:
     # Preferred single-key configuration.
     one_key = _get_env("GROQ_API_KEY")
     if one_key and one_key.strip():
@@ -68,7 +77,9 @@ def _load_groq_api_keys() -> list[str]:
         if keys:
             return [keys[0]]
 
-    raise RuntimeError("GROQ_API_KEY is required")
+    if require_if_no_local:
+        raise RuntimeError("GROQ_API_KEY is required when LOCAL_LLM_ENABLED is false")
+    return []
 
 
 def _load_trusted_headers() -> set[str]:
@@ -92,3 +103,11 @@ def _load_trusted_headers() -> set[str]:
             pass
 
     return headers
+
+
+def _get_bool_env(name: str, default: bool) -> bool:
+    raw = _get_env(name)
+    if raw is None:
+        return default
+    v = raw.strip().lower()
+    return v in {"1", "true", "yes", "on"}

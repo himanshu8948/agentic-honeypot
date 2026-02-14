@@ -10,12 +10,24 @@ logger = logging.getLogger("llm")
 
 
 class GroqClient:
-    def __init__(self, base_url: str, api_keys: list[str], model: str, timeout_s: int = 20):
+    def __init__(
+        self,
+        base_url: str,
+        api_keys: list[str],
+        model: str,
+        timeout_s: int = 20,
+        local_enabled: bool = False,
+        ollama_base_url: str = "http://127.0.0.1:11434",
+        ollama_model: str = "qwen2.5:3b",
+    ):
         self.base_url = base_url.rstrip("/")
         self.api_keys = api_keys
         self.model = model
         self.timeout_s = timeout_s
         self._key_index = 0
+        self.local_enabled = local_enabled
+        self.ollama_base_url = ollama_base_url.rstrip("/")
+        self.ollama_model = ollama_model
 
     def _next_key(self) -> str:
         if not self.api_keys:
@@ -25,6 +37,9 @@ class GroqClient:
         return key
 
     async def _chat(self, messages: list[dict[str, str]], temperature: float = 0.2) -> str:
+        if not self.api_keys and self.local_enabled:
+            return await self._chat_local(messages, temperature=temperature)
+
         url = f"{self.base_url}/chat/completions"
         payload = {
             "model": self.model,
@@ -33,7 +48,7 @@ class GroqClient:
         }
 
         last_exc: Exception | None = None
-        for _ in range(max(1, len(self.api_keys))):
+        for _ in range(len(self.api_keys)):
             api_key = self._next_key()
             headers = {
                 "Authorization": f"Bearer {api_key}",
@@ -60,9 +75,29 @@ class GroqClient:
                 logger.error("LLM request error: %s", exc)
                 continue
 
+        if self.local_enabled:
+            try:
+                return await self._chat_local(messages, temperature=temperature)
+            except Exception as exc:
+                last_exc = exc
+
         if last_exc:
             raise last_exc
         raise RuntimeError("LLM request failed without exception")
+
+    async def _chat_local(self, messages: list[dict[str, str]], temperature: float = 0.2) -> str:
+        url = f"{self.ollama_base_url}/api/chat"
+        payload = {
+            "model": self.ollama_model,
+            "messages": messages,
+            "stream": False,
+            "options": {"temperature": temperature},
+        }
+        async with httpx.AsyncClient(timeout=self.timeout_s) as client:
+            resp = await client.post(url, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
+        return str(data.get("message", {}).get("content", ""))
 
     async def summarize_intents(self, conversation: list[dict[str, str]]) -> dict[str, str]:
         system = (

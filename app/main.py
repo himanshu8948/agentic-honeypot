@@ -122,8 +122,17 @@ async def startup() -> None:
         base_url=SETTINGS.groq_base_url,
         api_keys=SETTINGS.groq_api_keys,
         model=SETTINGS.groq_model,
+        local_enabled=SETTINGS.local_llm_enabled,
+        ollama_base_url=SETTINGS.ollama_base_url,
+        ollama_model=SETTINGS.ollama_model,
     )
-    log_event("startup_complete", model=SETTINGS.groq_model, db_path=SETTINGS.db_path)
+    log_event(
+        "startup_complete",
+        model=SETTINGS.groq_model,
+        db_path=SETTINGS.db_path,
+        localLlmEnabled=SETTINGS.local_llm_enabled,
+        ollamaModel=SETTINGS.ollama_model,
+    )
 
 
 @app.post("/api/message", response_model=MessageResponse)

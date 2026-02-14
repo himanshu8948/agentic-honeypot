@@ -7,6 +7,7 @@ pip install -r requirements.txt
 
 Create `.env` from `.env.example` and set keys.
 Use a single Groq key via `GROQ_API_KEY`.
+For local fallback, enable Ollama with `LOCAL_LLM_ENABLED=true` and set `OLLAMA_MODEL=qwen2.5:3b`.
 
 ## Run
 ```
