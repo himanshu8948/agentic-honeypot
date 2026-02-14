@@ -1,0 +1,13 @@
+# Seed fraudster/scammer phrases (extend with OCR output via FRAUD_CORPUS_PATH).
+# Format: one line per phrase/snippet. Optional prefixes supported: "Scammer:" / "User:".
+
+Scammer: Your account will be blocked if you do not verify now.
+Scammer: Share the OTP immediately to complete verification.
+Scammer: This is bank security team, your account is compromised.
+Scammer: Pay a small verification fee to unlock your account.
+Scammer: Send money to this UPI ID to reverse the hold.
+Scammer: Click this link to update KYC.
+Scammer: Do not share this with anyone, it is confidential verification.
+Scammer: Final warning, your service will be suspended.
+Scammer: I am from customer care, confirm your identity now.
+Scammer: You will receive an OTP, tell me the number to proceed.

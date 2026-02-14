@@ -1,4 +1,5 @@
 import asyncio
+import os
 import re
 import time
 import uuid
@@ -33,12 +34,14 @@ from .hardening import (
 from .layers import interpret_message, merge_intelligence, normalize_intelligence
 from .llm import GroqClient, pick_persona
 from .signal_policy import assess_sender_signals, risk_to_zone
+from .fraud_corpus import best_match, load_corpus_lines
 
 app = FastAPI(title="Agentic Honeypot API")
 
 SETTINGS: Settings | None = None
 DB = None
 GROQ: GroqClient | None = None
+FRAUD_CORPUS: list[str] = []
 LLM_CIRCUIT = CircuitBreaker(failure_threshold=4, recovery_seconds=45)
 REQ_LIMITER = SlidingWindowLimiter(max_requests=80, window_seconds=60)
 
@@ -114,11 +117,12 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
 
 @app.on_event("startup")
 async def startup() -> None:
-    global SETTINGS, DB, GROQ
+    global SETTINGS, DB, GROQ, FRAUD_CORPUS
     setup_logging()
     SETTINGS = load_settings()
     DB = connect(SETTINGS.db_path)
     init_db(DB)
+    FRAUD_CORPUS = load_corpus_lines()
     GROQ = GroqClient(
         base_url=SETTINGS.groq_base_url,
         api_keys=SETTINGS.groq_api_keys,
@@ -133,6 +137,7 @@ async def startup() -> None:
         db_path=SETTINGS.db_path,
         firebaseEnabled=SETTINGS.firebase_enabled,
         firebaseProjectId=SETTINGS.firebase_project_id,
+        fraudCorpusLines=len(FRAUD_CORPUS),
         localLlmEnabled=SETTINGS.local_llm_enabled,
         ollamaModel=SETTINGS.ollama_model,
     )
@@ -205,15 +210,30 @@ async def handle_message(
     first_turn = int(session["total_messages"]) <= 1
     if first_turn:
         try:
-            if LLM_CIRCUIT.allow_request():
-                detector = await GROQ.detect_opening_route(payload.message.text)
-                detector_route = str(detector.get("route", "uncertain"))
-                detector_confidence = float(detector.get("confidence", 0.0))
-                layer_reasons.append(f"opening_route:{detector_route}")
+            # Corpus match is cheapest and avoids LLM calls for known scam scripts.
+            threshold_raw = os.getenv("FRAUD_CORPUS_MATCH_THRESHOLD", "").strip()
+            threshold = 0.22
+            if threshold_raw:
+                try:
+                    threshold = float(threshold_raw)
+                except Exception:
+                    threshold = 0.22
+            match = best_match(payload.message.text, FRAUD_CORPUS)
+            if match.score >= threshold:
+                detector_route = "scammer"
+                detector_confidence = min(0.99, 0.7 + match.score)
+                layer_reasons.append("opening_route:corpus_match")
+                layer_reasons.append(f"corpus_score:{match.score:.2f}")
             else:
-                detector_route = "scammer" if combined_score >= SETTINGS.rule_threshold else "normal"
-                detector_confidence = 0.6
-                layer_reasons.append("opening_route:rule_fallback")
+                if LLM_CIRCUIT.allow_request():
+                    detector = await GROQ.detect_opening_route(payload.message.text)
+                    detector_route = str(detector.get("route", "uncertain"))
+                    detector_confidence = float(detector.get("confidence", 0.0))
+                    layer_reasons.append(f"opening_route:{detector_route}")
+                else:
+                    detector_route = "scammer" if combined_score >= SETTINGS.rule_threshold else "normal"
+                    detector_confidence = 0.6
+                    layer_reasons.append("opening_route:rule_fallback")
         except Exception:
             detector_route = "uncertain"
             detector_confidence = 0.0
