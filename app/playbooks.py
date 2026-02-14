@@ -116,6 +116,16 @@ def _apply_persona(text: str, persona: str) -> str:
             ]
         )
         return prefix + text
+    if persona == "bittu_vet_doctor":
+        prefix = random.choice(
+            [
+                "Good evening, officer. ",
+                "Yes, officer. ",
+                "Officer sir, ",
+                "Namaste, officer. ",
+            ]
+        )
+        return prefix + text
     return text
 
 
@@ -323,39 +333,39 @@ def _load_templates(*, language: str) -> dict[str, Any]:
         "upi_authority": {
             # Fake RBI/Police/Cyber Crime authority pressure scam (Veterinary doctor persona compatible).
             "hook": [
-                "Officer sir, namaste. I am a retired veterinary doctor and I only use UPI for small clinic payments. I am scared, but I will cooperate. Please tell me calmly what to do.",
-                "Blocked and legal action? Sir, I am a law-abiding person. I do not understand these apps much, but I will follow instructions step by step.",
+                "Good evening, officer. I am feeling quite anxious hearing this because I have always followed rules and regulations throughout my life. I am a retired veterinary doctor and I only use UPI to receive small consultation fees and medicine payments from farmers. Please guide me calmly, step by step.",
+                "Yes, officer, I understand this is serious. I respect authority deeply and I have spent my career following government guidelines. I am not comfortable with smartphones, but I will cooperate fully if you explain slowly.",
             ],
             "friction": [
-                "I am taking the phone now. Network is unstable on the village side, so please don’t get angry if it is slow.",
-                "Google Pay is loading slowly. Signal bars are there but speed feels low inside the clinic.",
-                "I closed and reopened the app. These mobile things are more sensitive than treating animals, sir.",
+                "I am holding my phone now, but I should inform you I live near the village side where the network is often unstable. If replies are slow, please do not misunderstand it as non-cooperation.",
+                "Yes, I am opening Google Pay now, but it is taking time to load. The signal bars look full, yet the speed feels slow inside my clinic because the walls are thick.",
+                "I have closed the application and reopened it carefully. I am trying not to press anything incorrectly because I do not want to create more complications in an already serious situation.",
             ],
             "tangent": [
-                "Sir, I worked 35 years treating cattle and pets. I keep proper records. I am not involved in any fraud.",
-                "My son helps me at the clinic now. I only receive small payments for medicines and checkups.",
-                "One minute sir, an emergency case came in. I will return immediately.",
+                "You see, officer, I worked as a veterinary doctor for more than thirty-five years treating cattle, dogs, and other animals in nearby villages. Record-keeping and honesty were always important in my profession, which is why this situation is worrying me.",
+                "My son helps me manage clinic records now because these digital systems are overwhelming for me. I only receive small UPI payments for checkups and medicines, nothing suspicious.",
+                "Please give me one moment, officer. A farmer has come urgently regarding a sick cow, and I need to respond briefly. I will come back immediately.",
             ],
             "near_miss": [
-                "It is asking for UPI PIN. I am typing slowly because under pressure mistakes happen.",
-                "It says 'Incorrect PIN'. This is making me more anxious, sir.",
-                "Now it says 'Too many attempts, please wait'. These systems are very strict.",
-                "I restarted the phone. It turned on, but internet feels even slower now.",
+                "The application is asking for my UPI PIN. I am entering it very slowly and carefully because I become nervous when financial matters are involved.",
+                "Oh dear, it says 'Incorrect PIN'. This is making me anxious because I am sure I entered what I remembered.",
+                "I tried again, but now it says 'Too many attempts, please wait'. These systems seem very strict, and it becomes stressful when there is urgency involved.",
+                "I restarted the phone as you said. The phone is back on, but the internet feels even slower than before. It seems the network itself is unstable today.",
             ],
             "extract": [
-                "Officer sir, please type the UPI ID in message. The text is small and I want to write it in my register to cross-check properly.",
-                "Please send the UPI ID clearly in message. I will note it down like a medical record and then proceed carefully.",
+                "Before I proceed again, officer, may I request one small clarification? If you could type the UPI ID clearly in the message, I can write it down on paper and verify it calmly. My eyesight is not as strong as it used to be.",
+                "I understand it may be the same as shown earlier, but I would feel more confident if I can read it clearly in text form. Just like medical records, I prefer to keep a written note for accuracy.",
             ],
             "endurance": [
-                "Now it shows 'Bank server temporarily down'. Sir, I am trying, but systems are failing today.",
-                "Please give me 5 minutes. I do not want to do anything blindly and create more trouble.",
-                "I have the UPI ID written safely. Once server stabilizes, I will try again.",
+                "Now the screen says 'Bank server temporarily unavailable'. It appears the banking systems themselves are having technical issues today.",
+                "I fully understand the seriousness of what you are saying, which is exactly why I am proceeding cautiously rather than rushing blindly. Between server issues, slow internet, and my limited familiarity with smartphones, it is taking longer than expected.",
+                "If you can allow me five more minutes, I will try again once the server stabilizes. I have the UPI ID safely written down, and I assure you I am not trying to avoid this process.",
             ],
             "ask_upi": [
                 "Please type the UPI ID clearly in message so I can verify before approving anything.",
             ],
             "ask_phone": [
-                "Sir, please send your official department contact number as well, for record and verification.",
+                "Officer, please share the official department contact number as well. I want to keep a proper record for verification.",
             ],
             "ask_more": [
                 "Sir, explain in very simple steps. I will follow carefully.",

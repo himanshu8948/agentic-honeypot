@@ -335,12 +335,13 @@ async def handle_message(
             else:
                 used_rule_fallback = True
                 next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
-                # Deterministic persona for long honeypot sessions (matches your Bittu script).
-                persona_tag = "bittu_shopkeeper"
+                domain = detect_domain(payload.message.text)
+                # Deterministic persona per scenario domain.
+                persona_tag = "bittu_vet_doctor" if domain == "upi_authority" else "bittu_shopkeeper"
                 language = (payload.metadata.language if payload.metadata else None) or "en"
                 verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
                 pb = build_reply(
-                    domain=detect_domain(payload.message.text),
+                    domain=domain,
                     next_target=next_target,
                     persona=persona_tag,
                     conversation=conversation,
@@ -356,10 +357,12 @@ async def handle_message(
             next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
             language = (payload.metadata.language if payload.metadata else None) or "en"
             verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
+            domain = detect_domain(payload.message.text)
+            persona_tag = "bittu_vet_doctor" if domain == "upi_authority" else "bittu_shopkeeper"
             pb = build_reply(
-                domain=detect_domain(payload.message.text),
+                domain=domain,
                 next_target=next_target,
-                persona="bittu_shopkeeper",
+                persona=persona_tag,
                 conversation=conversation,
                 language=language,
                 verbosity=verbosity,
