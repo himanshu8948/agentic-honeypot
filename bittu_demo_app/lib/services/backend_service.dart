@@ -22,7 +22,7 @@ class BackendService {
     }
   }
 
-  Future<AnalyzeResponse> analyze({
+  Future<AnalyzeCallResult> analyze({
     required String sessionId,
     required ChatMessage message,
     required List<ChatMessage> history,
@@ -63,6 +63,10 @@ class BackendService {
     }
 
     final jsonBody = jsonDecode(response.body) as Map<String, dynamic>;
-    return AnalyzeResponse.fromJson(jsonBody);
+    return AnalyzeCallResult(
+      response: AnalyzeResponse.fromJson(jsonBody),
+      requestPayload: payload,
+      responsePayload: jsonBody,
+    );
   }
 }

@@ -351,11 +351,65 @@ class _BittuArenaPageState extends State<BittuArenaPage> {
         ),
         const SizedBox(height: 10),
         Expanded(
-          child: ChatPanel(
-            messages: controller.transcript,
-            isSending: controller.isSending,
-            onSend: controller.sendJudgeMessage,
-            onQuickScenario: controller.runQuickScenario,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 62,
+                child: ChatPanel(
+                  messages: controller.transcript,
+                  isSending: controller.isSending,
+                  onSend: controller.sendJudgeMessage,
+                  onQuickScenario: controller.runQuickScenario,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 38,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xD9121C2D),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFF2B3A4F)),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Tester Mirror Payloads',
+                        style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: SelectableText(
+                            _prettyJson(controller.lastRequestPayload),
+                            style: const TextStyle(
+                              color: Color(0xFFBBD0EA),
+                              fontSize: 11.5,
+                              fontFamily: 'Consolas',
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Divider(color: Color(0xFF30415B), height: 18),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: SelectableText(
+                            _prettyJson(controller.lastResponsePayload),
+                            style: const TextStyle(
+                              color: Color(0xFFE2F0FF),
+                              fontSize: 11.5,
+                              fontFamily: 'Consolas',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -557,6 +611,13 @@ class _BittuArenaPageState extends State<BittuArenaPage> {
         );
       },
     );
+  }
+
+  String _prettyJson(Map<String, dynamic> payload) {
+    if (payload.isEmpty) {
+      return '{ }';
+    }
+    return const JsonEncoder.withIndent('  ').convert(payload);
   }
 
 }

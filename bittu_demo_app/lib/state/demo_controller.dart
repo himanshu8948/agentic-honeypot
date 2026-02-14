@@ -33,6 +33,8 @@ class AgenticController extends ChangeNotifier {
   bool lastScamDetected = false;
   String lastAgentNotes = '';
   Map<String, dynamic> lastExtractedIntel = <String, dynamic>{};
+  Map<String, dynamic> lastRequestPayload = <String, dynamic>{};
+  Map<String, dynamic> lastResponsePayload = <String, dynamic>{};
 
   int riskScore = 12;
   int testsRun = 0;
@@ -137,7 +139,7 @@ class AgenticController extends ChangeNotifier {
     final stopwatch = Stopwatch()..start();
 
     try {
-      final response = await _service.analyze(
+      final call = await _service.analyze(
         sessionId: _sessionId,
         message: scammerMessage,
         history: transcript,
@@ -146,6 +148,12 @@ class AgenticController extends ChangeNotifier {
         senderNumber: _senderNumber.isEmpty ? null : _senderNumber,
         inContacts: _inContacts,
       );
+      final response = call.response;
+      lastRequestPayload = call.requestPayload;
+      lastResponsePayload = call.responsePayload;
+      if (response.sessionId.isNotEmpty) {
+        _sessionId = response.sessionId;
+      }
 
       stopwatch.stop();
       _updateLatency(stopwatch.elapsedMilliseconds);
@@ -212,6 +220,8 @@ class AgenticController extends ChangeNotifier {
     lastScamDetected = false;
     lastAgentNotes = '';
     lastExtractedIntel = <String, dynamic>{};
+    lastRequestPayload = <String, dynamic>{};
+    lastResponsePayload = <String, dynamic>{};
     _seedState();
     notifyListeners();
   }

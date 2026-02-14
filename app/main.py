@@ -1,5 +1,6 @@
 import asyncio
 import time
+import uuid
 from typing import Any, Optional
 
 import httpx
@@ -95,6 +96,7 @@ class MessageRequest(BaseModel):
 
 class MessageResponse(BaseModel):
     status: str
+    sessionId: str
     reply: str
     scamDetected: bool
     shouldEngage: bool
@@ -134,26 +136,30 @@ async def handle_message(
     if SETTINGS is None or DB is None or GROQ is None:
         raise HTTPException(status_code=500, detail="Service not initialized")
     request_start = time.time()
+    session_id = (payload.sessionId or "").strip()
+    if not session_id:
+        session_id = str(uuid.uuid4())
+        log_event("session_id_generated", generatedSessionId=session_id)
+
     client_host = request.client.host if request.client else "unknown"
-    limiter_key = f"{client_host}:{payload.sessionId}"
+    limiter_key = f"{client_host}:{session_id}"
     if not REQ_LIMITER.allow(limiter_key):
-        log_event("rate_limited", sessionId=payload.sessionId, client=client_host)
+        log_event("rate_limited", sessionId=session_id, client=client_host)
         raise HTTPException(status_code=429, detail="Too many requests")
 
-    session = get_or_create_session(DB, payload.sessionId)
-    increment_api_calls(DB, payload.sessionId)
-    api_calls = get_api_calls(DB, payload.sessionId)
-    total_messages_exchanged = max(2, api_calls * 2)
+    session = get_or_create_session(DB, session_id)
+    increment_api_calls(DB, session_id)
+    api_calls = get_api_calls(DB, session_id)
     if int(session["total_messages"]) == 0 and payload.conversationHistory:
         for msg in payload.conversationHistory:
-            append_message(DB, payload.sessionId, msg.sender, msg.text, msg.timestamp)
+            append_message(DB, session_id, msg.sender, msg.text, msg.timestamp)
 
     inferred_sender = infer_sender_role(payload.message.text)
     effective_sender = payload.message.sender
     if inferred_sender != payload.message.sender:
         effective_sender = inferred_sender
 
-    append_message(DB, payload.sessionId, effective_sender, payload.message.text, payload.message.timestamp)
+    append_message(DB, session_id, effective_sender, payload.message.text, payload.message.timestamp)
 
     interpreter = interpret_message(payload.message.text, effective_sender)
     signal_assessment = assess_sender_signals(
@@ -163,7 +169,7 @@ async def handle_message(
         in_contacts=payload.metadata.inContacts if payload.metadata else None,
         trusted_headers=SETTINGS.trusted_sms_headers,
     )
-    intel = load_intel(DB, payload.sessionId)
+    intel = load_intel(DB, session_id)
     intel = extract_intel(payload.message.text, intel)
 
     score = rule_score(payload.message.text)
@@ -183,7 +189,7 @@ async def handle_message(
 
     used_rule_fallback = False
     try:
-        recent_messages = list_messages(DB, payload.sessionId, limit=40)
+        recent_messages = list_messages(DB, session_id, limit=40)
         context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
         if LLM_CIRCUIT.allow_request():
             intents = await GROQ.summarize_intents(recent_messages)
@@ -222,7 +228,7 @@ async def handle_message(
         if not agent_notes:
             agent_notes = "llm_layer_failed"
 
-    save_intel(DB, payload.sessionId, intel)
+    save_intel(DB, session_id, intel)
 
     if combined_score >= SETTINGS.rule_threshold or confidence >= SETTINGS.llm_threshold:
         scam_detected = True
@@ -231,12 +237,19 @@ async def handle_message(
 
     reply = "Thanks. Can you share more details?"
     stop_reason = None
+    persona_used: str | None = None
     if should_engage:
-        conversation = list_messages(DB, payload.sessionId, limit=30)
-        persona = pick_persona()
+        conversation = list_messages(DB, session_id, limit=30)
+        persona_used = pick_persona()
         try:
             if LLM_CIRCUIT.allow_request():
-                agent = await GROQ.generate_reply(persona, conversation, intel, intents=intents, suspected_scammer=True)
+                agent = await GROQ.generate_reply(
+                    persona_used,
+                    conversation,
+                    intel,
+                    intents=intents,
+                    suspected_scammer=True,
+                )
                 safe_agent = validate_agent_result(agent, reply, agent_notes)
                 reply = safe_agent["reply"]
                 agent_notes = safe_agent["agentNotes"]
@@ -255,9 +268,19 @@ async def handle_message(
         reply = "Security alert detected. I cannot proceed with this request."
         agent_notes = (agent_notes + "; lethal_zone_block").strip("; ")
 
+    # Persist agent reply to keep session transcript and message counts consistent.
+    append_message(
+        DB,
+        session_id,
+        "user",
+        reply,
+        int(time.time() * 1000),
+    )
+
     # Engagement completion rules
-    session = get_or_create_session(DB, payload.sessionId)
-    total_messages = total_messages_exchanged
+    session = get_or_create_session(DB, session_id)
+    total_messages = int(session["total_messages"]) if "total_messages" in session.keys() else 0
+    total_messages_exchanged = total_messages
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
@@ -275,7 +298,7 @@ async def handle_message(
     if should_attempt_callback:
         success = await _send_callback(
             SETTINGS,
-            payload.sessionId,
+            session_id,
             scam_detected,
             total_messages_exchanged,
             intel,
@@ -290,7 +313,7 @@ async def handle_message(
 
     update_session(
         DB,
-        payload.sessionId,
+        session_id,
         scam_detected,
         confidence,
         reply,
@@ -298,11 +321,12 @@ async def handle_message(
         agent_notes,
         callback_pending,
         conversation_summary,
+        persona_used,
     )
     latency_ms = int((time.time() - request_start) * 1000)
     log_event(
         "message_processed",
-        sessionId=payload.sessionId,
+        sessionId=session_id,
         client=client_host,
         sender=effective_sender,
         scamDetected=scam_detected,
@@ -315,10 +339,13 @@ async def handle_message(
         fallbackUsed=used_rule_fallback,
         circuit=LLM_CIRCUIT.snapshot(),
         latencyMs=latency_ms,
+        apiCalls=api_calls,
+        totalMessages=total_messages_exchanged,
     )
 
     return MessageResponse(
         status="success",
+        sessionId=session_id,
         reply=reply,
         scamDetected=scam_detected,
         shouldEngage=should_engage,

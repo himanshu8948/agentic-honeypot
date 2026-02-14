@@ -21,6 +21,7 @@ class ChatMessage {
 class AnalyzeResponse {
   AnalyzeResponse({
     required this.status,
+    required this.sessionId,
     required this.reply,
     required this.scamDetected,
     required this.shouldEngage,
@@ -29,6 +30,7 @@ class AnalyzeResponse {
   });
 
   final String status;
+  final String sessionId;
   final String reply;
   final bool scamDetected;
   final bool shouldEngage;
@@ -38,6 +40,7 @@ class AnalyzeResponse {
   factory AnalyzeResponse.fromJson(Map<String, dynamic> json) {
     return AnalyzeResponse(
       status: (json['status'] ?? '').toString(),
+      sessionId: (json['sessionId'] ?? '').toString(),
       reply: (json['reply'] ?? '').toString(),
       scamDetected: json['scamDetected'] == true,
       shouldEngage: json['shouldEngage'] == true,
@@ -45,6 +48,18 @@ class AnalyzeResponse {
       agentNotes: (json['agentNotes'] ?? '').toString(),
     );
   }
+}
+
+class AnalyzeCallResult {
+  AnalyzeCallResult({
+    required this.response,
+    required this.requestPayload,
+    required this.responsePayload,
+  });
+
+  final AnalyzeResponse response;
+  final Map<String, dynamic> requestPayload;
+  final Map<String, dynamic> responsePayload;
 }
 
 class ThoughtLog {
