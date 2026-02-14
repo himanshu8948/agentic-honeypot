@@ -334,12 +334,13 @@ async def handle_message(
             else:
                 used_rule_fallback = True
                 next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
-                persona_tag = "busy" if "busy" in (persona_used or "").lower() else "neutral"
+                # Deterministic persona for long honeypot sessions (matches your Bittu script).
+                persona_tag = "bittu_shopkeeper"
                 pb = build_reply(
                     domain=detect_domain(payload.message.text),
                     next_target=next_target,
                     persona=persona_tag,
-                    asked=set(),
+                    conversation=conversation,
                 )
                 reply = pb.reply
                 agent_notes = pb.agent_notes
@@ -351,8 +352,8 @@ async def handle_message(
             pb = build_reply(
                 domain=detect_domain(payload.message.text),
                 next_target=next_target,
-                persona="neutral",
-                asked=set(),
+                persona="bittu_shopkeeper",
+                conversation=conversation,
             )
             reply = pb.reply
             agent_notes = pb.agent_notes
