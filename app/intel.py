@@ -40,6 +40,7 @@ UPI_RE = re.compile(r"[a-zA-Z0-9._-]{2,}@[a-zA-Z]{2,}")
 PHONE_RE = re.compile(r"\+?\d[\d -]{8,}\d")
 LINK_RE = re.compile(r"https?://\S+")
 BANK_RE = re.compile(r"\b\d{9,18}\b")
+IFSC_RE = re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b", re.IGNORECASE)
 ACCOUNT_CONTEXT_RE = re.compile(r"(account\s*(number|no\.?)|bank\s*account)", re.IGNORECASE)
 
 
