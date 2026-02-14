@@ -8,6 +8,7 @@ pip install -r requirements.txt
 Create `.env` from `.env.example` and set keys.
 Use a single Groq key via `GROQ_API_KEY`.
 For local fallback, enable Ollama with `LOCAL_LLM_ENABLED=true` and set `OLLAMA_MODEL=qwen2.5:3b`.
+For Firestore persistence, set `FIREBASE_ENABLED=true` and configure Firebase credentials.
 
 ## Run
 ```
@@ -32,6 +33,21 @@ pytest
 - Strict validation of LLM classifier and reply payloads before use
 - Deterministic sender signal policy (SMS/OTT/Email) with risk-zone mapping
 - Trusted SMS header intelligence via `TRUSTED_SMS_HEADERS` or `TRUSTED_SMS_HEADERS_PATH`
+
+## Firebase (Firestore) Storage
+- Default DB backend is SQLite (`DB_PATH`).
+- To use Firestore instead:
+  - `FIREBASE_ENABLED=true`
+  - `FIREBASE_PROJECT_ID=<your-project-id>`
+  - one of:
+    - `FIREBASE_CREDENTIALS_PATH=/path/to/service-account.json`
+    - `FIREBASE_SERVICE_ACCOUNT_JSON=<single-line-json>`
+  - Optional: `FIREBASE_APP_NAME=agentic-honeypot`
+- If Firestore is enabled, session/message/intelligence data is written to Firestore collections:
+  - `sessions`
+  - `messages`
+  - `intel`
+  - `user_intel`
 
 ## Optional Metadata Signals
 `metadata` can include:

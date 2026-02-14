@@ -23,6 +23,8 @@ class Settings:
     local_llm_enabled: bool
     ollama_base_url: str
     ollama_model: str
+    firebase_enabled: bool
+    firebase_project_id: str | None
 
 
 def load_settings() -> Settings:
@@ -38,6 +40,8 @@ def load_settings() -> Settings:
     groq_model = _get_env("GROQ_MODEL", "llama3-70b-8192")
     groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
     db_path = _get_env("DB_PATH", "./honeypot.db")
+    firebase_enabled = _get_bool_env("FIREBASE_ENABLED", False)
+    firebase_project_id = _get_env("FIREBASE_PROJECT_ID")
 
     rule_threshold = int(_get_env("RULE_THRESHOLD", "6"))
     llm_threshold = float(_get_env("LLM_THRESHOLD", "0.6"))
@@ -61,6 +65,8 @@ def load_settings() -> Settings:
         local_llm_enabled=local_llm_enabled,
         ollama_base_url=ollama_base_url,
         ollama_model=ollama_model,
+        firebase_enabled=firebase_enabled,
+        firebase_project_id=firebase_project_id,
     )
 
 

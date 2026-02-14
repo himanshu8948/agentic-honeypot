@@ -1,4 +1,5 @@
 import asyncio
+import re
 import time
 import uuid
 from typing import Any, Optional
@@ -130,6 +131,8 @@ async def startup() -> None:
         "startup_complete",
         model=SETTINGS.groq_model,
         db_path=SETTINGS.db_path,
+        firebaseEnabled=SETTINGS.firebase_enabled,
+        firebaseProjectId=SETTINGS.firebase_project_id,
         localLlmEnabled=SETTINGS.local_llm_enabled,
         ollamaModel=SETTINGS.ollama_model,
     )
@@ -145,10 +148,10 @@ async def handle_message(
     if SETTINGS is None or DB is None or GROQ is None:
         raise HTTPException(status_code=500, detail="Service not initialized")
     request_start = time.time()
-    session_id = (payload.sessionId or "").strip()
-    if not session_id:
-        session_id = str(uuid.uuid4())
-        log_event("session_id_generated", generatedSessionId=session_id)
+    incoming_session_id = (payload.sessionId or "").strip()
+    session_id = _normalize_session_id(incoming_session_id)
+    if session_id != incoming_session_id:
+        log_event("session_id_normalized", incomingSessionId=incoming_session_id, sessionId=session_id)
 
     client_host = request.client.host if request.client else "unknown"
     limiter_key = f"{client_host}:{session_id}"
@@ -411,15 +414,43 @@ def _sanitize_intelligence(intel: dict[str, list[str]]) -> dict[str, list[str]]:
         "phoneNumbers": list(intel.get("phoneNumbers", [])),
         "suspiciousKeywords": [],
     }
+    keyword_priority = {
+        "otp": 100,
+        "pin": 95,
+        "password": 95,
+        "cvv": 95,
+        "account blocked": 90,
+        "account suspended": 90,
+        "verify your identity": 88,
+        "share account number": 86,
+        "share your account number": 86,
+        "bank account": 84,
+        "upi": 82,
+        "urgent": 80,
+        "immediately": 78,
+    }
     seen_kw: set[str] = set()
+    collected: list[tuple[int, str]] = []
     for value in intel.get("suspiciousKeywords", []):
         kw = " ".join(str(value).split()).strip().lower()
         if not kw or kw in seen_kw:
             continue
         seen_kw.add(kw)
-        result["suspiciousKeywords"].append(kw)
-    result["suspiciousKeywords"] = result["suspiciousKeywords"][:10]
+        priority = keyword_priority.get(kw, 0)
+        if priority <= 0:
+            continue
+        collected.append((priority, kw))
+    collected.sort(key=lambda x: (-x[0], x[1]))
+    result["suspiciousKeywords"] = [kw for _, kw in collected[:4]]
     return result
+
+
+def _normalize_session_id(value: str) -> str:
+    # Keep session IDs URL-safe and bounded to avoid malformed IDs across clients.
+    candidate = value.strip()
+    if candidate and re.fullmatch(r"[A-Za-z0-9._-]{8,80}", candidate):
+        return candidate
+    return f"sess_{uuid.uuid4().hex[:20]}"
 
 
 def _competition_agent_notes(
