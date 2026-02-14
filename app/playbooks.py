@@ -17,6 +17,25 @@ def detect_domain(text: str) -> str:
     if any(
         k in lower
         for k in [
+            "cyber crime",
+            "cybercrime",
+            "police",
+            "officer",
+            "rbi",
+            "legal action",
+            "fir",
+            "case",
+            "arrest",
+            "court",
+            "crime department",
+            "coordination unit",
+            "rbi coordination",
+        ]
+    ):
+        return "upi_authority"
+    if any(
+        k in lower
+        for k in [
             "upi support",
             "suspicious activity",
             "verify",
@@ -301,6 +320,47 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Simple steps mein batao, next kya dabana hai?",
             ],
         },
+        "upi_authority": {
+            # Fake RBI/Police/Cyber Crime authority pressure scam (Veterinary doctor persona compatible).
+            "hook": [
+                "Officer sir, namaste. I am a retired veterinary doctor and I only use UPI for small clinic payments. I am scared, but I will cooperate. Please tell me calmly what to do.",
+                "Blocked and legal action? Sir, I am a law-abiding person. I do not understand these apps much, but I will follow instructions step by step.",
+            ],
+            "friction": [
+                "I am taking the phone now. Network is unstable on the village side, so please don’t get angry if it is slow.",
+                "Google Pay is loading slowly. Signal bars are there but speed feels low inside the clinic.",
+                "I closed and reopened the app. These mobile things are more sensitive than treating animals, sir.",
+            ],
+            "tangent": [
+                "Sir, I worked 35 years treating cattle and pets. I keep proper records. I am not involved in any fraud.",
+                "My son helps me at the clinic now. I only receive small payments for medicines and checkups.",
+                "One minute sir, an emergency case came in. I will return immediately.",
+            ],
+            "near_miss": [
+                "It is asking for UPI PIN. I am typing slowly because under pressure mistakes happen.",
+                "It says 'Incorrect PIN'. This is making me more anxious, sir.",
+                "Now it says 'Too many attempts, please wait'. These systems are very strict.",
+                "I restarted the phone. It turned on, but internet feels even slower now.",
+            ],
+            "extract": [
+                "Officer sir, please type the UPI ID in message. The text is small and I want to write it in my register to cross-check properly.",
+                "Please send the UPI ID clearly in message. I will note it down like a medical record and then proceed carefully.",
+            ],
+            "endurance": [
+                "Now it shows 'Bank server temporarily down'. Sir, I am trying, but systems are failing today.",
+                "Please give me 5 minutes. I do not want to do anything blindly and create more trouble.",
+                "I have the UPI ID written safely. Once server stabilizes, I will try again.",
+            ],
+            "ask_upi": [
+                "Please type the UPI ID clearly in message so I can verify before approving anything.",
+            ],
+            "ask_phone": [
+                "Sir, please send your official department contact number as well, for record and verification.",
+            ],
+            "ask_more": [
+                "Sir, explain in very simple steps. I will follow carefully.",
+            ],
+        },
         "otp": {
             "ask_phone": [
                 "You said OTP will come. Which number will it come from? Tell me the exact number.",
@@ -429,6 +489,46 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Simple steps mein batao beta, next kya karna hai?",
             ],
         },
+        "upi_authority": {
+            "hook": [
+                "Officer saab namaste. Main retired veterinary doctor hoon aur clinic ke chhote payments ke liye UPI use karta hoon. Darr lag raha hai, par main cooperate karunga. Calmly batao kya karna hai.",
+                "Legal action aur block? Saab main rule-following aadmi hoon. Apps ka zyada gyaan nahi, par step by step follow kar lunga.",
+            ],
+            "friction": [
+                "Phone haath mein le raha hoon. Village side mein network unstable rehta hai, slow ho toh bura mat maanna.",
+                "Google Pay slow load ho raha hai. Bars aa rahe hain par clinic ke andar speed kam lagti hai.",
+                "App band karke phir khola. Mobile cheezein jaanwaron se zyada sensitive hain saab.",
+            ],
+            "tangent": [
+                "Saab main 35 saal pashuon ka ilaaj karta raha. Record maintain karta tha. Main fraud type nahi hoon.",
+                "Ab clinic mein beta help karta hai. Main bas medicines aur checkup ka payment receive karta hoon.",
+                "Ek minute saab, emergency case aa gaya. Main turant aata hoon.",
+            ],
+            "near_miss": [
+                "UPI PIN maang raha hai. Pressure mein galti ho jaati hai isliye dheere type kar raha hoon.",
+                "'Incorrect PIN' bol raha hai. Ab ghabrahat ho rahi hai saab.",
+                "Ab 'Too many attempts, please wait' aa gaya. System bahut strict hai.",
+                "Phone restart kar diya. On ho gaya par internet aur slow lag raha hai.",
+            ],
+            "extract": [
+                "Officer saab, UPI ID message mein clearly likh do. Text chhota dikh raha hai aur main register mein note karna chahta hoon.",
+                "UPI ID clear bhejo saab. Main medical record ki tarah likh ke cross-check karke hi aage badhunga.",
+            ],
+            "endurance": [
+                "Ab 'Bank server temporarily down' aa raha hai. Main try kar raha hoon par system hi fail kar raha hai.",
+                "Saab 5 minute ka time de do. Main bina soche-samjhe kuch nahi karna chahta.",
+                "UPI ID mere paas safe likha hai. Server theek hote hi phir try karunga.",
+            ],
+            "ask_upi": [
+                "UPI ID message mein clearly bhejo saab, main verify karke hi approve karunga.",
+            ],
+            "ask_phone": [
+                "Official department ka contact number bhi bhejo saab, record ke liye.",
+            ],
+            "ask_more": [
+                "Simple steps mein samjhao saab, main follow kar lunga.",
+            ],
+        },
     }
 
     base = base_hi if lang == "hi" else base_en
@@ -460,7 +560,8 @@ def _filter_recent_repeats(options: list[str], conversation: list[dict[str, str]
 def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target: str) -> str:
     if domain != "upi_refund":
         if domain != "upi_security":
-            return "default"
+            if domain != "upi_authority":
+                return "default"
 
     # Use scammer-turn count to pace like your script (0-40+ minutes mapping).
     scammer_turns = sum(1 for m in conversation if m.get("sender") == "scammer")
@@ -495,6 +596,20 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
         if scammer_turns <= 8:
             return "tangent"
     if any(k in last_scam for k in ["pin", "upi pin", "enter pin", "approve", "request", "refundable", "amount"]):
+        return "near_miss"
+    if "upi" in (next_target or "").lower():
+        return "extract"
+    return "endurance"
+
+    # upi_authority
+    if scammer_turns <= 2:
+        return "hook"
+    if any(k in last_scam for k in ["internet", "network", "open", "loading", "reopen", "close", "signal"]):
+        return "friction"
+    if any(k in last_scam for k in ["verification", "approve", "request", "security amount", "refundable"]):
+        if scammer_turns <= 9:
+            return "tangent"
+    if any(k in last_scam for k in ["pin", "upi pin", "incorrect", "too many attempts", "restart"]):
         return "near_miss"
     if "upi" in (next_target or "").lower():
         return "extract"
