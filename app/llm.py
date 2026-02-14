@@ -205,30 +205,16 @@ class GroqClient:
         suspected_scammer: bool = True,
         last_reply: str | None = None,
     ) -> dict[str, Any]:
-        # **KEY FIX**: Progressive intelligence extraction strategy
         missing_intel = self._analyze_missing_intel(intel_summary)
         next_target = self._get_next_extraction_target(conversation, intel_summary, missing_intel)
 
         system = (
-            "You are an AI honeypot agent engaging a suspected scammer to extract intelligence for cybersecurity purposes. "
-            "CRITICAL RULES:\n"
-            "1. NEVER reveal you know this is a scam\n"
-            "2. NEVER provide real sensitive information (use fake placeholders if needed)\n"
-            "3. ACT like a confused but cooperative victim\n"
-            "4. PROGRESSIVELY extract information - don't repeat the same question\n"
-            "5. Your ONLY goal is to extract: UPI IDs, phone numbers, bank account numbers, links, payment methods\n"
-            "6. Keep replies SHORT (1-2 sentences)\n\n"
-            "STRATEGY:\n"
-            "- If scammer asks for OTP/password: Act confused, ask WHERE to send it (exact number/UPI/handle)\n"
-            "- If scammer provides phone number: Ask for alternative contact or verify it's official\n"
-            "- If scammer mentions account: Ask for IFSC, branch name, account type details\n"
-            "- If scammer shares link: Ask what it does before clicking (extract more info)\n"
-            "- If scammer asks for payment: Ask for EXACT payment details, UPI ID, QR code\n"
-            "- Prefer direct questions for UPI ID / phone / handle when missing\n\n"
-            "AVOID:\n"
-            "- Repeating the same question you already asked\n"
-            "- Generic responses like 'Can you share more details?'\n"
-            "- Revealing detection\n\n"
+            "You are an AI honeypot engaging a suspected scammer to collect intelligence. "
+            "Do not reveal detection. Do not provide real secrets. "
+            "Act confused-but-cooperative, keep replies to 1-2 short sentences, "
+            "and ask one concrete follow-up question that extracts missing intel. "
+            "Prioritize extracting phone numbers, UPI IDs, bank account details, or phishing links. "
+            "Avoid repeating recent questions."
             "Output ONLY JSON with:\n"
             "- reply: Your natural human-like response\n"
             "- agentNotes: What you're trying to extract\n"
@@ -280,6 +266,46 @@ class GroqClient:
             "agentNotes": "Fallback reply used.",
             "stopReason": None,
         })
+
+    def generate_rule_based_reply(
+        self,
+        conversation: list[dict[str, str]],
+        intel_summary: dict[str, list[str]],
+        intents: dict[str, str] | None = None,
+    ) -> dict[str, Any]:
+        missing_intel = self._analyze_missing_intel(intel_summary)
+        next_target = self._get_next_extraction_target(conversation, intel_summary, missing_intel)
+        turns = max(0, len(conversation))
+
+        if missing_intel == "All primary intel collected" and turns >= 10:
+            return {
+                "reply": "Thanks. Please share your official ticket or reference number so I can continue.",
+                "agentNotes": "Rule-based honeypot: intel complete, collecting secondary trace identifiers.",
+                "stopReason": "intel_complete",
+            }
+
+        target_lower = next_target.lower()
+        if "upi" in target_lower:
+            reply = "I can do it now. Please send the exact UPI ID and account holder name."
+        elif "phone number" in target_lower or "contact" in target_lower:
+            reply = "Sure, where should I send it? Share the exact phone number with country code."
+        elif "ifsc" in target_lower or "branch" in target_lower or "account" in target_lower:
+            reply = "I will verify once. Share account number, IFSC code, and branch name exactly."
+        elif "link" in target_lower:
+            reply = "Before I click, what does this link open and who owns it?"
+        else:
+            reply = "Okay, I can proceed. Share the exact payment/verification details I should use."
+
+        if intents and intents.get("intentScammer"):
+            notes = f"Rule-based honeypot target: {next_target}; inferred intent: {intents.get('intentScammer', '')[:80]}"
+        else:
+            notes = f"Rule-based honeypot target: {next_target}"
+
+        return {
+            "reply": reply,
+            "agentNotes": notes,
+            "stopReason": None,
+        }
 
     def _analyze_missing_intel(self, intel: dict[str, list[str]]) -> str:
         """Identify what intelligence is still missing"""

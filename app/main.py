@@ -271,13 +271,27 @@ async def handle_message(
                 LLM_CIRCUIT.record_success()
             else:
                 used_rule_fallback = True
-                reply = "I could not verify yet. Please share official contact details."
-                agent_notes = (agent_notes + "; reply_rule_fallback").strip("; ")
+                fallback_agent = GROQ.generate_rule_based_reply(
+                    conversation,
+                    intel,
+                    intents=intents,
+                )
+                safe_agent = validate_agent_result(fallback_agent, reply, agent_notes)
+                reply = safe_agent["reply"]
+                agent_notes = safe_agent["agentNotes"]
+                stop_reason = safe_agent["stopReason"]
         except Exception:
             LLM_CIRCUIT.record_failure()
             used_rule_fallback = True
-            reply = "I am not sure I understand. What should I do next?"
-            agent_notes = "LLM failure; fallback reply."
+            fallback_agent = GROQ.generate_rule_based_reply(
+                conversation,
+                intel,
+                intents=intents,
+            )
+            safe_agent = validate_agent_result(fallback_agent, reply, agent_notes)
+            reply = safe_agent["reply"]
+            agent_notes = safe_agent["agentNotes"]
+            stop_reason = safe_agent["stopReason"]
     elif scam_detected and policy_zone == "lethal":
         reply = "Security alert detected. I cannot proceed with this request."
         agent_notes = (agent_notes + "; lethal_zone_block").strip("; ")
