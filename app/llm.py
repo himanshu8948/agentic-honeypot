@@ -169,6 +169,39 @@ class GroqClient:
             "intentCategory": "other",
         })
 
+    async def detect_opening_route(self, text: str) -> dict[str, Any]:
+        system = (
+            "You are a fast route detector for anti-scam chat orchestration. "
+            "Output only strict JSON."
+        )
+        user = (
+            "Classify the opening message route.\n"
+            "Return JSON with fields: route (scammer|normal|uncertain), confidence (0-1), reason (short string).\n\n"
+            f"Message: {text}"
+        )
+        content = await self._chat(
+            [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            temperature=0.0,
+        )
+        data = _safe_json(
+            content,
+            {
+                "route": "uncertain",
+                "confidence": 0.0,
+                "reason": "fallback",
+            },
+        )
+        route = str(data.get("route", "uncertain")).strip().lower()
+        if route not in {"scammer", "normal", "uncertain"}:
+            route = "uncertain"
+        try:
+            confidence = float(data.get("confidence", 0.0))
+        except Exception:
+            confidence = 0.0
+        confidence = max(0.0, min(1.0, confidence))
+        reason = str(data.get("reason", "")).strip() or "no_reason"
+        return {"route": route, "confidence": confidence, "reason": reason}
+
     async def extract_structured_intel(self, text: str, context: str | None = None) -> dict[str, list[str]]:
         system = (
             "You are an intelligence extraction model for scam analysis. "

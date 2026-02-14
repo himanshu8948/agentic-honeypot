@@ -199,35 +199,61 @@ async def handle_message(
     agent_notes = "; ".join(layer_reasons)
     intents = {"intentScammer": "", "intentUser": ""}
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
+    detector_route = "uncertain"
+    detector_confidence = 0.0
+
+    first_turn = int(session["total_messages"]) <= 1
+    if first_turn:
+        try:
+            if LLM_CIRCUIT.allow_request():
+                detector = await GROQ.detect_opening_route(payload.message.text)
+                detector_route = str(detector.get("route", "uncertain"))
+                detector_confidence = float(detector.get("confidence", 0.0))
+                layer_reasons.append(f"opening_route:{detector_route}")
+            else:
+                detector_route = "scammer" if combined_score >= SETTINGS.rule_threshold else "normal"
+                detector_confidence = 0.6
+                layer_reasons.append("opening_route:rule_fallback")
+        except Exception:
+            detector_route = "uncertain"
+            detector_confidence = 0.0
+            layer_reasons.append("opening_route:detector_failed")
 
     used_rule_fallback = False
     try:
-        recent_messages = list_messages(DB, session_id, limit=40)
-        context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
-        if LLM_CIRCUIT.allow_request():
-            intents = await GROQ.summarize_intents(recent_messages)
-            if hasattr(GROQ, "extract_structured_intel"):
-                raw_intel = await GROQ.extract_structured_intel(payload.message.text, context=context)
-                intel = merge_intelligence(intel, normalize_intelligence(raw_intel))
+        if detector_route == "normal" and detector_confidence >= 0.75 and combined_score < SETTINGS.rule_threshold:
+            llm_result = {
+                "scamDetected": False,
+                "confidence": detector_confidence,
+                "reasons": ["opening_normal_short_circuit"],
+            }
         else:
-            layer_reasons.append("circuit_open")
-            used_rule_fallback = True
-        if int(session["total_messages"]) % 6 == 0:
+            recent_messages = list_messages(DB, session_id, limit=40)
+            context = "\n".join([f"{m['sender']}: {m['text']}" for m in recent_messages])
             if LLM_CIRCUIT.allow_request():
-                conversation_summary = await GROQ.summarize_conversation(
-                    recent_messages[-12:],
-                    conversation_summary,
-                )
-        context = f"Summary: {conversation_summary}\n\n{context}" if conversation_summary else context
-        if combined_score >= SETTINGS.rule_threshold + 6:
-            llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
-        elif interpreter.route == "lightweight" and combined_score < SETTINGS.rule_threshold:
-            llm_result = {"scamDetected": False, "confidence": 0.2, "reasons": ["lightweight_route"]}
-        elif not LLM_CIRCUIT.allow_request():
-            llm_result = {"scamDetected": combined_score >= SETTINGS.rule_threshold, "confidence": 0.25, "reasons": ["rule_only_mode"]}
-            used_rule_fallback = True
-        else:
-            llm_result = await GROQ.classify(payload.message.text, context=context, intents=intents)
+                intents = await GROQ.summarize_intents(recent_messages)
+                if hasattr(GROQ, "extract_structured_intel"):
+                    raw_intel = await GROQ.extract_structured_intel(payload.message.text, context=context)
+                    intel = merge_intelligence(intel, normalize_intelligence(raw_intel))
+            else:
+                layer_reasons.append("circuit_open")
+                used_rule_fallback = True
+            if int(session["total_messages"]) % 6 == 0:
+                if LLM_CIRCUIT.allow_request():
+                    conversation_summary = await GROQ.summarize_conversation(
+                        recent_messages[-12:],
+                        conversation_summary,
+                    )
+            context = f"Summary: {conversation_summary}\n\n{context}" if conversation_summary else context
+            if combined_score >= SETTINGS.rule_threshold + 6:
+                llm_result = {"scamDetected": True, "confidence": 0.99, "reasons": ["strong_rule_match"]}
+            elif interpreter.route == "lightweight" and combined_score < SETTINGS.rule_threshold:
+                llm_result = {"scamDetected": False, "confidence": 0.2, "reasons": ["lightweight_route"]}
+            elif not LLM_CIRCUIT.allow_request():
+                llm_result = {"scamDetected": combined_score >= SETTINGS.rule_threshold, "confidence": 0.25, "reasons": ["rule_only_mode"]}
+                used_rule_fallback = True
+            else:
+                llm_result = await GROQ.classify(payload.message.text, context=context, intents=intents)
         llm_result = validate_llm_result(llm_result)
         scam_detected = bool(llm_result["scamDetected"])
         confidence = float(llm_result["confidence"])
@@ -244,10 +270,17 @@ async def handle_message(
     intel = _sanitize_intelligence(intel)
     save_intel(DB, session_id, intel)
 
-    if combined_score >= SETTINGS.rule_threshold or confidence >= SETTINGS.llm_threshold:
+    if detector_route == "normal" and detector_confidence >= 0.75 and combined_score < SETTINGS.rule_threshold:
+        scam_detected = False
+    elif combined_score >= SETTINGS.rule_threshold or confidence >= SETTINGS.llm_threshold:
         scam_detected = True
 
-    should_engage = scam_detected and effective_sender == "scammer" and policy_zone != "lethal"
+    should_engage = (
+        scam_detected
+        and effective_sender == "scammer"
+        and policy_zone != "lethal"
+        and detector_route != "normal"
+    )
 
     reply = "Thanks. Can you share more details?"
     stop_reason = None
@@ -369,6 +402,8 @@ async def handle_message(
         riskScore=combined_score,
         riskPercent=risk_percent,
         policyZone=policy_zone,
+        detectorRoute=detector_route,
+        detectorConfidence=detector_confidence,
         route=interpreter.route,
         fallbackUsed=used_rule_fallback,
         circuit=LLM_CIRCUIT.snapshot(),
