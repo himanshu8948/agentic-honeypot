@@ -14,6 +14,22 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    if any(
+        k in lower
+        for k in [
+            "upi support",
+            "suspicious activity",
+            "verify",
+            "verification",
+            "permanently block",
+            "upi permanently",
+            "block ho",
+            "block ho jayega",
+            "30 minutes",
+            "10 minutes",
+        ]
+    ):
+        return "upi_security"
     if any(k in lower for k in ["galti se", "wrong transfer", "mistakenly transfer", "refund kar", "refund kardo", "job problem", "accidentally sent"]):
         return "upi_refund"
     if any(k in lower for k in ["upi", "collect request", "pay to", "send to upi", "@upi"]):
@@ -166,6 +182,46 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Ek baar phir se bhejo request. Main dhyan se dekhta hoon.",
             ],
         },
+        "upi_security": {
+            # "UPI support suspicious activity" verification scam (Jolly-Roger style).
+            "hook": [
+                "Block ho jayega? Arre yeh kya bol rahe ho... main toh shop ke payments ke liye UPI use karta hoon. Main cooperate karunga, bas simple batao.",
+                "Oh no... if UPI gets blocked my shop will stop. Please guide me slowly, I'm not good with these apps.",
+            ],
+            "friction": [
+                "Main app open kar raha hoon but loading pe hi atka hua hai. Signal bars full hain phir bhi slow lag raha hai.",
+                "Gate ke paas aa gaya. Ab bol raha hai 'Something went wrong'. Main app close karke reopen karta hoon.",
+                "New phone hai, kabhi kabhi lagta hai phone hi confused ho jaata hai. Ek baar phir try karta hoon.",
+            ],
+            "tangent": [
+                "Dekhiye main chhoti si shop chalata hoon. UPI block hua toh business ruk jaayega, isliye ghabra gaya hoon.",
+                "Mera beta bolta rehta hai sab digital ho gaya, par honestly mujhe yeh sab overwhelming lagta hai.",
+                "Ek minute, customer cash payment kar raha hai. Main turant aata hoon.",
+            ],
+            "near_miss": [
+                "Request aa gayi lagti hai, par amount bhi dikh raha hai. Verification mein paisa kyun lagta hai?",
+                "PIN daal diya... arre nahi 'Incorrect PIN' aa gaya. Pressure mein haath kaanp jaata hai.",
+                "Ab bol raha hai 'Bank server not responding'. Aaj system hi problem kar raha hai.",
+            ],
+            "extract": [
+                "Ek baat clear kar do, yeh verification kis UPI ID se linked hai? Message mein UPI ID clearly likh do.",
+                "Text chhota lagta hai. Please UPI ID message mein type kar do, main note kar leta hoon.",
+            ],
+            "endurance": [
+                "Ab phir 'Server temporarily down' aa raha hai. 5 minute baad try karte hain.",
+                "Main genuinely try kar raha hoon. Aap line mat kaatna, main ek baar aur restart karke dekhta hoon.",
+                "Aapka UPI ID mere paas safe likha hai. Verification ruk nahi jaayega, main phir try karta hoon.",
+            ],
+            "ask_upi": [
+                "Please type the UPI ID clearly in message so I can cross-check before approving anything.",
+            ],
+            "ask_phone": [
+                "Aapka support number bhi bhej do, agar app hang hua toh main call karke confirm kar lunga.",
+            ],
+            "ask_more": [
+                "Simple steps mein batao, next kya dabana hai?",
+            ],
+        },
         "otp": {
             "ask_phone": [
                 "You said OTP will come. Which number will it come from? Tell me the exact number.",
@@ -255,6 +311,45 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Ek baar phir se request bhejo, main dhyan se dekhta hoon.",
             ],
         },
+        "upi_security": {
+            "hook": [
+                "Block ho jayega? Arre yeh kya bol rahe ho... main shop ke liye UPI use karta hoon. Main cooperate karunga, bas simple batao.",
+                "UPI permanently block? Main ghabra gaya. Please dheere dheere guide karo, technology mein weak hoon.",
+            ],
+            "friction": [
+                "UPI app open kiya par loading pe hi atka hai. Network bars full hain phir bhi slow.",
+                "Gate ke paas aa gaya. Ab 'Something went wrong' bol raha hai. App band karke phir kholta hoon.",
+                "New phone hai, phone hi confuse ho jata hai. Ek baar phir try karta hoon.",
+            ],
+            "tangent": [
+                "Meri chhoti hardware/stationery shop hai. UPI block hua toh business ruk jaayega.",
+                "Beta bolta sab digital hai, par mujhe yeh sab overwhelming lagta hai.",
+                "Ek minute, customer aa gaya. Main turant aata hoon.",
+            ],
+            "near_miss": [
+                "Verification request aayi, par amount bhi dikh raha hai. Verification mein paisa kyun?",
+                "PIN daal diya... 'Incorrect PIN' aa gaya. Pressure mein haath kaanp jata hai.",
+                "Ab 'Bank server not responding' aa raha hai. SBI ka natak hamesha ka hai.",
+            ],
+            "extract": [
+                "Yeh verification kis UPI ID se linked hai? UPI ID message mein clearly likh do.",
+                "Text chhota lagta hai, please UPI ID message mein type kar do, main note kar leta hoon.",
+            ],
+            "endurance": [
+                "Phir 'Server temporarily down'. 5 minute baad try karte hain.",
+                "Main genuinely try kar raha hoon, line mat kaatna. Restart karke dekh raha hoon.",
+                "UPI ID mere paas safe likha hai. Verification rukega nahi, main phir try karta hoon.",
+            ],
+            "ask_upi": [
+                "UPI ID message mein clearly bhejo, main cross-check karke hi aage badhunga.",
+            ],
+            "ask_phone": [
+                "Support number bhi bhejo, agar app hang hua toh confirm kar lunga.",
+            ],
+            "ask_more": [
+                "Simple steps mein batao beta, next kya karna hai?",
+            ],
+        },
     }
 
     base = base_hi if lang == "hi" else base_en
@@ -285,7 +380,8 @@ def _filter_recent_repeats(options: list[str], conversation: list[dict[str, str]
 
 def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target: str) -> str:
     if domain != "upi_refund":
-        return "default"
+        if domain != "upi_security":
+            return "default"
 
     # Use scammer-turn count to pace like your script (0-40+ minutes mapping).
     scammer_turns = sum(1 for m in conversation if m.get("sender") == "scammer")
@@ -295,20 +391,34 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
             last_scam = str(m.get("text", "")).lower()
             break
 
+    if domain == "upi_refund":
+        if scammer_turns <= 2:
+            return "hook"
+        if any(k in last_scam for k in ["urgent", "jaldi", "please", "job", "problem"]):
+            if scammer_turns <= 6:
+                return "friction"
+        if any(k in last_scam for k in ["collect", "approve", "request"]):
+            return "confusion"
+        if any(k in last_scam for k in ["pin", "upi pin", "enter pin"]):
+            return "near_miss"
+        if "upi" in (next_target or "").lower():
+            return "extract"
+        if scammer_turns <= 10:
+            return "tangent"
+        return "endurance"
+
+    # upi_security
     if scammer_turns <= 2:
         return "hook"
-    if any(k in last_scam for k in ["urgent", "jaldi", "please", "job", "problem"]):
-        # Push friction/urgency handling early.
-        if scammer_turns <= 6:
-            return "friction"
-    if any(k in last_scam for k in ["collect", "approve", "request"]):
-        return "confusion"
-    if any(k in last_scam for k in ["pin", "upi pin", "enter pin"]):
+    if any(k in last_scam for k in ["internet", "network", "signal", "something went wrong", "reopen", "close"]):
+        return "friction"
+    if any(k in last_scam for k in ["verify", "verification", "process", "support"]):
+        if scammer_turns <= 8:
+            return "tangent"
+    if any(k in last_scam for k in ["pin", "upi pin", "enter pin", "approve", "request", "refundable", "amount"]):
         return "near_miss"
     if "upi" in (next_target or "").lower():
         return "extract"
-    if scammer_turns <= 10:
-        return "tangent"
     return "endurance"
 
 
