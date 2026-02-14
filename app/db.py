@@ -421,13 +421,9 @@ def save_user_intel(conn: sqlite3.Connection | FirestoreStore, session_id: str, 
 
 def list_messages(conn: sqlite3.Connection | FirestoreStore, session_id: str, limit: int = 30) -> list[dict[str, Any]]:
     if isinstance(conn, FirestoreStore):
-        query = (
-            conn.client.collection("messages")
-            .where("session_id", "==", session_id)
-            .order_by("timestamp_ms")
-            .limit(limit)
-        )
-        docs = query.stream()
+        # Avoid composite-index dependency (session_id filter + timestamp order).
+        # Fetch by session_id and sort in-memory for predictable transcript order.
+        docs = conn.client.collection("messages").where("session_id", "==", session_id).stream()
         out: list[dict[str, Any]] = []
         for doc in docs:
             data = doc.to_dict() or {}
@@ -438,6 +434,9 @@ def list_messages(conn: sqlite3.Connection | FirestoreStore, session_id: str, li
                     "timestamp": int(data.get("timestamp_ms", 0) or 0),
                 }
             )
+        out.sort(key=lambda m: m["timestamp"])
+        if limit > 0:
+            return out[-limit:]
         return out
 
     rows = conn.execute(
