@@ -237,6 +237,7 @@ async def handle_message(
         if not agent_notes:
             agent_notes = "llm_layer_failed"
 
+    intel = _sanitize_intelligence(intel)
     save_intel(DB, session_id, intel)
 
     if combined_score >= SETTINGS.rule_threshold or confidence >= SETTINGS.llm_threshold:
@@ -305,13 +306,19 @@ async def handle_message(
         session["engagement_complete"]
     )
     if should_attempt_callback:
+        callback_notes = _competition_agent_notes(
+            raw_notes=agent_notes,
+            scam_detected=scam_detected,
+            policy_zone=policy_zone,
+            fallback_used=used_rule_fallback,
+        )
         success = await _send_callback(
             SETTINGS,
             session_id,
             scam_detected,
             total_messages_exchanged,
             intel,
-            agent_notes,
+            callback_notes,
         )
         if not success:
             engagement_complete = False
@@ -359,7 +366,12 @@ async def handle_message(
         scamDetected=scam_detected,
         shouldEngage=should_engage,
         extractedIntelligence=intel,
-        agentNotes=agent_notes,
+        agentNotes=_competition_agent_notes(
+            raw_notes=agent_notes,
+            scam_detected=scam_detected,
+            policy_zone=policy_zone,
+            fallback_used=used_rule_fallback,
+        ),
     )
 
 
@@ -389,3 +401,48 @@ async def _send_callback(
             pass
         await asyncio.sleep(2 ** attempt)
     return False
+
+
+def _sanitize_intelligence(intel: dict[str, list[str]]) -> dict[str, list[str]]:
+    result = {
+        "bankAccounts": list(intel.get("bankAccounts", [])),
+        "upiIds": list(intel.get("upiIds", [])),
+        "phishingLinks": list(intel.get("phishingLinks", [])),
+        "phoneNumbers": list(intel.get("phoneNumbers", [])),
+        "suspiciousKeywords": [],
+    }
+    seen_kw: set[str] = set()
+    for value in intel.get("suspiciousKeywords", []):
+        kw = " ".join(str(value).split()).strip().lower()
+        if not kw or kw in seen_kw:
+            continue
+        seen_kw.add(kw)
+        result["suspiciousKeywords"].append(kw)
+    result["suspiciousKeywords"] = result["suspiciousKeywords"][:10]
+    return result
+
+
+def _competition_agent_notes(
+    *,
+    raw_notes: str,
+    scam_detected: bool,
+    policy_zone: str,
+    fallback_used: bool,
+) -> str:
+    lower = (raw_notes or "").lower()
+    reasons: list[str] = []
+    if "credential_harvest_signal" in lower:
+        reasons.append("Credential harvesting intent detected")
+    if "prompt_injection_signal" in lower:
+        reasons.append("Prompt-injection style manipulation attempt detected")
+    if "link_present" in lower:
+        reasons.append("Message contains suspicious redirection behavior")
+    if policy_zone == "lethal":
+        reasons.append("Conversation reached lethal-risk policy zone")
+    if fallback_used or "llm failure" in lower or "llm_layer_failed" in lower:
+        reasons.append("Rule-based verification used due to LLM instability")
+    if not reasons and scam_detected:
+        reasons.append("Scam pattern detected from urgency and verification pressure")
+    if not scam_detected:
+        reasons.append("No high-confidence scam pattern detected in current conversation state")
+    return "; ".join(reasons)

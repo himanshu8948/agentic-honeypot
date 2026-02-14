@@ -100,7 +100,7 @@ def normalize_intelligence(raw: dict[str, Any]) -> dict[str, list[str]]:
         if BANK_RE.fullmatch(clean):
             bank_accounts.append(clean)
 
-    suspicious_keywords = _ensure_list(raw.get("suspiciousKeywords"))
+    suspicious_keywords = _normalize_keywords(_ensure_list(raw.get("suspiciousKeywords")))
 
     return {
         "bankAccounts": _dedupe(bank_accounts),
@@ -118,4 +118,18 @@ def _dedupe(values: list[str]) -> list[str]:
         if value not in seen:
             seen.add(value)
             out.append(value)
+    return out
+
+
+def _normalize_keywords(values: list[str]) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        clean = re.sub(r"\s+", " ", value).strip().lower()
+        if not clean:
+            continue
+        if clean in seen:
+            continue
+        seen.add(clean)
+        out.append(clean)
     return out
