@@ -336,11 +336,13 @@ async def handle_message(
                 next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
                 # Deterministic persona for long honeypot sessions (matches your Bittu script).
                 persona_tag = "bittu_shopkeeper"
+                language = (payload.metadata.language if payload.metadata else None) or "en"
                 pb = build_reply(
                     domain=detect_domain(payload.message.text),
                     next_target=next_target,
                     persona=persona_tag,
                     conversation=conversation,
+                    language=language,
                 )
                 reply = pb.reply
                 agent_notes = pb.agent_notes
@@ -349,11 +351,13 @@ async def handle_message(
             LLM_CIRCUIT.record_failure()
             used_rule_fallback = True
             next_target = GROQ._get_next_extraction_target(conversation, intel, GROQ._analyze_missing_intel(intel))
+            language = (payload.metadata.language if payload.metadata else None) or "en"
             pb = build_reply(
                 domain=detect_domain(payload.message.text),
                 next_target=next_target,
                 persona="bittu_shopkeeper",
                 conversation=conversation,
+                language=language,
             )
             reply = pb.reply
             agent_notes = pb.agent_notes

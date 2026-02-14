@@ -35,8 +35,9 @@ def build_reply(
     next_target: str,
     persona: str,
     conversation: list[dict[str, str]],
+    language: str = "en",
 ) -> PlaybookReply:
-    templates = _load_templates()
+    templates = _load_templates(language=language)
     domain_bank = templates.get(domain, templates["generic"])
 
     target_lower = (next_target or "").lower()
@@ -80,9 +81,15 @@ def _apply_persona(text: str, persona: str) -> str:
     return text
 
 
-def _load_templates() -> dict[str, Any]:
+def _load_templates(*, language: str) -> dict[str, Any]:
     # Built-in templates; can be overridden by JSON file in app/playbooks/*.json later.
-    base = {
+    lang = (language or "en").strip().lower()
+    if lang.startswith("hi"):
+        lang = "hi"
+    else:
+        lang = "en"
+
+    base_en = {
         "generic": {
             "ask_phone": [
                 "Where should I send it? Share the exact phone number with country code.",
@@ -184,6 +191,73 @@ def _load_templates() -> dict[str, Any]:
             ],
         },
     }
+
+    base_hi = {
+        "generic": {
+            "ask_phone": [
+                "Kahan send karna hai? Country code ke saath exact number likh do.",
+                "Theek hai, aapka exact number message kar do.",
+            ],
+            "ask_upi": [
+                "UPI ID exact bhej do (jaise name@bank), main galti nahi karna chahta.",
+                "UPI handle aur naam message mein bhej do, main likh leta hoon.",
+            ],
+            "ask_bank": [
+                "Account number, IFSC aur branch name exact bhej do, main verify kar lunga.",
+            ],
+            "ask_link": [
+                "Link kholne se pehle batao yeh kis cheez ka hai?",
+            ],
+            "ask_more": [
+                "Achha, ab next step kya hai? Dhyan se batao.",
+            ],
+        },
+        "upi_refund": {
+            "hook": [
+                "Arre bhagwan... mere account mein paisa? Maine toh abhi notice nahi kiya.",
+                "Haan beta, pehle main check kar leta hoon ki sach mein aaya hai ya nahi.",
+            ],
+            "friction": [
+                "UPI app open nahi ho raha, kal se slow hai.",
+                "Internet aa raha hai par yeh app ziddi hai. Ruko, phir se try karta hoon.",
+                "Dukaan pe customer aa gaya, do minute.",
+            ],
+            "confusion": [
+                "'Collect' ka matlab kya? Mujhe laga paisa bhejna hota hai.",
+                "Green button dabana hai ya amount pehle dalna hai?",
+                "Arre cancel ho gaya, phir se bhejo.",
+            ],
+            "tangent": [
+                "Waise beta aap kaam kya karte ho? Bank mein ho kya?",
+                "Pehle sab bank jaake hota tha, ab sab mobile pe ho gaya.",
+            ],
+            "near_miss": [
+                "UPI PIN maang raha hai. Dheere dheere type kar raha hoon.",
+                "Incorrect PIN bol raha hai. Thoda nervous ho jata hoon.",
+                "Too many attempts, wait bol raha hai. Bank rules strict hain.",
+                "Restart kar raha hoon, request phir se bhej do.",
+            ],
+            "extract": [
+                "Aapka UPI ID message mein clearly bhej do, aankhon se kam dikhta hai.",
+                "UPI ID aur naam message mein bhej do, main note kar leta hoon.",
+            ],
+            "endurance": [
+                "Server down bol raha hai. Thoda baad try karte hain.",
+                "Kal subah bank jaake clear karwa dunga. UPI ID mere paas hai.",
+            ],
+            "ask_upi": [
+                "UPI handle exact bhejo (name@bank).",
+            ],
+            "ask_phone": [
+                "Aapka number bhi message kar do, confirm karne mein aasani hogi.",
+            ],
+            "ask_more": [
+                "Ek baar phir se request bhejo, main dhyan se dekhta hoon.",
+            ],
+        },
+    }
+
+    base = base_hi if lang == "hi" else base_en
 
     # Optional external JSON file(s)
     folder = os.path.join(os.path.dirname(__file__), "playbooks")
