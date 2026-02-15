@@ -133,8 +133,6 @@ async def startup() -> None:
     log_event(
         "startup_complete",
         db_path=SETTINGS.db_path,
-        firebaseEnabled=SETTINGS.firebase_enabled,
-        firebaseProjectId=SETTINGS.firebase_project_id,
         fraudCorpusLines=len(FRAUD_CORPUS),
         lookupPatterns=LOOKUP_TABLE_COUNT,
         llmEnabled=False,

@@ -16,8 +16,6 @@ class Settings:
     rule_threshold: int
     guvi_callback_url: str
     trusted_sms_headers: set[str]
-    firebase_enabled: bool
-    firebase_project_id: str | None
     # Engagement/callback pacing knobs (defaults are conservative for most demos)
     target_messages_exchanged: int
     min_messages_before_complete: int
@@ -30,8 +28,6 @@ def load_settings() -> Settings:
         raise RuntimeError("SERVICE_API_KEY is required")
 
     db_path = _get_env("DB_PATH", "./honeypot.db")
-    firebase_enabled = _get_bool_env("FIREBASE_ENABLED", False)
-    firebase_project_id = _get_env("FIREBASE_PROJECT_ID")
 
     rule_threshold = int(_get_env("RULE_THRESHOLD", "8"))
 
@@ -52,8 +48,6 @@ def load_settings() -> Settings:
         rule_threshold=rule_threshold,
         guvi_callback_url=guvi_callback_url,
         trusted_sms_headers=trusted_sms_headers,
-        firebase_enabled=firebase_enabled,
-        firebase_project_id=firebase_project_id,
         target_messages_exchanged=max(0, target_messages_exchanged),
         min_messages_before_complete=max(1, min_messages_before_complete),
         min_messages_before_complete_with_intel=max(1, min_messages_before_complete_with_intel),
@@ -82,9 +76,3 @@ def _load_trusted_headers() -> set[str]:
     return headers
 
 
-def _get_bool_env(name: str, default: bool) -> bool:
-    raw = _get_env(name)
-    if raw is None:
-        return default
-    v = raw.strip().lower()
-    return v in {"1", "true", "yes", "on"}
