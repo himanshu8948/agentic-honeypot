@@ -56,3 +56,9 @@ def test_rule_score_prize_lottery_openers():
     text = "Congratulations! You've won ₹1,00,000 in WhatsApp Mega Draw. You are selected for cash prize."
     score = rule_score(text)
     assert score >= 6
+
+
+def test_rule_score_fake_job_openers():
+    text = "Hi, this is Ravi from HR at ACME. You've been shortlisted for remote role. Pay ₹499 as registration fee."
+    score = rule_score(text)
+    assert score >= 7

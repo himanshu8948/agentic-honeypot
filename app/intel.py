@@ -148,6 +148,19 @@ PRIZE_LOTTERY_OPENERS = [
     "you won",
 ]
 
+FAKE_JOB_OPENERS = [
+    "from hr at",
+    "been shortlisted",
+    "shortlisted for remote",
+    "remote role",
+    "work from home",
+    "work-from-home",
+    "opportunity",
+    "registration fee",
+    "joining fee",
+    "selected for",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -168,6 +181,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         *FAKE_LOAN_OPENERS,
         *OTP_WHATSAPP_HACK_OPENERS,
         *PRIZE_LOTTERY_OPENERS,
+        *FAKE_JOB_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -249,6 +263,9 @@ def rule_score(text: str) -> int:
         score += 5
     # Lottery/prize hooks: opener + amount implies scam.
     if any(p in lower for p in PRIZE_LOTTERY_OPENERS) and (MONEY_RE.search(text) or any(k in lower for k in ["prize", "lottery", "reward"])):
+        score += 4
+    # Fake job offer hooks: fee + job phrases.
+    if any(p in lower for p in FAKE_JOB_OPENERS) and (MONEY_RE.search(text) or "fee" in lower):
         score += 4
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
