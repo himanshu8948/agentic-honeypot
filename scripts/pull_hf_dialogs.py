@@ -13,7 +13,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
+import hashlib
 from typing import Any, Iterable
 
 import httpx
@@ -58,19 +60,20 @@ def _get_json(client: httpx.Client, path: str, params: dict[str, Any]) -> dict[s
     return r.json()
 
 
-def _configs(client: httpx.Client, dataset: str) -> list[str]:
-    data = _get_json(client, "/configs", {"dataset": dataset})
-    return [c["config"] for c in (data.get("configs") or []) if "config" in c]
-
-
-def _splits(client: httpx.Client, dataset: str, config: str) -> list[str]:
-    data = _get_json(client, "/splits", {"dataset": dataset, "config": config})
-    splits = []
+def _splits(client: httpx.Client, dataset: str) -> list[tuple[str, str]]:
+    """
+    datasets-server exposes dataset configs and splits via /splits.
+    Response example:
+      {"splits":[{"dataset":"...","config":"default","split":"train"}], ...}
+    """
+    data = _get_json(client, "/splits", {"dataset": dataset})
+    out: list[tuple[str, str]] = []
     for s in (data.get("splits") or []):
-        name = s.get("split")
-        if isinstance(name, str) and name:
-            splits.append(name)
-    return splits
+        cfg = s.get("config")
+        sp = s.get("split")
+        if isinstance(cfg, str) and cfg and isinstance(sp, str) and sp:
+            out.append((cfg, sp))
+    return out
 
 
 def _rows(
@@ -98,58 +101,90 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
     ap.add_argument("--max-utterances", type=int, default=100000)
-    ap.add_argument("--batch", type=int, default=200)
+    ap.add_argument("--batch", type=int, default=100, help="rows per request (datasets-server max is 100)")
+    ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--append", action="store_true", help="append to existing file instead of overwriting")
+    ap.add_argument("--dedupe", action="store_true", default=True, help="skip duplicate utterances (recommended)")
+    ap.add_argument("--sleep", type=float, default=0.15, help="base sleep between requests (seconds)")
     ap.add_argument(
         "--datasets",
-        default="daily_dialog,blended_skill_talk,empathetic_dialogues,wizard_of_wikipedia,conv_ai_2",
+        default="allenai/WildChat-1M,HuggingFaceH4/ultrachat_200k,OpenAssistant/oasst1,teknium/OpenHermes-2.5",
         help="Comma-separated HF dataset IDs",
     )
     args = ap.parse_args()
 
     wanted = max(1, int(args.max_utterances))
-    batch = max(10, int(args.batch))
+    batch = max(10, min(100, int(args.batch)))
     datasets = [d.strip() for d in str(args.datasets).split(",") if d.strip()]
 
     wrote = 0
-    with httpx.Client(timeout=30) as client, open(args.out, "w", encoding="utf-8") as f:
+    seen: set[bytes] = set()
+    mode = "a" if args.append else "w"
+    if args.append and os.path.exists(args.out):
+        # Count and seed the dedupe set from existing file so "resume" doesn't balloon.
+        with open(args.out, "r", encoding="utf-8") as rf:
+            for line in rf:
+                wrote += 1
+                if args.dedupe:
+                    try:
+                        obj = json.loads(line)
+                        txt = obj.get("text")
+                        if isinstance(txt, str):
+                            seen.add(hashlib.blake2b(txt.encode("utf-8"), digest_size=8).digest())
+                    except Exception:
+                        pass
+
+    sleep_s = max(0.01, float(args.sleep))
+
+    with httpx.Client(timeout=30) as client, open(args.out, mode, encoding="utf-8") as f:
         for ds in datasets:
             try:
-                cfgs = _configs(client, ds) or ["default"]
-            except Exception:
+                cfg_splits = _splits(client, ds)
+            except Exception as e:
+                if args.verbose:
+                    print(f"[skip] splits failed for {ds}: {e}")
                 continue
 
-            for cfg in cfgs[:3]:  # keep it bounded; many datasets have lots of configs
-                try:
-                    splits = _splits(client, ds, cfg) or ["train"]
-                except Exception:
-                    continue
+            for cfg, split in cfg_splits:
+                offset = 0
+                backoff = 0.0
+                while wrote < wanted:
+                    try:
+                        rows = _rows(client, ds, cfg, split, offset, batch)
+                    except Exception as e:
+                        msg = str(e)
+                        if "429" in msg:
+                            backoff = max(1.0, backoff * 1.8) if backoff else 2.0
+                            if args.verbose:
+                                print(f"[429] backing off {backoff:.1f}s for {ds} {cfg}/{split} @ {offset}")
+                            time.sleep(backoff)
+                            continue
+                        if args.verbose:
+                            print(f"[stop] rows failed for {ds} {cfg}/{split} @ {offset}: {e}")
+                        break
+                    if not rows:
+                        break
 
-                for split in splits:
-                    offset = 0
-                    while wrote < wanted:
-                        try:
-                            rows = _rows(client, ds, cfg, split, offset, batch)
-                        except Exception:
-                            break
-                        if not rows:
-                            break
-
-                        for i, row in enumerate(rows):
-                            for turn, utt in enumerate(_iter_utterances_from_row(row)):
-                                rec = {"dataset": ds, "config": cfg, "split": split, "row": offset + i, "turn": turn, "text": utt}
-                                f.write(json.dumps(rec, ensure_ascii=True) + "\n")
-                                wrote += 1
-                                if wrote >= wanted:
-                                    break
+                    for i, row in enumerate(rows):
+                        for turn, utt in enumerate(_iter_utterances_from_row(row)):
+                            if args.dedupe:
+                                h = hashlib.blake2b(utt.encode("utf-8"), digest_size=8).digest()
+                                if h in seen:
+                                    continue
+                                seen.add(h)
+                            rec = {"dataset": ds, "config": cfg, "split": split, "row": offset + i, "turn": turn, "text": utt}
+                            f.write(json.dumps(rec, ensure_ascii=True) + "\n")
+                            wrote += 1
                             if wrote >= wanted:
                                 break
+                        if wrote >= wanted:
+                            break
 
-                        offset += len(rows)
-                        if offset % (batch * 10) == 0:
-                            f.flush()
-                        time.sleep(0.05)  # be gentle to the public API
-                    if wrote >= wanted:
-                        break
+                    offset += len(rows)
+                    if offset % (batch * 10) == 0:
+                        f.flush()
+                    # be gentle to the public API
+                    time.sleep(sleep_s + (backoff * 0.15))
                 if wrote >= wanted:
                     break
             if wrote >= wanted:
@@ -161,4 +196,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
