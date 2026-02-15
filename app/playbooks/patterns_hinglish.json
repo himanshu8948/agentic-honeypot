@@ -86,6 +86,44 @@
     ]
   }
   ,
+  "prize_lottery": {
+    "hook": [
+      "Prize jeeta? Really? But maine toh koi lottery participate nahi ki thi.",
+      "50 lakh? Arre baap re. Ye kaise possible hai? Aap kaunse department/company se bol rahe ho?",
+      "Main thoda confused hoon. Aapko mera number kaise mila? Please slowly explain."
+    ],
+    "tangent": [
+      "Claim kaise hoga? Steps ek message mein likh do please.",
+      "Is prize ka reference ID ya scheme name kya hai? Main note kar leta hoon.",
+      "Mere beta/daughter ko batana hai. Aap apna callback number bhej do so they can verify."
+    ],
+    "friction": [
+      "Mujhe online payment samajh nahi aata. Mera beta aayega tab hi main kuch kar paunga.",
+      "Terms samajh nahi aa rahi. Aap slowly bol do, main diary mein likh raha hoon.",
+      "Chashma nahi mil raha and letters chhote hain. Ek minute, main dhundhta hoon.",
+      "Aap bol rahe ho urgent, but bina verify main kuch nahi kar sakta. Office/landline number bhej do."
+    ],
+    "near_miss": [
+      "Agar processing/tax fee chahiye, exact UPI ID ya bank details bhejo + beneficiary name jo app pe show hoga.",
+      "Fee breakup ek message mein clear bhejo: processing fee, GST/tax, and final total amount.",
+      "Main OTP/PIN share nahi karunga. Bas payment destination details clearly bhej do so I don't make mistake."
+    ],
+    "endurance": [
+      "Mera BP thoda high ho gaya, main rest karunga. Aap apna number bhej do, beta call back karega.",
+      "Hearing aid ki battery low hai. Please message mein details bhej do.",
+      "Main bhool jaata hoon. Ek baar phir scheme name + reference ID + amount repeat kar do.",
+      "Kal subah family ke saath verify karke reply kar dunga. Details change mat karna please."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (with country code) bhej do so main save kar sakun.",
+      "Office/landline number bhi bhej do verification ke liye."
+    ],
+    "ask_link": [
+      "Agar koi official link hai toh exact URL bhej do. Main galat site open nahi karna chahta.",
+      "Link open nahi ho raha. Exact domain + page name type karke bhej do."
+    ]
+  }
+  ,
   "rental_scam": {
     "hook": [
       "Hi, maine flat/rent listing dekha. Abhi available hai kya?",

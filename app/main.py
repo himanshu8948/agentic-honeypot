@@ -657,11 +657,43 @@ def _pick_domain(state: dict[str, Any], text: str) -> str:
 
 
 def _pick_language_with_state(state: dict[str, Any], metadata: Metadata | None, session_id: str, turn: int, scammer_text: str) -> str:
-    locked = state.get("language")
-    if isinstance(locked, str) and locked.strip():
-        return locked.strip().lower()
-    # Pick once and then lock for the rest of the session (prevents perceived "context breaks").
-    return _pick_language(metadata, session_id, turn, scammer_text)
+    """
+    Pick and persist the session language, but allow one-way adaptation to the scammer's
+    stable language style after a short streak.
+
+    Requirement (hackathon realism): if the scammer keeps using the same language/style
+    for a few turns, the honeypot should align.
+    """
+    # Respect explicit language selection (never auto-switch away from it).
+    lang_raw = (metadata.language if metadata else None) or ""
+    if lang_raw.strip():
+        chosen = _pick_language(metadata, session_id, turn, scammer_text)
+        state["language"] = chosen
+        return chosen
+
+    current = str(state.get("language") or "").strip().lower() or ""
+    # Default if nothing chosen yet: Hinglish (India-friendly).
+    if not current:
+        current = "hinglish"
+        state["language"] = current
+
+    # Track scammer style stability and adapt after 3 consistent scammer turns.
+    style = _detect_lang_style(scammer_text)
+    last_style = str(state.get("lang_last") or "").strip().lower()
+    streak = int(state.get("lang_streak", 0) or 0)
+    if style and style == last_style:
+        streak += 1
+    else:
+        streak = 1
+        last_style = style
+    state["lang_last"] = last_style
+    state["lang_streak"] = streak
+
+    if streak >= 3 and style in {"en", "hi", "hinglish"} and style != current:
+        state["language"] = style
+        return style
+
+    return current
 
 
 def _get_next_extraction_target(
@@ -897,22 +929,18 @@ def _pick_language(metadata: Metadata | None, session_id: str, turn: int, scamme
             return "hi"
         return "en"
 
-    # Default: make English the priority, but adapt to scammer language.
-    # This keeps output clean for evaluation while still sounding India-local when needed.
+    # Default: Hinglish for India, but follow scammer style when strongly signaled.
     style = _detect_lang_style(scammer_text)
-    if style in {"hi", "hinglish"} and (not loc or loc == "IN"):
-        base = style
-    else:
-        base = "en"
+    if not loc or loc == "IN":
+        if style in {"hi", "hinglish"}:
+            return style
+        # If scammer is clearly English, start English; otherwise prefer Hinglish.
+        if style == "en":
+            return "en"
+        return "hinglish"
 
-    # Light, deterministic rotation to avoid sounding like a rigid template engine.
-    h = hashlib.sha1(f"{session_id}:{turn}".encode("utf-8")).digest()[0]
-    # When base is English, occasionally blend to Hinglish for India sessions only.
-    if base == "en" and (not loc or loc == "IN"):
-        if h >= 245:
-            return "hinglish"
-        return "en"
-    return base
+    # Non-IN locales: default to English.
+    return "en"
 
 
 def _normalize_session_id(value: str) -> str:
