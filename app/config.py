@@ -20,6 +20,7 @@ class Settings:
     target_messages_exchanged: int
     min_messages_before_complete: int
     min_messages_before_complete_with_intel: int
+    callback_mode: str
 
 
 def load_settings() -> Settings:
@@ -31,16 +32,16 @@ def load_settings() -> Settings:
 
     rule_threshold = int(_get_env("RULE_THRESHOLD", "8"))
 
-    guvi_callback_url = _get_env(
-        "GUVI_CALLBACK_URL",
-        "https://hackathon.guvi.in/api/updateHoneyPotFinalResult",
-    )
+    guvi_callback_url = _get_env("GUVI_CALLBACK_URL", "")
     trusted_sms_headers = _load_trusted_headers()
 
     # Default to hackathon-style long engagements; override in env for shorter demos.
     target_messages_exchanged = int(_get_env("TARGET_MESSAGES_EXCHANGED", "150"))
     min_messages_before_complete = int(_get_env("MIN_MESSAGES_BEFORE_COMPLETE", "10"))
     min_messages_before_complete_with_intel = int(_get_env("MIN_MESSAGES_BEFORE_COMPLETE_WITH_INTEL", "6"))
+    callback_mode = (_get_env("CALLBACK_MODE", "always") or "always").strip().lower()
+    if callback_mode not in {"always", "on_complete"}:
+        callback_mode = "always"
 
     return Settings(
         service_api_key=service_api_key,
@@ -51,6 +52,7 @@ def load_settings() -> Settings:
         target_messages_exchanged=max(0, target_messages_exchanged),
         min_messages_before_complete=max(1, min_messages_before_complete),
         min_messages_before_complete_with_intel=max(1, min_messages_before_complete_with_intel),
+        callback_mode=callback_mode,
     )
 
 def _load_trusted_headers() -> set[str]:
@@ -74,5 +76,4 @@ def _load_trusted_headers() -> set[str]:
             pass
 
     return headers
-
 

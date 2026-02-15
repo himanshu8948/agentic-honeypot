@@ -468,9 +468,13 @@ async def handle_message(
             engagement_complete = True
 
     callback_pending = bool(session["callback_pending"]) if "callback_pending" in session.keys() else False
-    should_attempt_callback = scam_detected and (engagement_complete or callback_pending) and not bool(
-        session["engagement_complete"]
-    )
+    callback_mode = str(getattr(SETTINGS, "callback_mode", "always") or "always").strip().lower()
+    if callback_mode == "always":
+        should_attempt_callback = scam_detected and effective_sender == "scammer"
+    else:
+        should_attempt_callback = scam_detected and (engagement_complete or callback_pending) and not bool(
+            session["engagement_complete"]
+        )
     if should_attempt_callback:
         callback_notes = _competition_agent_notes(
             raw_notes=agent_notes,
@@ -547,6 +551,10 @@ async def _send_callback(
     intel: dict[str, list[str]],
     agent_notes: str,
 ) -> bool:
+    if not (settings.guvi_callback_url or "").strip():
+        # Callback endpoint is optional in local/dev; treat as a no-op success.
+        return True
+
     payload = _build_competition_payload(
         session_id=session_id,
         scam_detected=scam_detected,
