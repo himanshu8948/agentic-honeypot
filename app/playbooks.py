@@ -387,21 +387,36 @@ def build_reply(
     domain_bank = templates.get(persona_key, templates.get(domain, templates["generic"]))
 
     # Fast lookup override for known scammer prompts (no LLM).
+    # Keep lookup matches strict; loose fuzzy matches can create repetitive or off-domain replies.
+    try:
+        lookup_min_score = float(os.getenv("LOOKUP_MIN_SCORE", "0.62") or "0.62")
+    except Exception:
+        lookup_min_score = 0.62
+    lookup_min_score = max(0.4, min(0.95, lookup_min_score))
+
     hit = lookup_response(
         message=conversation[-1]["text"] if conversation else "",
         domain=domain,
         persona=persona,
         language=(language or "en").strip().lower(),
+        min_score=lookup_min_score,
     )
     if hit is not None:
         reply = _apply_persona(hit.response, persona)
-        if str(verbosity).strip().lower() == "high":
-            reply = _make_verbose(reply=reply, domain=domain, stage="default", language=language)
-        return PlaybookReply(
-            reply=reply,
-            agent_notes=f"Lookup:{domain}; score:{hit.score:.2f}; key:{hit.key}",
-            stop_reason=None,
-        )
+        # If lookup response is effectively a near-repeat of recent user messages,
+        # fall through to stage-based templates for better variation.
+        recent_user = [m["text"] for m in conversation[-10:] if m.get("sender") == "user"]
+        if reply and recent_user:
+            norm_reply = _norm(reply)
+            norm_recent = {_norm(t) for t in recent_user if t and t.strip()}
+            if norm_reply not in norm_recent:
+                if str(verbosity).strip().lower() == "high":
+                    reply = _make_verbose(reply=reply, domain=domain, stage="default", language=language)
+                return PlaybookReply(
+                    reply=reply,
+                    agent_notes=f"Lookup:{domain}; score:{hit.score:.2f}; key:{hit.key}",
+                    stop_reason=None,
+                )
 
     target_lower = (next_target or "").lower()
     stage = _infer_stage(domain=domain, conversation=conversation, next_target=next_target)

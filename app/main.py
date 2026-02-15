@@ -59,6 +59,9 @@ _EXCITED_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\barre\s+bhagwan\b", re.IGNORECASE), "Observed"),
     (re.compile(r"\barre\s+baap\s+re\b", re.IGNORECASE), "Observed"),
     (re.compile(r"\bwow\b", re.IGNORECASE), "Observed"),
+    # Avoid "overly excited" tone - keep it neutral/observational.
+    (re.compile(r"\b(i[' ]?m|i am)\s+excited\b", re.IGNORECASE), "Observed"),
+    (re.compile(r"\bso\s+excited\b", re.IGNORECASE), "Observed"),
 ]
 
 
