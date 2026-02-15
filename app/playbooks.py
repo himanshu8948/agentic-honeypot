@@ -7,6 +7,7 @@ from typing import Any
 from difflib import SequenceMatcher
 
 from .lookup_table import lookup_response
+from .dialog_bank import maybe_inject_bridge
 
 
 @dataclass(frozen=True)
@@ -157,6 +158,26 @@ def build_reply(
     reply = _apply_persona(reply, persona)
     if str(verbosity).strip().lower() == "high":
         reply = _make_verbose(reply=reply, domain=domain, stage=stage, language=language)
+
+    # Optional: inject a neutral "story bridge" line from a large local dialog bank (HF JSONL).
+    # This is intentionally conservative: English only, and only in stall-heavy stages.
+    lang = (language or "en").strip().lower()
+    if lang not in {"hi"} and stage in {"friction", "tangent", "endurance"}:
+        try:
+            prob = float(os.getenv("DIALOG_BANK_BRIDGE_PROB") or "0.25")
+        except Exception:
+            prob = 0.25
+        prob = max(0.0, min(prob, 0.75))
+        if lang != "en":
+            # Hinglish/Roman-Hindi already has plenty of templates; keep the external bank as EN priority.
+            prob = min(prob, 0.10)
+        recent_msgs = [m.get("text", "") for m in conversation[-25:] if isinstance(m, dict)]
+        reply = maybe_inject_bridge(
+            base_reply=reply,
+            scammer_text=conversation[-1]["text"] if conversation else "",
+            recent_messages=recent_msgs,
+            probability=prob,
+        )
 
     return PlaybookReply(
         reply=reply,
