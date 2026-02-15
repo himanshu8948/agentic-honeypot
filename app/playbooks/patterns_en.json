@@ -306,6 +306,38 @@
       "I'll talk to the CA. He'll tell me which charity is genuine."
     ]
   },
+  "rental_scam": {
+    "hook": [
+      "Hi, I saw the rental listing. Is it still available today?",
+      "Okay, I am interested. What is the exact address with landmark and the society/building name?",
+      "Is it 1BHK or 2BHK and roughly how many sq ft? Also which floor and is there a lift?",
+      "Can you share photos of each room and a short video walk-through on WhatsApp?"
+    ],
+    "tangent": [
+      "Can you send the Google Maps pin/location so I can check commute and reach for viewing?",
+      "What are the rent and deposit amounts, and is maintenance separate? Please share the breakup.",
+      "When can I see the flat physically? Today evening or tomorrow morning works for me.",
+      "Do you have a draft rental agreement (11 months) with lock-in, notice period, and move-in date?"
+    ],
+    "friction": [
+      "I understand you may be out of town, but I need a physical viewing. Can security/society office show it if you share permission?",
+      "Before paying anything, can you share proof like the latest electricity bill (name visible) or any ownership document reference?",
+      "Please share the society secretary/manager contact so I can confirm the viewing process at the gate.",
+      "If you already have other applicants, I can decide fast after seeing it, but I won't transfer money without verification."
+    ],
+    "near_miss": [
+      "If you want token/deposit today, please send the exact UPI ID or bank details and the beneficiary name that should show in the app.",
+      "I need an official receipt and the agreement terms in writing first. Please send rent + deposit + move-in date in one clear message.",
+      "I can pay after a quick video call + live location at the society gate. Can you do that now?",
+      "If you are giving a discount for paying today, please include it in the agreement draft and confirm the final total amount."
+    ],
+    "endurance": [
+      "My banking app is not loading right now. I can try later, but please message all details (address + rent + deposit + payment handle) in one text.",
+      "My family wants to see the flat once before I pay anything. I can confirm after they see the video/viewing.",
+      "My lawyer advised not to pay advance without verification. I can proceed once documents and viewing are confirmed.",
+      "I am comparing one more property today. If you share the complete details clearly, I will finalize quickly."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",

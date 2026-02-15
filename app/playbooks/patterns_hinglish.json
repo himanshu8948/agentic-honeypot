@@ -86,6 +86,39 @@
     ]
   }
   ,
+  "rental_scam": {
+    "hook": [
+      "Hi, maine flat/rent listing dekha. Abhi available hai kya?",
+      "Exact address + society/building name bhej do please. Landmark bhi.",
+      "1BHK/2BHK? Approx sq ft kitna? Floor/lift/power backup hai kya?",
+      "WhatsApp pe photos + ek short video walk-through bhej do please."
+    ],
+    "tangent": [
+      "Google Maps pin/location bhej do so I can check commute and come for viewing.",
+      "Rent + deposit kitna hai? Maintenance alag hai kya? Breakup ek message mein likh do.",
+      "Physical viewing kab possible hai? Aaj evening ya kal morning?",
+      "Agreement terms bata do: lock-in, notice, move-in date, 11 months?"
+    ],
+    "friction": [
+      "Out of town ho toh bhi I need a viewing. Security/society office ko permission de sakte ho?",
+      "Payment se pehle proof chahiye: latest electricity bill (name visible) ya ownership reference.",
+      "Society secretary/manager ka contact share kar do. Main verify kar lunga.",
+      "Other applicants hain toh main jaldi decide kar dunga after viewing, but bina verification pay nahi kar sakta."
+    ],
+    "near_miss": [
+      "Token/deposit chahiye toh exact UPI ID ya bank details bhejo + beneficiary name jo app pe show hoga.",
+      "Receipt + agreement terms written pehle chahiye. Rent, deposit, move-in date ek message mein confirm karo.",
+      "Video call + society gate live location ke baad I can pay. Abhi possible hai?",
+      "Discount aaj pay karne pe hai toh agreement draft mein include karo and final total confirm karo."
+    ],
+    "endurance": [
+      "Banking app load nahi ho raha. Later try karunga, but address + rent + deposit + payment handle ek message mein bhej do.",
+      "Family wants to see flat once. Video/viewing ke baad main confirm kar dunga.",
+      "Lawyer said no advance without verification. Documents + viewing confirm ho jaye then I proceed.",
+      "Main ek aur property compare kar raha hoon. Complete details clearly bhej doge toh main jaldi finalize kar dunga."
+    ]
+  }
+  ,
   "romance_scam": {
     "hook": [
       "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",

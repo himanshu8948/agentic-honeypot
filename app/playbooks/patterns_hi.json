@@ -337,6 +337,38 @@
       "Month end mein donate karunga. Abhi budget tight hai."
     ]
   },
+  "rental_scam": {
+    "hook": [
+      "Hello, maine flat/rent ka listing dekha. Abhi available hai kya?",
+      "Mujhe shift hona hai jaldi. Exact address + society/building name likh do please.",
+      "1BHK ya 2BHK? Approx kitne sq ft? Kaunsa floor aur lift/power backup hai?",
+      "WhatsApp pe photos aur ek short video walk-through bhej sakte ho kya?"
+    ],
+    "tangent": [
+      "Google Maps ka pin/location bhej do. Main route aur area check kar leta hoon.",
+      "Rent + deposit kitna hai? Maintenance alag hai kya? Breakup ek message mein likh do.",
+      "Main physical viewing chah raha hoon. Aaj evening ya kal morning possible hai kya?",
+      "Agreement ka draft hai kya (11 months) with lock-in, notice period, move-in date?"
+    ],
+    "friction": [
+      "Aap town se bahar ho toh bhi mujhe viewing chahiye. Security/society office ko permission de sakte ho kya?",
+      "Payment se pehle basic proof chahiye: latest electricity bill (naam visible) ya ownership document reference.",
+      "Society secretary/manager ka contact share kar do. Main gate pe verify kar lunga.",
+      "Agar aur applicants hain, main jaldi decide kar dunga after viewing, par bina verification paisa transfer nahi karunga."
+    ],
+    "near_miss": [
+      "Aap token/deposit maang rahe ho toh exact UPI ID ya bank details bhejo, aur beneficiary name bhi jo app pe show hoga.",
+      "Receipt + agreement terms written chahiye pehle. Rent, deposit, move-in date ek message mein confirm kar do.",
+      "Video call + society gate live location ke baad main pay kar sakta hoon. Abhi possible hai kya?",
+      "Agar aaj pay karne pe discount hai toh agreement draft mein likh do aur final total amount confirm kar do."
+    ],
+    "endurance": [
+      "Mera banking app abhi load nahi ho raha. Main baad mein try karunga, par address + rent + deposit + payment handle ek message mein bhej do.",
+      "Family bhi ek baar flat dekhna chahti hai. Video/viewing ke baad main confirm kar dunga.",
+      "Lawyer ne bola bina verification advance mat do. Documents + viewing confirm ho jaye toh main proceed karunga.",
+      "Main ek aur property compare kar raha hoon. Aap complete details clearly bhej doge toh main jaldi finalize kar dunga."
+    ]
+  },
   "generic": {
     "ask_more": [
       "Beta mujhe samajh nahi aaya. Zara dheere bolo.",

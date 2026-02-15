@@ -19,6 +19,32 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    # Rental / property advance-payment scams
+    rental_context = any(
+        k in lower
+        for k in [
+            "rent",
+            "rental",
+            "flat",
+            "apartment",
+            "pg",
+            "room",
+            "1bhk",
+            "2bhk",
+            "society",
+            "landlord",
+            "owner",
+            "broker",
+            "agent",
+            "viewing",
+            "visit",
+            "move-in",
+            "move in",
+        ]
+    )
+    rental_terms = any(k in lower for k in ["agreement", "lease", "deposit", "token", "advance"])
+    if rental_context and (rental_terms or any(k in lower for k in ["pay", "transfer", "upi"])):
+        return "rental_scam"
     # Romance / dating / relationship scams
     if any(
         k in lower
@@ -999,6 +1025,22 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                         if scammer_turns <= 8:
                             return "friction"
                     if domain == "job_offer" and any(k in last_scam for k in ["fee", "registration", "pay", "payment", "upi", "transfer", "deposit"]):
+                        return "near_miss"
+                    if domain == "rental_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "deposit",
+                            "token",
+                            "advance",
+                            "pay",
+                            "payment",
+                            "transfer",
+                            "upi",
+                            "send",
+                            "confirm booking",
+                            "book now",
+                        ]
+                    ):
                         return "near_miss"
                     # Payment push / deposit requests in investment scams are a "near miss" moment where
                     # we keep them talking and force them to repeat their handles/links without paying.
