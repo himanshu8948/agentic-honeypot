@@ -73,3 +73,26 @@ def test_rule_score_tech_support_scam_openers():
     text = "This is Amit from Microsoft Support. Your device has malware/virus. Please install AnyDesk and share remote access code."
     score = rule_score(text)
     assert score >= 7
+
+def test_rule_score_sim_swap_scam_openers():
+    text = "Your SIM will be deactivated today. For SIM card replacement share OTP immediately."
+    score = rule_score(text)
+    assert score >= 7
+
+
+def test_rule_score_charity_scam_openers():
+    text = "Donate now to the relief fund. Pay via UPI help@upi to support charity."
+    score = rule_score(text)
+    assert score >= 6
+
+
+def test_rule_score_ecommerce_scam_openers():
+    text = "Your parcel is on hold. Click https://track.example to verify and pay the delivery charge via UPI."
+    score = rule_score(text)
+    assert score >= 6
+
+
+def test_rule_score_tax_refund_scam_openers():
+    text = "Income tax refund pending. Verify your bank details via https://tax-refund.example now."
+    score = rule_score(text)
+    assert score >= 6

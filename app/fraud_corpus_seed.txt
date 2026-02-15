@@ -1,13 +1,280 @@
-# Seed fraudster/scammer phrases (extend with OCR output via FRAUD_CORPUS_PATH).
-# Format: one line per phrase/snippet. Optional prefixes supported: "Scammer:" / "User:".
-
-Scammer: Your account will be blocked if you do not verify now.
-Scammer: Share the OTP immediately to complete verification.
-Scammer: This is bank security team, your account is compromised.
-Scammer: Pay a small verification fee to unlock your account.
-Scammer: Send money to this UPI ID to reverse the hold.
-Scammer: Click this link to update KYC.
-Scammer: Do not share this with anyone, it is confidential verification.
-Scammer: Final warning, your service will be suspended.
-Scammer: I am from customer care, confirm your identity now.
-Scammer: You will receive an OTP, tell me the number to proceed.
+[Cryptocurrency Investment Scam] Invest ₹51736 in our crypto plan and get ₹99211 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹69403 in our crypto plan and get ₹93093 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹78843 in our crypto plan and get ₹58664 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹9651 in our crypto plan and get ₹80620 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹10406 in our crypto plan and get ₹32957 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹94224 in our crypto plan and get ₹93400 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹55203 in our crypto plan and get ₹76439 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹61580 in our crypto plan and get ₹69574 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹39310 in our crypto plan and get ₹59052 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹9894 in our crypto plan and get ₹37319 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹59871 in our crypto plan and get ₹89748 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹4501 in our crypto plan and get ₹45280 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹62769 in our crypto plan and get ₹48323 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹20255 in our crypto plan and get ₹48408 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹86591 in our crypto plan and get ₹34074 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹35095 in our crypto plan and get ₹78314 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹63439 in our crypto plan and get ₹53162 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹98606 in our crypto plan and get ₹54793 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹63720 in our crypto plan and get ₹55413 in a week. Limited slots!
+[Cryptocurrency Investment Scam] Invest ₹3736 in our crypto plan and get ₹67045 in a week. Limited slots!
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Bihar. Please donate what you can to UPI ID: jcontractor@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Gujarat. Please donate what you can to UPI ID: ojas55@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Andhra Pradesh. Please donate what you can to UPI ID: jdhillon@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Jharkhand. Please donate what you can to UPI ID: aarnabedi@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Himachal Pradesh. Please donate what you can to UPI ID: riaan80@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Karnataka. Please donate what you can to UPI ID: kumerpurab@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Maharashtra. Please donate what you can to UPI ID: neysadugar@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Himachal Pradesh. Please donate what you can to UPI ID: vihaanrau@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Uttar Pradesh. Please donate what you can to UPI ID: nehmattailor@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Haryana. Please donate what you can to UPI ID: hiran09@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Uttarakhand. Please donate what you can to UPI ID: bmand@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Jharkhand. Please donate what you can to UPI ID: nakul15@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Rajasthan. Please donate what you can to UPI ID: riyachanda@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Punjab. Please donate what you can to UPI ID: shukladhruv@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Uttar Pradesh. Please donate what you can to UPI ID: ltak@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Rajasthan. Please donate what you can to UPI ID: fdubey@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Assam. Please donate what you can to UPI ID: ysabharwal@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Sikkim. Please donate what you can to UPI ID: yuvraj-sankaran@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Chhattisgarh. Please donate what you can to UPI ID: laganmanda@upi
+[Fake Charity/Donation Scam] We're raising funds for flood victims in Karnataka. Please donate what you can to UPI ID: aaryahi50@upi
+[Fake Discount/Refund Scam] You are eligible for a ₹11543 refund from Chowdhury Inc. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹46899 refund from Behl, Jha and Sarna. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹59806 refund from Rajan-Wali. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹99466 refund from Ratta, Chacko and Chhabra. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹48769 refund from Shan Inc. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹17190 refund from Bava Ltd. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹85807 refund from Balasubramanian, Raja and Varma. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹71242 refund from Butala, Tank and Hari. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹58140 refund from Hari-Swamy. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹45438 refund from Dayal, Mallick and Kala. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹25353 refund from Varghese Inc. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹9324 refund from Varughese, Bera and Dass. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹99075 refund from Yogi and Sons. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹8658 refund from Basu, Dass and Vyas. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹50792 refund from Ahuja-Gera. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹2299 refund from Gala-Tella. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹8849 refund from Viswanathan, Savant and Saran. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹58893 refund from Chander-Chaudhuri. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹58430 refund from Grewal, Comar and Keer. Please share your bank details to process it.
+[Fake Discount/Refund Scam] You are eligible for a ₹40624 refund from Halder, Thakkar and Kulkarni. Please share your bank details to process it.
+[Fake E-commerce Scam] Get Smartwatch for just ₹23176. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹42520. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get iPhone 13 for just ₹88203. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Smartwatch for just ₹33128. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get iPhone 13 for just ₹3726. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹44811. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Smartwatch for just ₹62375. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get iPhone 13 for just ₹24314. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get AirPods Pro for just ₹55828. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get iPhone 13 for just ₹74644. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get iPhone 13 for just ₹56504. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹5112. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹83798. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get AirPods Pro for just ₹55965. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹23908. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹63774. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹45012. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Smartwatch for just ₹74132. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹67895. DM on WhatsApp to order now. Prepay to confirm.
+[Fake E-commerce Scam] Get Laptop for just ₹52540. DM on WhatsApp to order now. Prepay to confirm.
+[Fake Job Offer Scam] Hi, this is Saksham from HR at Dalal Inc. You've been shortlisted for a remote role. Pay ₹708 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Shayak from HR at Chad Inc. You've been shortlisted for a remote role. Pay ₹473 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Dhanuk from HR at Ramachandran, Majumdar and Manne. You've been shortlisted for a remote role. Pay ₹309 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Yuvraj  from HR at Kumer and Sons. You've been shortlisted for a remote role. Pay ₹872 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Suhana from HR at Bajaj, Devi and Ahuja. You've been shortlisted for a remote role. Pay ₹916 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Neelofar from HR at Balan Ltd. You've been shortlisted for a remote role. Pay ₹991 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Dhanush from HR at Dara Inc. You've been shortlisted for a remote role. Pay ₹534 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Yakshit from HR at Krishnamurthy-Sawhney. You've been shortlisted for a remote role. Pay ₹967 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Dhruv from HR at Shetty-Som. You've been shortlisted for a remote role. Pay ₹338 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Ojas from HR at Sama, Dhillon and Sagar. You've been shortlisted for a remote role. Pay ₹606 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Zain from HR at Koshy, Buch and Walia. You've been shortlisted for a remote role. Pay ₹627 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Suhana from HR at Raval, Dhar and Mandal. You've been shortlisted for a remote role. Pay ₹713 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Prisha from HR at Borde-Sarkar. You've been shortlisted for a remote role. Pay ₹443 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Anaya from HR at Iyer, Rastogi and Bhargava. You've been shortlisted for a remote role. Pay ₹357 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Azad from HR at Balay-Bhatia. You've been shortlisted for a remote role. Pay ₹696 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Amira from HR at Loke Inc. You've been shortlisted for a remote role. Pay ₹412 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Nitya from HR at Ravi Ltd. You've been shortlisted for a remote role. Pay ₹465 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Ishita from HR at Chad-Bobal. You've been shortlisted for a remote role. Pay ₹739 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Amira from HR at Konda-Sheth. You've been shortlisted for a remote role. Pay ₹444 as a registration fee.
+[Fake Job Offer Scam] Hi, this is Inaaya  from HR at Atwal Group. You've been shortlisted for a remote role. Pay ₹627 as a registration fee.
+[Fake Loan Approval Scam] You are pre-approved for a ₹27824 loan. Pay ₹896 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹31404 loan. Pay ₹686 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹17449 loan. Pay ₹516 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹66387 loan. Pay ₹407 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹69109 loan. Pay ₹857 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹46537 loan. Pay ₹698 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹52851 loan. Pay ₹660 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹59702 loan. Pay ₹840 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹33226 loan. Pay ₹492 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹63482 loan. Pay ₹619 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹99629 loan. Pay ₹469 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹75845 loan. Pay ₹360 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹91486 loan. Pay ₹553 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹28948 loan. Pay ₹718 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹35682 loan. Pay ₹414 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹50216 loan. Pay ₹667 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹85000 loan. Pay ₹874 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹92134 loan. Pay ₹719 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹52739 loan. Pay ₹662 as a processing fee to receive the funds.
+[Fake Loan Approval Scam] You are pre-approved for a ₹80886 loan. Pay ₹614 as a processing fee to receive the funds.
+[Fake Technical Support Scam] This is Indranil from Kata, Bahri and Lanka Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Priyansh from Vyas-Lall Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Onkar from Ganesh, Maharaj and Bhatti Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Prisha from Raman-Aurora Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Dhanuk from Koshy, Talwar and Goyal Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Aarna from Madan, Deol and Shankar Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Mehul from Gera, Mani and Manda Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Nitara from Kaur PLC Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Dhruv from Bath-Bains Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Kiara from Shenoy Group Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Romil from Anne-Chaudhary Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Kanav from Bhattacharyya PLC Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Jayan from Rajagopal, Ratta and Bobal Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Kiaan from Ganesan, Swamy and Chandran Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Vihaan from Mane-De Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Oorja from Tripathi-Swamy Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Ivana from Mani and Sons Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Jayesh from Sha Group Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Tushar from Varty, Rau and Kade Support. Your device has malware. Please install TeamViewer and share the code.
+[Fake Technical Support Scam] This is Nehmat from Kota and Sons Support. Your device has malware. Please install TeamViewer and share the code.
+[Friend in Distress Scam] Hey, it's Manikya. I'm stuck in Korba and need ₹94392 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Yakshit. I'm stuck in Tadipatri and need ₹22290 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Rania. I'm stuck in Korba and need ₹47702 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Nitya. I'm stuck in Srikakulam and need ₹77967 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Yashvi. I'm stuck in Bhatpara and need ₹10019 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Devansh. I'm stuck in Buxar and need ₹67443 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Mannat. I'm stuck in Kochi and need ₹56911 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Amira. I'm stuck in Muzaffarpur and need ₹80147 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Hiran. I'm stuck in Kurnool and need ₹6876 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Vidur. I'm stuck in Ongole and need ₹60782 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Kabir. I'm stuck in Secunderabad and need ₹58693 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Nitara. I'm stuck in Ambala and need ₹87416 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Zara. I'm stuck in Saharsa and need ₹81866 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Indranil. I'm stuck in Latur and need ₹66809 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Aarav. I'm stuck in Gorakhpur and need ₹61714 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Baiju. I'm stuck in Agra and need ₹7519 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Seher. I'm stuck in Rohtak and need ₹13865 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Indranil. I'm stuck in Bharatpur and need ₹45006 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Damini. I'm stuck in Silchar and need ₹19390 urgently. Can you UPI me?
+[Friend in Distress Scam] Hey, it's Dharmajan. I'm stuck in Bhusawal and need ₹45921 urgently. Can you UPI me?
+[Phishing Scam (Link Sharing)] Your Axis account is at risk. Click here to verify your info: http://dhingra-kade.net
+[Phishing Scam (Link Sharing)] Your HDFC account is at risk. Click here to verify your info: http://luthra.com
+[Phishing Scam (Link Sharing)] Your Axis account is at risk. Click here to verify your info: http://balan-banik.com
+[Phishing Scam (Link Sharing)] Your HDFC account is at risk. Click here to verify your info: http://deol.net
+[Phishing Scam (Link Sharing)] Your HDFC account is at risk. Click here to verify your info: http://bawa.info
+[Phishing Scam (Link Sharing)] Your ICICI account is at risk. Click here to verify your info: http://vaidya.com
+[Phishing Scam (Link Sharing)] Your Axis account is at risk. Click here to verify your info: http://yogi.com
+[Phishing Scam (Link Sharing)] Your SBI account is at risk. Click here to verify your info: http://loyal-devan.com
+[Phishing Scam (Link Sharing)] Your HDFC account is at risk. Click here to verify your info: http://ghosh.com
+[Phishing Scam (Link Sharing)] Your SBI account is at risk. Click here to verify your info: http://ramesh.com
+[Phishing Scam (Link Sharing)] Your HDFC account is at risk. Click here to verify your info: http://khatri.com
+[Phishing Scam (Link Sharing)] Your HDFC account is at risk. Click here to verify your info: http://seshadri.com
+[Phishing Scam (Link Sharing)] Your Axis account is at risk. Click here to verify your info: http://biswas.org
+[Phishing Scam (Link Sharing)] Your SBI account is at risk. Click here to verify your info: http://loke.com
+[Phishing Scam (Link Sharing)] Your Axis account is at risk. Click here to verify your info: http://iyengar.org
+[Phishing Scam (Link Sharing)] Your SBI account is at risk. Click here to verify your info: http://balan.com
+[Phishing Scam (Link Sharing)] Your Axis account is at risk. Click here to verify your info: http://devi.com
+[Phishing Scam (Link Sharing)] Your Axis account is at risk. Click here to verify your info: http://divan.com
+[Phishing Scam (Link Sharing)] Your HDFC account is at risk. Click here to verify your info: http://lad.org
+[Phishing Scam (Link Sharing)] Your SBI account is at risk. Click here to verify your info: http://shankar-walia.info
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Jio support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Jio support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Jio support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Jio support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Airtel support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Jio support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Jio support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Vi support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[SIM Card Replacement Scam] Hi, this is Jio support. We're upgrading your SIM. Send your Aadhaar and OTP to continue.
+[Tax Refund Scam] Your tax refund of ₹75924 is ready. Click here to verify your info: http://som.com
+[Tax Refund Scam] Your tax refund of ₹57617 is ready. Click here to verify your info: http://khalsa.com
+[Tax Refund Scam] Your tax refund of ₹33899 is ready. Click here to verify your info: http://venkatesh.com
+[Tax Refund Scam] Your tax refund of ₹98365 is ready. Click here to verify your info: http://ramesh.com
+[Tax Refund Scam] Your tax refund of ₹45251 is ready. Click here to verify your info: http://bhandari.org
+[Tax Refund Scam] Your tax refund of ₹81275 is ready. Click here to verify your info: http://gulati.net
+[Tax Refund Scam] Your tax refund of ₹30459 is ready. Click here to verify your info: http://tailor.com
+[Tax Refund Scam] Your tax refund of ₹72729 is ready. Click here to verify your info: http://sampath-dalal.com
+[Tax Refund Scam] Your tax refund of ₹13154 is ready. Click here to verify your info: http://ram.net
+[Tax Refund Scam] Your tax refund of ₹4690 is ready. Click here to verify your info: http://sekhon.com
+[Tax Refund Scam] Your tax refund of ₹38845 is ready. Click here to verify your info: http://garde.com
+[Tax Refund Scam] Your tax refund of ₹77953 is ready. Click here to verify your info: http://yohannan-raj.biz
+[Tax Refund Scam] Your tax refund of ₹60765 is ready. Click here to verify your info: http://sibal.com
+[Tax Refund Scam] Your tax refund of ₹28848 is ready. Click here to verify your info: http://badami.com
+[Tax Refund Scam] Your tax refund of ₹75893 is ready. Click here to verify your info: http://tiwari.com
+[Tax Refund Scam] Your tax refund of ₹34299 is ready. Click here to verify your info: http://garg.info
+[Tax Refund Scam] Your tax refund of ₹9150 is ready. Click here to verify your info: http://goel.com
+[Tax Refund Scam] Your tax refund of ₹23705 is ready. Click here to verify your info: http://talwar-chand.com
+[Tax Refund Scam] Your tax refund of ₹45012 is ready. Click here to verify your info: http://balasubramanian.com
+[Tax Refund Scam] Your tax refund of ₹50638 is ready. Click here to verify your info: http://ganesan.com
+[UPI Scam] Your Axis account is blocked. To unblock, pay ₹63112 to UPI ID: hirangolla@upi.
+[UPI Scam] Your SBI account is blocked. To unblock, pay ₹8612 to UPI ID: ahujaaaina@upi.
+[UPI Scam] Your Axis account is blocked. To unblock, pay ₹67419 to UPI ID: jayesh01@upi.
+[UPI Scam] Your HDFC account is blocked. To unblock, pay ₹58921 to UPI ID: vanya13@upi.
+[UPI Scam] Your SBI account is blocked. To unblock, pay ₹88166 to UPI ID: hazel82@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹3436 to UPI ID: jranganathan@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹8439 to UPI ID: zgandhi@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹70576 to UPI ID: pranaybhattacharyya@upi.
+[UPI Scam] Your SBI account is blocked. To unblock, pay ₹87089 to UPI ID: ywalia@upi.
+[UPI Scam] Your HDFC account is blocked. To unblock, pay ₹79762 to UPI ID: sarnaprisha@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹67252 to UPI ID: manikyasawhney@upi.
+[UPI Scam] Your Axis account is blocked. To unblock, pay ₹92122 to UPI ID: wjoshi@upi.
+[UPI Scam] Your SBI account is blocked. To unblock, pay ₹46576 to UPI ID: purabmallick@upi.
+[UPI Scam] Your SBI account is blocked. To unblock, pay ₹14482 to UPI ID: dhanushdesai@upi.
+[UPI Scam] Your HDFC account is blocked. To unblock, pay ₹32294 to UPI ID: neysashan@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹80420 to UPI ID: miraan25@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹72151 to UPI ID: reyanshbava@upi.
+[UPI Scam] Your Axis account is blocked. To unblock, pay ₹88578 to UPI ID: stuvanmajumdar@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹52874 to UPI ID: talwarmyra@upi.
+[UPI Scam] Your ICICI account is blocked. To unblock, pay ₹24369 to UPI ID: navyabakshi@upi.
+[WhatsApp Account Hacking Scam] Hey, this is Eshani. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Hansh. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Riya. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Vivaan. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Lakshay. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Anaya. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Vanya. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Hansh. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Chirag. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Ivana. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Raunak. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Jivika. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Jivin. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Myra. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Ahana . I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Saanvi. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Prerak. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Urvi. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Vivaan. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Account Hacking Scam] Hey, this is Purab. I accidentally sent my OTP to your number. Can you send it to me quickly?
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹89278 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to +910476216271.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹69870 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 9909625799.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹59093 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 1195763051.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹86612 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to +910613277744.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹6783 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 01826027457.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹53860 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 01577904166.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹96486 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 02027722173.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹98589 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 7139524129.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹37984 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 1700336293.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹41143 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 6135577943.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹32827 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 09817881703.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹42872 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 01473264976.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹87903 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to +918041162769.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹3874 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 01866152164.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹63001 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to +919386952382.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹26584 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 00066793347.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹71088 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 08927078310.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹33583 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to +910676161644.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹97450 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 09813223385.
+[WhatsApp Lottery/Prize Scam] Congratulations! You've won ₹93437 in the WhatsApp Mega Draw. To claim, send your full name, bank account number, and Aadhaar to 5230186398.

@@ -16,6 +16,9 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    if any(k in lower for k in ["anydesk", "teamviewer", "rustdesk", "remote access", "access code", "device has virus", "device has malware"]):
+        # Route tech-support style scams to phishing-style playbooks (install/link + instructions).
+        return "phishing"
     if any(
         k in lower
         for k in [

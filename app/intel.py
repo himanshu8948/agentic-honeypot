@@ -104,6 +104,65 @@ THREAT_KEYWORDS = [
     "locked",
 ]
 
+TECH_SUPPORT_OPENERS = [
+    "from support",
+    "from microsoft support",
+    "from windows support",
+    "technical support",
+    "device has malware",
+    "device has virus",
+    "we detected security breach",
+    "security breach",
+    "share remote access code",
+    "remote access code",
+]
+
+SIM_SWAP_OPENERS = [
+    "sim card replacement",
+    "sim replacement",
+    "sim swap",
+    "sim will be deactivated",
+    "sim will be blocked",
+    "upgrade to 5g sim",
+    "your sim will stop",
+]
+
+ECOMMERCE_OPENERS = [
+    "your order",
+    "order confirmation",
+    "delivery",
+    "courier",
+    "parcel",
+    "shipment",
+    "tracking",
+    "customs",
+]
+
+CHARITY_OPENERS = [
+    "donate",
+    "donation",
+    "charity",
+    "fundraiser",
+    "relief fund",
+]
+
+FRIEND_DISTRESS_OPENERS = [
+    "i am in trouble",
+    "need urgent money",
+    "send money urgently",
+    "i lost my phone",
+    "new number",
+    "this is my new number",
+]
+
+TAX_REFUND_OPENERS = [
+    "income tax refund",
+    "tax refund",
+    "gst refund",
+    "itr refund",
+    "refund from income tax",
+]
+
 PHISHING_OPENERS = [
     "account is at risk",
     "click here to verify",
@@ -172,20 +231,6 @@ CRYPTO_INVEST_OPENERS = [
     "returns of",
 ]
 
-TECH_SUPPORT_OPENERS = [
-    "from support",
-    "device has malware",
-    "device has virus",
-    "has malware",
-    "has virus",
-    "install teamviewer",
-    "install anydesk",
-    "share remote access code",
-    "remote access code",
-    "we detected security breach",
-    "security breach",
-]
-
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -209,6 +254,11 @@ SUSPICIOUS_KEYWORDS = sorted(
         *FAKE_JOB_OPENERS,
         *CRYPTO_INVEST_OPENERS,
         *TECH_SUPPORT_OPENERS,
+        *SIM_SWAP_OPENERS,
+        *ECOMMERCE_OPENERS,
+        *CHARITY_OPENERS,
+        *FRIEND_DISTRESS_OPENERS,
+        *TAX_REFUND_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -304,6 +354,23 @@ def rule_score(text: str) -> int:
         k in lower for k in ["anydesk", "teamviewer", "rustdesk", "remote", "access code"]
     ):
         score += 5
+    # SIM swap / replacement: SIM deactivation + OTP/social engineering.
+    if any(p in lower for p in SIM_SWAP_OPENERS) and any(k in lower for k in ["otp", "verification code", "one time password"]):
+        score += 5
+    # E-commerce delivery/refund: parcel/order + link/otp/payment.
+    if any(p in lower for p in ECOMMERCE_OPENERS) and (
+        LINK_RE.search(text) or any(k in lower for k in ["otp", "pay", "upi", "refund"])
+    ):
+        score += 4
+    # Charity/donation: donation ask + payment handle/link.
+    if any(p in lower for p in CHARITY_OPENERS) and (any(k in lower for k in ["upi", "pay", "donate now"]) or LINK_RE.search(text)):
+        score += 4
+    # Friend-in-distress: impersonation + urgent money transfer.
+    if any(p in lower for p in FRIEND_DISTRESS_OPENERS) and any(k in lower for k in ["send", "transfer", "upi", "urgent"]):
+        score += 4
+    # Tax refund: refund + link/verification request.
+    if any(p in lower for p in TAX_REFUND_OPENERS) and (LINK_RE.search(text) or any(k in lower for k in ["verify", "otp", "bank details"])):
+        score += 4
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
     if any(k in lower for k in URGENCY_KEYWORDS):
