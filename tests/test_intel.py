@@ -68,3 +68,8 @@ def test_rule_score_crypto_invest_openers():
     text = "Invest ₹10,000 and get ₹25,000 in a week. Guaranteed returns of 15%."
     score = rule_score(text)
     assert score >= 6
+
+def test_rule_score_tech_support_scam_openers():
+    text = "This is Amit from Microsoft Support. Your device has malware/virus. Please install AnyDesk and share remote access code."
+    score = rule_score(text)
+    assert score >= 7

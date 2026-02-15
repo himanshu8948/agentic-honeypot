@@ -172,6 +172,20 @@ CRYPTO_INVEST_OPENERS = [
     "returns of",
 ]
 
+TECH_SUPPORT_OPENERS = [
+    "from support",
+    "device has malware",
+    "device has virus",
+    "has malware",
+    "has virus",
+    "install teamviewer",
+    "install anydesk",
+    "share remote access code",
+    "remote access code",
+    "we detected security breach",
+    "security breach",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -194,6 +208,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         *PRIZE_LOTTERY_OPENERS,
         *FAKE_JOB_OPENERS,
         *CRYPTO_INVEST_OPENERS,
+        *TECH_SUPPORT_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -284,6 +299,11 @@ def rule_score(text: str) -> int:
         MONEY_RE.search(text) or "%" in text or any(t in lower for t in ["week", "weeks", "days", "day", "month", "months"])
     ):
         score += 4
+    # Tech support scams: malware/virus + remote tool / access code.
+    if any(p in lower for p in TECH_SUPPORT_OPENERS) and any(
+        k in lower for k in ["anydesk", "teamviewer", "rustdesk", "remote", "access code"]
+    ):
+        score += 5
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
     if any(k in lower for k in URGENCY_KEYWORDS):
