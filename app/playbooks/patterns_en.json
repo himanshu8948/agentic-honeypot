@@ -346,6 +346,46 @@
       "Can you WhatsApp the photo/video link again? It is not loading on my phone."
     ]
   },
+  "insurance_scam": {
+    "hook": [
+      "Hello. You said it's an insurance policy. Is this LIC or a private company? Please tell me the exact company name.",
+      "I have family responsibilities, so I'm interested, but please explain coverage and premium in simple words.",
+      "What is the policy name, sum assured, and maturity benefit? Also what is the yearly premium?",
+      "Can you WhatsApp me the brochure/policy document to read first?"
+    ],
+    "tangent": [
+      "What is your agent name and agent ID / license number? Please type it clearly.",
+      "Which branch/office is this from? Share the office address and a landline number so I can verify.",
+      "Is this IRDAI registered? Please share IRDAI registration reference and where I can verify it online.",
+      "What is the claim settlement process and any waiting period/cooling-off period?"
+    ],
+    "friction": [
+      "Before any payment, I need to verify your credentials. Can you share an official email ID and the website link where this policy is listed?",
+      "The PDF/logo looks a bit different. Can you resend from an official source and also share your supervisor/branch contact?",
+      "I want to visit the office once. What are the visiting hours and exact location (Google Maps pin)?",
+      "I will compare with my existing agent and online calculators first. Please give me 1-2 hours."
+    ],
+    "near_miss": [
+      "If you want premium today, share the exact UPI ID or bank details and the beneficiary name that should show in the app.",
+      "Please send the policy number, premium amount breakup, and receipt format in one clear message before I pay anything.",
+      "My wife is the nominee, she wants to be on the call. Can you share your callback number so we can three-way confirm?",
+      "If this is limited time, confirm the final amount and provide written confirmation on email/WhatsApp with your agent ID and office address."
+    ],
+    "endurance": [
+      "My banking app is not loading right now. I can try later, but keep all details (company, agent ID, office address, payment handle) in one message.",
+      "I need to check with my CA for tax benefits and terms. Please wait, I will revert after confirmation.",
+      "I want to start next month. Can you hold the quote and send the terms again so I don't miss anything?",
+      "I found another policy to compare. If you share verification links and landline, I can finalize faster."
+    ],
+    "ask_phone": [
+      "Please share your exact callback/WhatsApp number (with country code) and the branch landline number for verification.",
+      "Can you share your official email ID and supervisor/branch contact number as well?"
+    ],
+    "ask_link": [
+      "Please share the official website link and the exact page where this policy is listed. Also send the Google Maps pin for the office.",
+      "The brochure link is not opening on my phone. Please resend the exact link and policy name again."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",

@@ -127,6 +127,47 @@
     ]
   }
   ,
+  "insurance_scam": {
+    "hook": [
+      "Hello. Insurance policy bol rahe ho. Ye LIC hai ya private? Exact company name batao.",
+      "Family ki safety important hai, so I'm interested, but coverage and premium simple words mein explain karo.",
+      "Policy name, sum assured, maturity benefit kya hai? Yearly premium kitna hoga?",
+      "WhatsApp pe brochure/policy document bhej do. Main pehle read karunga."
+    ],
+    "tangent": [
+      "Aapka agent name + agent ID / license number kya hai? Clearly type kar do please.",
+      "Which branch/office? Office address + landline number share karo so I can verify.",
+      "IRDAI registered hai kya? Registration reference and verify link bhej do.",
+      "Claim process kya hai and cooling-off/waiting period details bhi bhej do."
+    ],
+    "friction": [
+      "Payment se pehle I need verification. Official email ID + website link bhejo jahan policy listed ho.",
+      "PDF/logo thoda different lag raha. Official source se resend karo and supervisor/branch contact bhi do.",
+      "Main office visit karna chahta hoon. Visiting hours + Google Maps pin bhej do.",
+      "Main apne existing agent + online calculators se compare karke confirm karunga. 1-2 hours do."
+    ],
+    "near_miss": [
+      "If premium today, share exact UPI ID/bank details + beneficiary name that should show in the app.",
+      "Before payment, policy number + premium breakup + receipt format ek message mein clear bhej do.",
+      "Nominee meri wife hai; she wants to be on call. Apna callback/WhatsApp number bhej do.",
+      "Limited time offer hai toh final amount written confirm karo (WhatsApp/email) with agent ID + office address."
+    ],
+    "endurance": [
+      "Banking app load nahi ho raha. Later try karunga, but company + agent ID + office address + payment handle ek message mein bhej do.",
+      "CA se tax benefits confirm karne hain. Verify karke main reply karunga.",
+      "Main next month start karna chahta hoon. Quote hold karo and terms dobara bhej do.",
+      "Main ek aur policy compare kar raha hoon. Verification links + landline share kar doge toh finalize fast."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (with country code) + branch landline share karo please.",
+      "Official email ID + supervisor/branch contact number bhi bhej do."
+    ],
+    "ask_link": [
+      "Official website link + exact page name bhejo jahan policy listed ho. Office Google Maps pin bhi bhej do.",
+      "Brochure link open nahi ho raha. Exact link + policy name dobara bhej do please."
+    ]
+  }
+  ,
   "romance_scam": {
     "hook": [
       "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",

@@ -106,6 +106,29 @@ def detect_domain(text: str) -> str:
         return "credit_card"
     if any(k in lower for k in ["donate", "donation", "charity", "fundraising", "relief fund"]):
         return "charity_donation"
+    if any(
+        k in lower
+        for k in [
+            "insurance",
+            "life cover",
+            "health insurance",
+            "policy",
+            "premium",
+            "maturity",
+            "nominee",
+            "sum assured",
+            "claim",
+            "claim settlement",
+            "lic",
+            "irda",
+            "irdai",
+            "agent id",
+            "license number",
+            "policy number",
+            "brochure",
+        ]
+    ):
+        return "insurance_scam"
     if any(k in lower for k in ["anydesk", "teamviewer", "rustdesk", "remote access", "access code", "device has virus", "device has malware"]):
         # Route tech-support style scams to phishing-style playbooks (install/link + instructions).
         return "tech_support"
@@ -1055,6 +1078,26 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                             "send",
                             "confirm booking",
                             "book now",
+                        ]
+                    ):
+                        return "near_miss"
+                    if domain == "insurance_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "premium",
+                            "pay",
+                            "payment",
+                            "transfer",
+                            "upi",
+                            "bank details",
+                            "account number",
+                            "first premium",
+                            "today only",
+                            "limited time",
+                            "discount",
+                            "offer expires",
+                            "activation",
+                            "processing fee",
                         ]
                     ):
                         return "near_miss"

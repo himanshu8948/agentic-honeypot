@@ -377,6 +377,46 @@
       "Photo/video dobara bhej do beta. Mere phone pe load nahi ho raha."
     ]
   },
+  "insurance_scam": {
+    "hook": [
+      "Hello. Aap insurance policy bol rahe ho. Ye LIC hai ya private company? Exact company name batao.",
+      "Meri family ki responsibility hai, isliye interested hoon, par simple words mein coverage aur premium samjhao.",
+      "Policy name kya hai, sum assured kitna, maturity benefit kya? Yearly premium kitna hoga?",
+      "WhatsApp pe brochure/policy document bhej do. Main pehle padhunga."
+    ],
+    "tangent": [
+      "Aapka agent name aur agent ID / license number kya hai? Clearly type kar do.",
+      "Kaunsi branch/office se ho? Office address aur landline number do, main verify kar lunga.",
+      "IRDAI registered hai kya? IRDAI registration reference share kar do aur verify kahan karna hai?",
+      "Claim settlement process kya hai? Waiting period/cooling-off period bhi bata do."
+    ],
+    "friction": [
+      "Payment se pehle credentials verify karna hai. Official email ID aur website link bhej do jahan policy listed ho.",
+      "PDF/logo thoda different lag raha hai. Official source se resend karo aur supervisor/branch contact bhi do.",
+      "Main office visit karna chahta hoon. Visiting hours aur exact location (Google Maps pin) bhej do.",
+      "Main existing agent aur online calculator se compare karke confirm karunga. 1-2 ghanta time do."
+    ],
+    "near_miss": [
+      "Agar premium aaj bhejna hai toh exact UPI ID ya bank details bhejo, aur beneficiary name bhi jo app pe show hoga.",
+      "Pay karne se pehle policy number, premium amount breakup, aur receipt format ek message mein clear bhej do.",
+      "Nominee meri wife hai, wo call pe baat karna chahegi. Aap apna callback number bhej do.",
+      "Limited time hai toh final amount written mein confirm karo (WhatsApp/email) with agent ID aur office address."
+    ],
+    "endurance": [
+      "Mera banking app abhi load nahi ho raha. Main baad mein try karunga, par company, agent ID, office address, payment handle ek message mein bhej do.",
+      "CA se tax benefits aur terms confirm karne hain. Main verify karke reply karunga.",
+      "Main next month start karna chahta hoon. Quote hold kar do aur terms dobara bhej do.",
+      "Main ek aur policy compare kar raha hoon. Verification link + landline bhej doge toh main jaldi finalize kar dunga."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (country code ke saath) bhej do aur branch ka landline number bhi.",
+      "Official email ID aur supervisor/branch contact number bhi share kar do."
+    ],
+    "ask_link": [
+      "Official website link bhej do aur exact page ka naam bhi jahan policy listed ho. Office ka Google Maps pin bhi bhej do.",
+      "Brochure link open nahi ho raha. Exact link aur policy name dobara bhej do beta."
+    ]
+  },
   "generic": {
     "ask_more": [
       "Beta mujhe samajh nahi aaya. Zara dheere bolo.",
