@@ -44,3 +44,9 @@ def test_rule_score_fake_loan_openers():
     text = "Instant loan of ₹50,000 approved. Get loan in 5 minutes, pay ₹199 fee to activate."
     score = rule_score(text)
     assert score >= 7
+
+
+def test_rule_score_otp_whatsapp_hack_openers():
+    text = "Wrong number, please share the OTP. Hi, I sent you OTP by mistake."
+    score = rule_score(text)
+    assert score >= 6

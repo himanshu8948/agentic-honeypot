@@ -131,6 +131,13 @@ FAKE_LOAN_OPENERS = [
     "get loan in",
 ]
 
+OTP_WHATSAPP_HACK_OPENERS = [
+    "i accidentally sent my otp",
+    "sent you otp by mistake",
+    "can you send me the code i sent you",
+    "wrong number, please share the otp",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -149,6 +156,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         *PHISHING_OPENERS,
         *FAKE_REFUND_OPENERS,
         *FAKE_LOAN_OPENERS,
+        *OTP_WHATSAPP_HACK_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -225,6 +233,9 @@ def rule_score(text: str) -> int:
     # Loan hooks: opener + amount or fee strongly indicates scam.
     if any(p in lower for p in FAKE_LOAN_OPENERS) and (MONEY_RE.search(text) or "fee" in lower or "processing" in lower):
         score += 4
+    # OTP / WhatsApp takeover hooks: exact phrasing is very high confidence.
+    if any(p in lower for p in OTP_WHATSAPP_HACK_OPENERS):
+        score += 5
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
     if any(k in lower for k in URGENCY_KEYWORDS):
