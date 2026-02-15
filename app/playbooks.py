@@ -16,9 +16,29 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    if any(k in lower for k in ["grant", "subsidy", "government scheme", "tax refund", "processing fee"]):
+        return "government_grant"
+    if any(k in lower for k in ["congratulations", "you won", "winner", "lucky draw", "lottery", "cash prize", "mega draw", "prize"]):
+        return "prize_lottery"
+    if any(k in lower for k in ["microsoft", "apple", "virus", "malware", "teamviewer", "anydesk", "rustdesk", "remote access", "access code"]):
+        return "tech_support"
+    if any(k in lower for k in ["work from home", "shortlisted", "registration fee", "joining fee", "hr", "job offer"]):
+        return "job_offer"
+    if any(k in lower for k in ["bitcoin", "crypto", "forex", "guaranteed returns", "double your money", "investment"]):
+        return "investment_crypto"
+    if any(k in lower for k in ["arrest warrant", "warrant", "police", "investigation", "legal action"]):
+        return "police_authority"
+    if any(k in lower for k in ["parcel", "courier", "delivery", "customs", "shipment", "tracking number", "package"]):
+        return "delivery_package"
+    if any(k in lower for k in ["emergency", "hospital", "accident", "stuck", "help me", "urgent money"]):
+        return "friend_emergency"
+    if any(k in lower for k in ["credit card", "cvv", "expiry", "card number", "suspicious transaction"]):
+        return "credit_card"
+    if any(k in lower for k in ["donate", "donation", "charity", "fundraising", "relief fund"]):
+        return "charity_donation"
     if any(k in lower for k in ["anydesk", "teamviewer", "rustdesk", "remote access", "access code", "device has virus", "device has malware"]):
         # Route tech-support style scams to phishing-style playbooks (install/link + instructions).
-        return "phishing"
+        return "tech_support"
     if any(
         k in lower
         for k in [
@@ -821,7 +841,21 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
         if domain != "upi_security":
             if domain != "upi_authority":
                 if domain != "cyber_fine":
-                    return "default"
+                    # Simple staged flow for most domains: hook -> tangent -> friction -> endurance.
+                    scammer_turns = sum(1 for m in conversation if m.get("sender") == "scammer")
+                    last_scam = ""
+                    for m in reversed(conversation):
+                        if m.get("sender") == "scammer":
+                            last_scam = str(m.get("text", "")).lower()
+                            break
+                    if scammer_turns <= 2:
+                        return "hook"
+                    if any(k in last_scam for k in ["otp", "pin", "fee", "link", "install", "download", "pay", "transfer", "upi"]):
+                        if scammer_turns <= 8:
+                            return "friction"
+                    if scammer_turns <= 5:
+                        return "tangent"
+                    return "endurance"
 
     # Use scammer-turn count to pace like your script (0-40+ minutes mapping).
     scammer_turns = sum(1 for m in conversation if m.get("sender") == "scammer")

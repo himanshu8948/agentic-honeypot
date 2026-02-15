@@ -1,0 +1,301 @@
+{
+  "government_grant": {
+    "hook": [
+      "Government grant? Arre ye kya hai? Mujhe kisi ne bataya nahi. Aap kon ho?",
+      "Grant mila hai? Beta lekin maine toh apply nahi kiya. Ye kaise hua?",
+      "Processing fee? Pehle batao ye grant kis cheez ke liye hai beta?",
+      "Government scheme? Mujhe kuch nahi pata. Aap kis department se bol rahe ho?"
+    ],
+    "tangent": [
+      "Haan haan, main sun raha hoon. Bank details? Ek minute, wo diary mein likha hai...",
+      "Account number batana hai? Ruko beta, passbook dhoondhta hoon. Kahaan rakhi thi...",
+      "Processing fee kitna hai? Arre itna? Mera beta ko poochna chahiye pehle.",
+      "Theek hai theek hai. Ye sab information chahiye tumko? Ek minute likh leta hoon.",
+      "Haan beta main help karna chahta hoon. Batao kya kya details chahiye?"
+    ],
+    "friction": [
+      "Beta mera computer toh band hai. Chalane mein time lagega. Aap number do, baad mein phone karta hoon?",
+      "Bank ka account number kya tha? 16 digit? Arre itna lamba? Yaad nahi aa raha.",
+      "Arre ek minute, darwaza knock ho raha hai. Ruko... haan bolo, kya bol rahe the?",
+      "Processing fee online bhejni hai? Beta mujhe online payment karna nahi aata.",
+      "Account number likha hai passbook mein... arre chashma kahaan gaya? Dikhai nahi de raha...",
+      "Beta network ka problem hai. Tumhari awaaz theek se sunai nahi de rahi."
+    ],
+    "endurance": [
+      "Wait beta, ye sab kya kar rahe the hum? Bhool gaya main.",
+      "Network kharab aa raha hai. Tumhari awaaz toot toot ke aa rahi hai.",
+      "Beta thoda chakkar aa raha hai. Baad mein call karo na.",
+      "Mera beta shaam ko aayega. Usse hi ye sab karwa lunga. Number do tumhara.",
+      "Arre haan, government grant ka... toh kya karna tha? Dobara batao na."
+    ],
+    "ask_phone": [
+      "Beta main confuse ho raha hoon. Aapka exact callback number / WhatsApp number likh do.",
+      "Kis number pe baat karni hai? Country code ke saath exact number bhejo."
+    ]
+  },
+  "prize_lottery": {
+    "hook": [
+      "Prize jeeta? Sach mein? Lekin maine toh koi lottery nahi khelti!",
+      "10 lakh rupees? Arre baap re! Ye kaise hua? Main kaise jeeti?",
+      "WhatsApp Mega Draw? Beta ye kya hota hai? Pehle kabhi suna nahi.",
+      "Lucky draw mein naam aaya? Lekin beta maine toh participate hi nahi kiya!",
+      "Congratulations? Mujhe? Ye surprise hai! Batao kaise mila ye prize?"
+    ],
+    "tangent": [
+      "Claim kaise karu? Batao kya karna padega. Main bahut khush hoon!",
+      "Bank details? Haan de sakta hoon, lekin pehle ye batao - pakka hai na prize?",
+      "Phone number? Haan haan, mere paas hai. Lekin kyun chahiye tumko?",
+      "Full name aur address? Theek hai beta, bataata hoon. Ek minute..."
+    ],
+    "friction": [
+      "Phone number? Mera phone toh purana hai, number yaad nahi. Ek minute...",
+      "Bank account number? Arre wo toh bahut lamba hai. Galti ho jayegi likhne mein.",
+      "Aadhaar card photo? Beta kaise bhejun? Mujhe WhatsApp pe photo bhejna nahi aata.",
+      "Processing charges? Arre prize jeeta hai toh charges kyun? Ye samajh nahi aaya.",
+      "Bank details bhejne hain? Ruko, mera beta aane do. Wo help karega."
+    ],
+    "endurance": [
+      "Beta battery khatam hone wali hai phone ki. Baad mein baat karte hain.",
+      "Kya bol rahe the? Prize ka? Haan haan... ek minute, kya process tha?",
+      "Mere bete ko phone do. Wo help kar dega. Main abhi confused hoon.",
+      "Arre haan lottery jeeti thi na? Toh phir kya karna tha? Bhool gaya."
+    ]
+  },
+  "tech_support": {
+    "hook": [
+      "Microsoft? Virus? Arre baap re! Mera computer mein virus hai?",
+      "TeamViewer? Beta ye kya hota hai? Mujhe nahi pata ye sab.",
+      "Remote access? Matlab kya? Samajh nahi aaya.",
+      "Apple support? Lekin beta mere paas toh Apple phone nahi hai.",
+      "Device mein malware? Ye kya cheez hai beta? Kharab hai kya?"
+    ],
+    "tangent": [
+      "Haan beta, computer ko theek karna hai. Batao kya karu?",
+      "Install karna hai? Theek hai, lekin kaise karoon? Step by step batao.",
+      "Code share karna hai? Konsa code beta? Kahaan milega?",
+      "Download karna padega? Theek hai, website ka naam kya hai?"
+    ],
+    "friction": [
+      "Download kar raha hoon... bahut slow hai... abhi bhi loading ho raha hai...",
+      "TeamViewer kaha se download karoon? Google pe search karu kya?",
+      "Error aa raha hai. 'Unable to download' likh raha hai. Ab kya karoon?",
+      "Install button nahi mil raha. Kahaan hai ye? Computer screen pe bahut kuch dikh raha hai.",
+      "Beta computer hang ho gaya. Kuch nahi ho raha. Restart karoon kya?",
+      "Code kitne number ka hai? 6 digit? 8 digit? Mujhe dikhai nahi de raha theek se."
+    ],
+    "endurance": [
+      "Beta internet bahut slow chal raha hai aaj. Kal try karte hain?",
+      "Mera beta shaam ko aata hai. Wo expert hai, usse karwa lunga.",
+      "Computer hang ho gaya. Restart karna padega. Thoda time lagega...",
+      "Beta aaj nahi ho payega. Computer band kar diya. Bahut problem aa raha tha."
+    ],
+    "ask_link": [
+      "Beta jis website se download karna hai, exact link bhej do. Galat app install ho gaya toh?",
+      "Exact link/URL de do. Main bina link ke kuch click nahi karna chahta."
+    ]
+  },
+  "bank_fraud": {
+    "hook": [
+      "Account blocked? Arre baap re! Kyun? Kya hua?",
+      "Suspended? Lekin maine toh kuch galat nahi kiya! Ye kaise hua?",
+      "Verify karna hai? Theek hai, batao kya verify karna hai.",
+      "UPI payment karni padegi? Kyun beta? Account unblock ke liye payment?"
+    ],
+    "tangent": [
+      "Haan haan main cooperate karunga. Bank account important hai. Batao kya process hai?",
+      "OTP? Haan wo message aaya tha. Ruko, messages check karta hoon...",
+      "Verify karne ke liye kya chahiye? Aadhaar? PAN card? Batao.",
+      "Theek hai beta, main sab details de dunga. Account unblock hona chahiye."
+    ],
+    "friction": [
+      "OTP kaunsa? Abhi 3-4 messages aaye hain. Konse wala padhun?",
+      "Account number kahaan likha hai passbook mein... arre kahaan gaya... ek minute...",
+      "Beta ye UPI ID kya hota hai? Mere paas hai kya? Kaise pata chalega?",
+      "Payment kaise bhejun? Google Pay use karta hoon, lekin number nahi pata tumhara."
+    ],
+    "endurance": [
+      "Beta mera beta aayega toh usse poochunga. Wo banking samajhta hai.",
+      "Haan toh account blocked tha na? Unblock ke liye kya karna tha? Dobara batao.",
+      "Arre ek baar bank branch jaa kar baat karta hoon. Wo log batayenge.",
+      "Network problem ho raha hai. Phone ka balance bhi khatam hone wala hai."
+    ]
+  },
+  "job_offer": {
+    "hook": [
+      "Job offer? Mujhe? Lekin beta maine toh apply nahi kiya!",
+      "Work from home? Salary kitni hai? Kya kaam karna hoga?",
+      "HR se call? Konsi company hai ye? Naam kya hai?",
+      "Shortlisted? Arre lekin interview kab hua? Mujhe yaad nahi."
+    ],
+    "tangent": [
+      "Haan haan, job chahiye mujhe. Kya process hai? Batao beta.",
+      "Registration fee? Kitni hai? Aur job pakki hai na uske baad?",
+      "Resume bhejni hai? Mere paas hai, lekin PDF mein kaise convert karoon?",
+      "Haan interested hoon. Training kab shuru hogi? Kya sikhana hai?"
+    ],
+    "friction": [
+      "Registration fee online payment karni hai? Beta mujhe nahi aata ye.",
+      "Resume email pe bhejni hai? Mera email password bhool gaya. Reset karna padega.",
+      "₹500 fees? Arre pehle job confirm ho toh payment karoon. Pakka hai na?",
+      "Company ka office kahaan hai? Address batao, ek baar jaake dekh loon.",
+      "Beta phone number do company ka. Main verify kar loon pehle."
+    ],
+    "endurance": [
+      "Beta mera CV purana hai. Update karna padega. Thoda time lagega.",
+      "Haan job offer tha... konsi company thi? Kya position tha? Bhool gaya.",
+      "Beta kal call karo. Aaj CV nahi mil raha. Kal dhoondhke ready rakhunga."
+    ]
+  },
+  "investment_crypto": {
+    "hook": [
+      "Investment? Crypto? Beta ye kya hota hai? Pehle samjhao.",
+      "Bitcoin? Haan suna hai naam. Lekin kya hai ye? Kaise kaam karta hai?",
+      "30% returns? Ek hafte mein? Arre itna jaldi? Pakka hai na?",
+      "Guaranteed profit? Lekin market toh kabhi guaranteed nahi hota beta."
+    ],
+    "tangent": [
+      "Haan interested hoon. Minimum kitna invest karna padega?",
+      "Platform ka naam kya hai? Trusted hai? Government approved hai?",
+      "Demo account hai kya? Pehle practice kar loon?",
+      "Returns kaise milenge? Bank account mein aayenge ya wallet mein?"
+    ],
+    "friction": [
+      "Wallet kaise banate hain? KYC kya hota hai? Mujhe ye sab nahi pata.",
+      "Minimum ₹10,000? Arre itna? Pehle ₹1000 se try kar sakte hain kya?",
+      "Platform pe register kaise karoon? Link do, lekin safe hai na?",
+      "Beta ye cryptocurrency legal hai India mein? News mein suna tha kuch problem hai."
+    ],
+    "endurance": [
+      "Beta mera CA se baat karni hai pehle. Investment ke liye uski advice chahiye.",
+      "Beta family se discuss kar loon. Bina unhe bataye investment nahi kar sakta.",
+      "Beta ek do din soch loon. Itni jaldi decision nahi le sakta."
+    ]
+  },
+  "police_authority": {
+    "hook": [
+      "Police? Arre bhagwan! Kya hua? Main kya galat kar diya?",
+      "Arrest warrant? Mere naam pe? Ye kaise ho sakta hai?",
+      "Legal action? Arre inspector sahab, koi galat fehmi hui hai.",
+      "Investigation? Theek hai, main cooperate karunga. Kya jaankari chahiye?"
+    ],
+    "tangent": [
+      "Haan sir, main puri details de dunga. Kuch bhi chhupana nahi hai.",
+      "Documents bhejne hain? Theek hai. Email address batao.",
+      "Fine bharni hai? Kitni amount? Kaise pay karoon?",
+      "Haan sir main samajh gaya. Jo bhi process hai batao, follow karunga."
+    ],
+    "friction": [
+      "Sir ek baar station aa jaoon? Address batao, personally aakar baat karta hoon.",
+      "Badge number kya hai aapka? Verification ke liye. Aajkal fraud bahut ho raha hai.",
+      "Sir case number kya hai? Aur kis court mein file hua hai case?",
+      "Police station ka landline number do. Main wahan call karke confirm kar loon."
+    ],
+    "endurance": [
+      "Sir mera advocate ko phone karna hai. Wo batayega kya karna hai.",
+      "Sir kal station aata hoon documents lekar. Aaj toh time nahi hai.",
+      "Sir thoda time do. Family ko batana hai pehle. Wo log help karenge."
+    ]
+  },
+  "delivery_package": {
+    "hook": [
+      "Package? Mere naam pe? Lekin maine toh kuch order nahi kiya.",
+      "Courier? Kahan se aa raha hai? Kisne bheja hai?",
+      "Customs clearance? Beta ye international parcel hai kya?",
+      "Delivery charges? Kitne hain? Aur package mein kya hai?"
+    ],
+    "tangent": [
+      "Haan haan, package chahiye mujhe. Address confirm kar leta hoon.",
+      "Delivery kab hogi? Aaj? Kal? Main ghar pe rahunga.",
+      "Charges pay karne hain? Online ya cash on delivery?",
+      "Track karni hai package? Tracking number kya hai?"
+    ],
+    "friction": [
+      "Beta sender ka naam kya hai? Mujhe nahi pata kisne bheja hai.",
+      "Package mein kya hai? Batao toh sahi. Confirm kar loon.",
+      "Online payment kaise karoon? Mujhe UPI use karna nahi aata properly.",
+      "Beta courier company ka customer care number do. Main verify kar loon."
+    ],
+    "endurance": [
+      "Beta office timing kya hai tumhari? Main courier office aakar le lunga package.",
+      "Beta ek baar bete ko phone do. Wo handle kar lega delivery."
+    ]
+  },
+  "friend_emergency": {
+    "hook": [
+      "Emergency? Kaun bol raha hai? Naam kya hai beta?",
+      "Accident? Arre bhagwan! Theek ho? Hospital mein ho?",
+      "Money chahiye? Kitni? Kya hua exactly?",
+      "Urgent? Haan haan batao. Main help karunga. Pareshan mat ho."
+    ],
+    "tangent": [
+      "Haan beta, paisa bhej deta hoon. Bank account number batao.",
+      "Kitne paise chahiye? ₹10,000? Theek hai. UPI se bhej sakta hoon?",
+      "Hospital ka naam kya hai? Main bhi aa sakta hoon agar zaroori ho.",
+      "Haan beta tension mat lo. Paise arrange kar deta hoon. Thoda time do."
+    ],
+    "friction": [
+      "Beta tumhari awaaz alag lag rahi hai. Confirm karo naam.",
+      "UPI ID kya hai? Spelling batao. Galti se galat number pe na chala jaye.",
+      "Ek baar phone do hospital staff ko. Unse baat kar loon confirm karne ke liye."
+    ],
+    "endurance": [
+      "Paisa arrange karna padega. Relatives se baat karta hoon. Thoda time lagega.",
+      "Beta tum kaun the? Naam kya hai? Dobara batao."
+    ]
+  },
+  "credit_card": {
+    "hook": [
+      "Credit card breach? Arre! Kya hua mere card ko?",
+      "Verify karna hai? Theek hai. Batao kya process hai.",
+      "Suspicious activity? Kis tarah ki activity? Kya hua?",
+      "Security team? Aap kon ho? Bank ka naam kya hai?"
+    ],
+    "tangent": [
+      "Haan card details verify kar leta hoon. Kya chahiye?",
+      "Last 4 digits? Ruko card nikalta hoon wallet se...",
+      "Expiry date? Haan card pe dekh kar batata hoon."
+    ],
+    "friction": [
+      "Card kahaan rakha hai... wallet mein nahi mil raha... ek minute dhoondhta hoon...",
+      "CVV number bahut chhota likha hai. Chashma lagana padega.",
+      "Beta ye OTP card verification ke liye hai ya kisi transaction ke liye?"
+    ],
+    "endurance": [
+      "Beta card toh bag mein hai. Wo bag ghar pe nahi hai. Kal call karo.",
+      "Beta app pe check kar leta hoon. App login nahi ho raha. Password reset karna padega."
+    ]
+  },
+  "charity_donation": {
+    "hook": [
+      "Charity? Kis cheez ke liye? Kaunsa organization hai?",
+      "Donation? Kitna amount expect kar rahe ho?",
+      "Help karna hai mujhe bhi. Lekin ye registered charity hai?"
+    ],
+    "tangent": [
+      "Haan haan donate kar sakta hoon. Procedure kya hai?",
+      "Website hai kya? Online donate kar sakta hoon?",
+      "Kitna donate karoon? Minimum amount kya hai?"
+    ],
+    "friction": [
+      "Beta pehle charity verify kar loon. Registration details bhejo.",
+      "UPI ID company ke naam se hai? Individual name se toh nahi?",
+      "Receipt milegi donation ki? Tax filing ke liye chahiye hogi."
+    ],
+    "endurance": [
+      "Beta CA se baat kar loon. Wo batayega konsi charity genuine hai.",
+      "Month end mein donate karunga. Abhi budget tight hai."
+    ]
+  },
+  "generic": {
+    "ask_more": [
+      "Beta mujhe samajh nahi aaya. Zara dheere bolo.",
+      "Kya? Network kharab hai. Dobara bolo na.",
+      "Ek minute beta, koi aur phone aa raha hai. Ruko...",
+      "Beta thoda confusion ho raha hai. Kya bol rahe the tum?",
+      "Arre awaaz bahut dheemi aa rahi hai. Zor se bolo beta.",
+      "Beta phone ki battery khatam hone wali hai. Jaldi batao kya kehna hai.",
+      "Beta main thoda busy hoon abhi. Baad mein call kar sakte ho?"
+    ]
+  }
+}
+
