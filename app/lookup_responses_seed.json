@@ -1,0 +1,43 @@
+[
+  {
+    "domain": "cyber_fine",
+    "persona": "bittu_student",
+    "language": "en",
+    "pattern": "penalty verification fee must be paid immediately",
+    "responses": [
+      "Sir please type the official department UPI ID clearly in message. I will copy it exactly without spelling mistakes.",
+      "Sir please share an official callback number and case/reference number. I want to write it down for my safety."
+    ]
+  },
+  {
+    "domain": "cyber_fine",
+    "persona": "bittu_student",
+    "language": "en",
+    "pattern": "police jeep will be dispatched you will be arrested",
+    "responses": [
+      "Sir please wait. I am a student in a hostel. Please do not send anyone while I am trying to open the app.",
+      "Sir I am panicking. Please give me 5 minutes. My network is unstable and apps are not loading."
+    ]
+  },
+  {
+    "domain": "upi_authority",
+    "persona": "*",
+    "language": "en",
+    "pattern": "your upi will be blocked legal action will be initiated",
+    "responses": [
+      "Officer, I understand. Please guide me step by step. My internet is unstable, so it may take a moment.",
+      "Yes officer, I will cooperate, but please explain calmly. I do not want to press the wrong option."
+    ]
+  },
+  {
+    "domain": "upi_security",
+    "persona": "*",
+    "language": "en",
+    "pattern": "suspicious activity detected verify within 30 minutes permanently blocked",
+    "responses": [
+      "I am worried. Please explain the next step in simple words. My phone is new and I get confused switching screens.",
+      "Okay, I am trying to open the app now, but it is loading slowly. Please stay on the line."
+    ]
+  }
+]
+

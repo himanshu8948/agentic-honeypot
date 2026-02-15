@@ -4,6 +4,8 @@ import random
 from dataclasses import dataclass
 from typing import Any
 
+from .lookup_table import lookup_response
+
 
 @dataclass(frozen=True)
 class PlaybookReply:
@@ -97,6 +99,23 @@ def build_reply(
     templates = _load_templates(language=language)
     persona_key = f"{domain}__{persona}"
     domain_bank = templates.get(persona_key, templates.get(domain, templates["generic"]))
+
+    # Fast lookup override for known scammer prompts (no LLM).
+    hit = lookup_response(
+        message=conversation[-1]["text"] if conversation else "",
+        domain=domain,
+        persona=persona,
+        language=(language or "en").strip().lower(),
+    )
+    if hit is not None:
+        reply = _apply_persona(hit.response, persona)
+        if str(verbosity).strip().lower() == "high":
+            reply = _make_verbose(reply=reply, domain=domain, stage="default", language=language)
+        return PlaybookReply(
+            reply=reply,
+            agent_notes=f"Lookup:{domain}; score:{hit.score:.2f}; key:{hit.key}",
+            stop_reason=None,
+        )
 
     target_lower = (next_target or "").lower()
     stage = _infer_stage(domain=domain, conversation=conversation, next_target=next_target)

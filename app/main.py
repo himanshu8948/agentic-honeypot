@@ -36,6 +36,7 @@ from .llm import GroqClient, pick_persona
 from .playbooks import build_reply, detect_domain
 from .signal_policy import assess_sender_signals, risk_to_zone
 from .fraud_corpus import best_match, load_corpus_lines
+from .lookup_table import load_lookup_table
 
 app = FastAPI(title="Agentic Honeypot API")
 
@@ -43,6 +44,7 @@ SETTINGS: Settings | None = None
 DB = None
 GROQ: GroqClient | None = None
 FRAUD_CORPUS: list[str] = []
+LOOKUP_TABLE_COUNT = 0
 LLM_CIRCUIT = CircuitBreaker(failure_threshold=4, recovery_seconds=45)
 REQ_LIMITER = SlidingWindowLimiter(max_requests=80, window_seconds=60)
 
@@ -120,12 +122,13 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
 
 @app.on_event("startup")
 async def startup() -> None:
-    global SETTINGS, DB, GROQ, FRAUD_CORPUS
+    global SETTINGS, DB, GROQ, FRAUD_CORPUS, LOOKUP_TABLE_COUNT
     setup_logging()
     SETTINGS = load_settings()
     DB = connect(SETTINGS.db_path)
     init_db(DB)
     FRAUD_CORPUS = load_corpus_lines()
+    LOOKUP_TABLE_COUNT = len(load_lookup_table())
     GROQ = GroqClient(
         base_url=SETTINGS.groq_base_url,
         api_keys=SETTINGS.groq_api_keys,
@@ -141,6 +144,7 @@ async def startup() -> None:
         firebaseEnabled=SETTINGS.firebase_enabled,
         firebaseProjectId=SETTINGS.firebase_project_id,
         fraudCorpusLines=len(FRAUD_CORPUS),
+        lookupPatterns=LOOKUP_TABLE_COUNT,
         llmEnabled=SETTINGS.llm_enabled,
         localLlmEnabled=SETTINGS.local_llm_enabled,
         ollamaModel=SETTINGS.ollama_model,
