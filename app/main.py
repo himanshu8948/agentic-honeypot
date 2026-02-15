@@ -288,7 +288,7 @@ async def handle_message(
         domain = detect_domain(payload.message.text)
         persona_used = _select_persona_tag(session=session, metadata=payload.metadata, domain=domain)
         next_target = _get_next_extraction_target(conversation=conversation, intel=intel)
-        language = (payload.metadata.language if payload.metadata else None) or "en"
+        language = _pick_language(payload.metadata)
         verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
         try:
             pb = build_reply(
@@ -569,6 +569,25 @@ def _get_next_extraction_target(*, conversation: list[dict[str, Any]], intel: di
     if missing_bank:
         return "Ask which account number this is about"
     return "Ask what to do next"
+
+
+def _pick_language(metadata: Metadata | None) -> str:
+    lang = (metadata.language if metadata else None) or ""
+    loc = (metadata.locale if metadata else None) or ""
+    lang = lang.strip().lower()
+    loc = loc.strip().upper()
+
+    # Prefer Hindi/Hinglish for India by default unless explicitly English.
+    if not lang:
+        if loc in {"IN", "HI-IN"}:
+            return "hi"
+        return "hi"
+
+    if lang.startswith("en"):
+        return "en"
+    if lang.startswith("hi"):
+        return "hi"
+    return "en"
 
 
 def _normalize_session_id(value: str) -> str:
