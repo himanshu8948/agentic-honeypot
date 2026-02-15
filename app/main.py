@@ -35,6 +35,7 @@ from .playbooks import build_reply, detect_domain
 from .signal_policy import assess_sender_signals, risk_to_zone
 from .fraud_corpus import best_match, load_corpus_lines
 from .lookup_table import load_lookup_table
+from .stat_model import load_stat_model
 
 app = FastAPI(title="Agentic Honeypot API")
 
@@ -43,6 +44,7 @@ DB = None
 FRAUD_CORPUS: list[str] = []
 LOOKUP_TABLE_COUNT = 0
 REQ_LIMITER = SlidingWindowLimiter(max_requests=80, window_seconds=60)
+STAT_MODEL = None
 
 
 def _health_payload() -> dict[str, str]:
@@ -118,13 +120,14 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
 
 @app.on_event("startup")
 async def startup() -> None:
-    global SETTINGS, DB, FRAUD_CORPUS, LOOKUP_TABLE_COUNT
+    global SETTINGS, DB, FRAUD_CORPUS, LOOKUP_TABLE_COUNT, STAT_MODEL
     setup_logging()
     SETTINGS = load_settings()
     DB = connect(SETTINGS.db_path)
     init_db(DB)
     FRAUD_CORPUS = load_corpus_lines()
     LOOKUP_TABLE_COUNT = len(load_lookup_table())
+    STAT_MODEL = load_stat_model()
     log_event(
         "startup_complete",
         db_path=SETTINGS.db_path,
@@ -133,6 +136,7 @@ async def startup() -> None:
         fraudCorpusLines=len(FRAUD_CORPUS),
         lookupPatterns=LOOKUP_TABLE_COUNT,
         llmEnabled=False,
+        statModelLoaded=bool(STAT_MODEL),
     )
 
 
@@ -192,6 +196,22 @@ async def handle_message(
     score = rule_score(payload.message.text)
     intent_score = intent_signal_score(payload.message.text)
     combined_score = score + intent_score + interpreter.risk_boost + signal_assessment.delta
+
+    stat_prob = None
+    if STAT_MODEL is not None:
+        try:
+            stat_prob = float(STAT_MODEL.predict_proba_scam(payload.message.text))
+        except Exception:
+            stat_prob = None
+    if stat_prob is not None:
+        # Translate probability into a small, bounded boost for stability.
+        # Keep rules as the primary decision-maker.
+        if stat_prob >= 0.90:
+            combined_score += 4
+        elif stat_prob >= 0.75:
+            combined_score += 2
+        elif stat_prob <= 0.10:
+            combined_score -= 1
     # Calibrated for demo/evaluation flow: avoid premature lethal zone on early turns.
     risk_percent = min(100, combined_score * 4)
     policy_zone = risk_to_zone(risk_percent)
@@ -201,6 +221,8 @@ async def handle_message(
     layer_reasons = list(interpreter.reasons) + list(signal_assessment.reasons)
     layer_reasons.append(f"policy_zone:{policy_zone}")
     layer_reasons.append(f"risk_percent:{risk_percent}")
+    if stat_prob is not None:
+        layer_reasons.append(f"stat_prob:{stat_prob:.2f}")
     agent_notes = "; ".join(layer_reasons)
     intents = {"intentScammer": "", "intentUser": ""}
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
