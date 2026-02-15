@@ -850,6 +850,11 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                             break
                     if scammer_turns <= 2:
                         return "hook"
+                    # "Near miss": scammer attempts to get remote access credentials / IDs / passwords.
+                    if domain in {"tech_support", "phishing"} and any(
+                        k in last_scam for k in ["your id", "id number", "password", "remote access", "access code", "teamviewer id", "anydesk code"]
+                    ):
+                        return "near_miss"
                     if any(k in last_scam for k in ["otp", "pin", "fee", "link", "install", "download", "pay", "transfer", "upi"]):
                         if scammer_turns <= 8:
                             return "friction"

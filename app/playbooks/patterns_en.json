@@ -57,17 +57,28 @@
     "tangent": [
       "Yes, I want to fix the computer. Tell me what to do.",
       "I have to install it? Fine, but how? Tell me step by step.",
-      "Share the code? Which code? Where will I find it?"
+      "Share the code? Which code? Where will I find it?",
+      "Before I do anything, can you give me a callback number in case the call drops?"
     ],
     "friction": [
       "I'm downloading it... it's very slow... it's still loading...",
       "An error occurred. It says 'Unable to download'. Now what do I do?",
-      "I can't find the Install button. Where is it? There's too much on the computer screen."
+      "I can't find the Install button. Where is it? There's too much on the computer screen.",
+      "It is asking 'Allow this app to make changes'. Should I click Yes or No? I'm scared.",
+      "Now it is asking for an administrator password. Is it the same as my computer login password?",
+      "The website is not opening. Can you repeat the exact domain and page name once?"
+    ],
+    "near_miss": [
+      "I can see something like 'Your ID' and 'Password' but the numbers are very small. Can you please wait a moment?",
+      "It says 'Your ID' and 'Password'. Before I read it, can you confirm your official callback number again?",
+      "I'm not comfortable sharing passwords. Can you explain why you need this ID/password and what exactly you will do?",
+      "A pop-up is showing some fee/charge. Is this free or paid? Please explain clearly first."
     ],
     "endurance": [
       "The internet is very slow today. Shall we try tomorrow?",
       "The computer hung up. I have to restart. It will take some time...",
-      "Not today. I turned off the computer. There were too many problems."
+      "Not today. I turned off the computer. There were too many problems.",
+      "My regular computer technician is coming tomorrow. I'll ask him to check first and then I will call back."
     ]
   },
   "bank_fraud": {
@@ -237,4 +248,3 @@
     ]
   }
 }
-
