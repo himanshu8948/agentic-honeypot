@@ -5,6 +5,15 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
+try:
+    from rapidfuzz import fuzz
+except Exception:  # pragma: no cover - optional
+    fuzz = None
+
+try:
+    from flashtext import KeywordProcessor
+except Exception:  # pragma: no cover - optional
+    KeywordProcessor = None
 
 _WORD_RE = re.compile(r"[a-z0-9@._+-]+", re.IGNORECASE)
 _STOP = {
@@ -44,6 +53,7 @@ class LookupHit:
 
 
 _CACHE: list[dict[str, Any]] | None = None
+_KP = None
 
 
 def load_lookup_table() -> list[dict[str, Any]]:
@@ -85,6 +95,7 @@ def load_lookup_table() -> list[dict[str, Any]]:
         )
 
     _CACHE = out
+    _build_keyword_index(_CACHE)
     return out
 
 
@@ -105,6 +116,9 @@ def lookup_response(
     persona = (persona or "*").strip().lower()
     language = (language or "*").strip().lower()
 
+    # Optional fast pre-hit: if message contains a known pattern phrase, boost its score.
+    kp_hits = _keyword_hits(message)
+
     best: LookupHit | None = None
     for it in table:
         if it["domain"] not in {domain, "*"}:
@@ -113,8 +127,19 @@ def lookup_response(
             continue
         if it["language"] not in {language, "*"}:
             continue
+
+        pattern = str(it.get("pattern", ""))
         pat_tokens = set(it.get("pattern_tokens") or [])
         score = _jaccard(msg_tokens, pat_tokens)
+
+        if fuzz is not None and pattern:
+            # Robust to typos/word order differences; normalized to 0..1
+            rf = fuzz.token_set_ratio(message, pattern) / 100.0
+            score = max(score, rf)
+
+        if pattern and kp_hits and pattern.lower() in kp_hits:
+            score = max(score, 0.95)
+
         if score < min_score:
             continue
         resp = random.choice(it["responses"])
@@ -154,3 +179,26 @@ def _jaccard(a: set[str], b: set[str]) -> float:
     union = len(a | b)
     return inter / union
 
+
+def _build_keyword_index(table: list[dict[str, Any]]) -> None:
+    global _KP
+    if KeywordProcessor is None:
+        _KP = None
+        return
+    kp = KeywordProcessor(case_sensitive=False)
+    # Add exact patterns as keywords for O(n) scanning.
+    for it in table:
+        pat = str(it.get("pattern", "")).strip()
+        if pat:
+            kp.add_keyword(pat, pat.lower())
+    _KP = kp
+
+
+def _keyword_hits(message: str) -> set[str]:
+    if _KP is None:
+        return set()
+    try:
+        hits = _KP.extract_keywords(message)
+        return {str(h).lower() for h in hits if str(h).strip()}
+    except Exception:
+        return set()
