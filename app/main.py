@@ -276,7 +276,6 @@ async def handle_message(
     should_engage = (
         scam_detected
         and effective_sender == "scammer"
-        and policy_zone != "lethal"
         and detector_route != "normal"
     )
 
@@ -306,9 +305,7 @@ async def handle_message(
             # Absolute fallback to keep the API stable in evaluation harnesses.
             reply = "Sorry, I'm confused. What should I do next?"
             agent_notes = "playbook_failed"
-    elif scam_detected and policy_zone == "lethal":
-        reply = "Security alert detected. I cannot proceed with this request."
-        agent_notes = (agent_notes + "; lethal_zone_block").strip("; ")
+    # Note: even in high-risk zones, we keep engaging (honeypot) but never reveal detection.
 
     # Persist agent reply to keep session transcript and message counts consistent.
     append_message(
