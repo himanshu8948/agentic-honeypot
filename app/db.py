@@ -77,6 +77,56 @@ def init_db(conn: sqlite3.Connection) -> None:
         )
         """
     )
+
+    # Lightweight migrations for existing DB files created before new columns
+    # were added. (Render disks persist; tests use fresh temp DBs.)
+    def _ensure_columns(table: str, cols: dict[str, str]) -> None:
+        try:
+            existing = {
+                row["name"]
+                for row in conn.execute(f"PRAGMA table_info({table})").fetchall()
+            }
+        except Exception:
+            return
+        for name, ddl in cols.items():
+            if name in existing:
+                continue
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {ddl}")
+
+    _ensure_columns(
+        "sessions",
+        {
+            "total_messages": "total_messages INTEGER DEFAULT 0",
+            "api_calls": "api_calls INTEGER DEFAULT 0",
+            "last_reply": "last_reply TEXT",
+            "engagement_complete": "engagement_complete INTEGER DEFAULT 0",
+            "agent_notes": "agent_notes TEXT",
+            "callback_pending": "callback_pending INTEGER DEFAULT 0",
+            "conversation_summary": "conversation_summary TEXT",
+            "persona": "persona TEXT",
+            "created_at": "created_at INTEGER",
+            "updated_at": "updated_at INTEGER",
+        },
+    )
+    _ensure_columns(
+        "intel",
+        {
+            "bank_accounts": "bank_accounts TEXT",
+            "upi_ids": "upi_ids TEXT",
+            "phishing_links": "phishing_links TEXT",
+            "phone_numbers": "phone_numbers TEXT",
+            "suspicious_keywords": "suspicious_keywords TEXT",
+        },
+    )
+    _ensure_columns(
+        "user_intel",
+        {
+            "bank_accounts": "bank_accounts TEXT",
+            "upi_ids": "upi_ids TEXT",
+            "phishing_links": "phishing_links TEXT",
+            "phone_numbers": "phone_numbers TEXT",
+        },
+    )
     conn.commit()
 
 
@@ -295,4 +345,3 @@ def _empty_user_intel() -> dict[str, list[str]]:
         "phoneNumbers": [],
         "suspiciousKeywords": [],
     }
-
