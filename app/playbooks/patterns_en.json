@@ -1,0 +1,240 @@
+{
+  "government_grant": {
+    "hook": [
+      "Government grant? What is this? Nobody told me about it. Who are you?",
+      "I got a grant? But I never applied for one. How did this happen?",
+      "Processing fee? First tell me what this grant is for.",
+      "Government scheme? I don't know anything. Which department are you calling from?"
+    ],
+    "tangent": [
+      "Yes, yes, I am listening. Bank details? Wait a minute, it's written in my diary...",
+      "I have to give the account number? Hold on, let me find my passbook. Where did I keep it...",
+      "How much is the processing fee? That much? I should ask my son first.",
+      "Okay, okay. You need all this information? Let me write it down for a second."
+    ],
+    "friction": [
+      "My computer is off. It will take time to start. Can you give me your number? I'll call you later.",
+      "What was the bank account number? 16 digits? That long? I can't remember.",
+      "Wait a second, someone is knocking at the door. Hold on... yes, what were you saying?",
+      "I have to send the processing fee online? I don't know how to make online payments.",
+      "The account number is in the passbook... wait, where are my glasses? I can't see properly..."
+    ],
+    "endurance": [
+      "Wait, what were we doing? I forgot.",
+      "The network is bad. Your voice is breaking up.",
+      "I'm feeling a bit dizzy. Can you call later?",
+      "My son will be home in the evening. I'll get him to do all this. Give me your number."
+    ]
+  },
+  "prize_lottery": {
+    "hook": [
+      "Won a prize? Really? But I don't even play the lottery!",
+      "10 lakh rupees? Oh my god! How did this happen? How did I win?",
+      "WhatsApp Mega Draw? What is that? I've never heard of it before."
+    ],
+    "tangent": [
+      "How do I claim it? Tell me what to do. I'm so happy!",
+      "Bank details? I can give them, but first tell me - is the prize for real?",
+      "Send Aadhaar? Where is it kept... I'll have to search for it..."
+    ],
+    "friction": [
+      "Phone number? My phone is old, I don't remember the number. One minute...",
+      "Aadhaar card photo? How do I send it? I don't know how to send photos on WhatsApp.",
+      "Processing charges? If I won a prize, why are there charges? I don't understand this."
+    ],
+    "endurance": [
+      "The phone battery is about to die. Let's talk later.",
+      "What were you saying? About the prize? Yes, yes... wait, what was the process?",
+      "Give the phone to my son. He will help. I'm confused right now."
+    ]
+  },
+  "tech_support": {
+    "hook": [
+      "Microsoft? Virus? Oh no! There is a virus in my computer?",
+      "TeamViewer? What is that? I don't know about these things.",
+      "Remote access? What does that mean? I don't understand."
+    ],
+    "tangent": [
+      "Yes, I want to fix the computer. Tell me what to do.",
+      "I have to install it? Fine, but how? Tell me step by step.",
+      "Share the code? Which code? Where will I find it?"
+    ],
+    "friction": [
+      "I'm downloading it... it's very slow... it's still loading...",
+      "An error occurred. It says 'Unable to download'. Now what do I do?",
+      "I can't find the Install button. Where is it? There's too much on the computer screen."
+    ],
+    "endurance": [
+      "The internet is very slow today. Shall we try tomorrow?",
+      "The computer hung up. I have to restart. It will take some time...",
+      "Not today. I turned off the computer. There were too many problems."
+    ]
+  },
+  "bank_fraud": {
+    "hook": [
+      "Account blocked? Oh my! Why? What happened?",
+      "You are from HDFC bank? But my account is in Axis bank!",
+      "I have to make a UPI payment? Why? A payment to unblock an account?"
+    ],
+    "tangent": [
+      "OTP? Yes, a message came. Wait, let me check the messages...",
+      "Account number? Yes, I have it. I'll tell you from the passbook."
+    ],
+    "friction": [
+      "Which OTP? I just got 3-4 messages. Which one should I read?",
+      "What is this UPI ID? Do I have one? How will I find out?",
+      "How do I send the payment? I use Google Pay, but I don't have your number."
+    ],
+    "endurance": [
+      "I'll ask my son when he comes. He understands banking.",
+      "Network problem is happening. The phone balance is also about to run out."
+    ]
+  },
+  "otp": {
+    "hook": [
+      "OTP? Your OTP came to my number? How did that happen?",
+      "Sent it accidentally? Fine, which OTP? No message has come yet."
+    ],
+    "tangent": [
+      "Yes, a code has come. Wait, I'll read it to you.",
+      "The code is visible. It's 6 numbers. Is this what you need?"
+    ],
+    "friction": [
+      "I need to put on my glasses. I can't see the numbers clearly...",
+      "Is this a WhatsApp OTP or an SMS one? There are messages in both places.",
+      "Wait, the OTP might have expired. This message is an hour old."
+    ],
+    "endurance": [
+      "My WhatsApp isn't loading properly. Can I send it tomorrow?",
+      "How do you take a screenshot? I don't know. I'll ask my son."
+    ]
+  },
+  "job_offer": {
+    "hook": [
+      "Job offer? For me? But I didn't apply!",
+      "Work from home? What is the salary? What will the work be?"
+    ],
+    "tangent": [
+      "Yes, yes, I need a job. What is the process? Tell me.",
+      "Registration fee? How much is it? And the job is guaranteed after that, right?"
+    ],
+    "friction": [
+      "I have to pay the registration fee online? I don't know how to do this.",
+      "500 rupees fee? Let the job be confirmed first, then I'll pay. Is it for real?"
+    ],
+    "endurance": [
+      "My CV is old. I need to update it. It will take some time.",
+      "My son works in HR. I'll get him to confirm if this is legitimate or not."
+    ]
+  },
+  "investment_crypto": {
+    "hook": [
+      "Investment? Crypto? What is this? Explain it first.",
+      "30% returns? In a week? That fast? Is it for real?"
+    ],
+    "tangent": [
+      "Yes, I'm interested. What is the minimum I have to invest?",
+      "How will I get the returns? In the bank account or a wallet?"
+    ],
+    "friction": [
+      "How do you make a wallet? What is KYC? I don't know all this.",
+      "Is this cryptocurrency legal in India? I heard on the news there's some problem."
+    ],
+    "endurance": [
+      "I need to talk to my CA first. I need his advice for investment.",
+      "Let me discuss with the family. I can't invest without telling them."
+    ]
+  },
+  "police_authority": {
+    "hook": [
+      "Police? Oh god! What happened? What did I do wrong?",
+      "Arrest warrant? In my name? How can this be?"
+    ],
+    "tangent": [
+      "Yes sir, I'll give full details. I have nothing to hide.",
+      "Fine? How much is the amount? How do I pay?"
+    ],
+    "friction": [
+      "Sir, can I come to the station once? Give me the address, I'll talk in person.",
+      "What is your badge number? For verification. There are many frauds these days.",
+      "Can I talk to a lawyer once? It's my right, isn't it?"
+    ],
+    "endurance": [
+      "Sir, I have to call my advocate. He will tell me what to do.",
+      "Sir, I'll come to the station tomorrow with documents. I don't have time today."
+    ]
+  },
+  "delivery_package": {
+    "hook": [
+      "Package? In my name? But I didn't order anything.",
+      "Customs clearance? Is this an international parcel?"
+    ],
+    "tangent": [
+      "Yes, yes, I want the package. Let me confirm the address.",
+      "Pay the charges? Online or cash on delivery?"
+    ],
+    "friction": [
+      "What is the sender's name? I don't know who sent it.",
+      "Customs charges? But I didn't get any intimation from Customs."
+    ],
+    "endurance": [
+      "What is your office timing? I'll come to the courier office and pick it up.",
+      "Give the phone to my son once. He will handle the delivery."
+    ]
+  },
+  "friend_emergency": {
+    "hook": [
+      "Emergency? Who is speaking? What is your name?",
+      "Accident? Oh god! Are you okay? Are you in the hospital?"
+    ],
+    "tangent": [
+      "Yes, I'll send the money. Tell me the bank account number.",
+      "How much money do you need? 10,000? Fine. Can I send it via UPI?"
+    ],
+    "friction": [
+      "Your voice sounds different. Do you have a cold? Confirm the name.",
+      "Give the phone to the hospital staff. Let me talk to them to confirm."
+    ],
+    "endurance": [
+      "The bank is closed right now. I'll send the money first thing tomorrow morning.",
+      "I have to arrange the money. I'll talk to the relatives. It will take some time."
+    ]
+  },
+  "credit_card": {
+    "hook": [
+      "Credit card breach? Oh! What happened to my card?",
+      "Card block? Why? Tell me the reason first."
+    ],
+    "tangent": [
+      "Yes, I'll verify the card details. What do you need?",
+      "CVV? That's written on the back, right? Let me look for a second."
+    ],
+    "friction": [
+      "Where did I keep the card... can't find it in the wallet... wait a minute...",
+      "Is this OTP for card verification or for some transaction?"
+    ],
+    "endurance": [
+      "My son handles the cards. Give him the phone, he'll give the details.",
+      "I'll check the app. The app isn't logging in. I need to reset the password."
+    ]
+  },
+  "charity_donation": {
+    "hook": [
+      "Charity? For what? Which organization is it?",
+      "Flood victims? Where is the flood? Which area?"
+    ],
+    "tangent": [
+      "Yes, I can donate. What is the procedure?",
+      "Will I get a tax exemption? Will I get an 80G certificate?"
+    ],
+    "friction": [
+      "Let me verify the charity first. Send the registration details.",
+      "Is the UPI ID in the name of the company? Not in an individual's name?"
+    ],
+    "endurance": [
+      "I'll think and let you know. There are many charities. It's hard to decide.",
+      "I'll talk to the CA. He'll tell me which charity is genuine."
+    ]
+  }
+}
+
