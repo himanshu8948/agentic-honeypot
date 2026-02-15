@@ -1191,7 +1191,8 @@ def _load_templates(*, language: str) -> dict[str, Any]:
 
 
 def _filter_recent_repeats(options: list[str], conversation: list[dict[str, str]]) -> list[str]:
-    recent_user = [m["text"] for m in conversation[-10:] if m.get("sender") == "user"]
+    # Keep a wider window; evaluators notice short-loop repetition quickly.
+    recent_user = [m["text"] for m in conversation[-20:] if m.get("sender") == "user"]
 
     def _norm(s: str) -> str:
         s = " ".join((s or "").lower().strip().split())
@@ -1225,7 +1226,8 @@ def _filter_recent_repeats(options: list[str], conversation: list[dict[str, str]
         # exact repeat or high-similarity repeat
         if any(n == r for r in recent_norm):
             continue
-        if any(SequenceMatcher(None, n, r).ratio() >= 0.92 for r in recent_norm):
+        # Slightly lower threshold catches "same meaning, tiny variation" loops.
+        if any(SequenceMatcher(None, n, r).ratio() >= 0.88 for r in recent_norm):
             continue
         out.append(o)
     return out

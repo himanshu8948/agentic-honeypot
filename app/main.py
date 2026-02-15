@@ -435,7 +435,14 @@ async def handle_message(
 
     reply = _tone_normalize_reply(reply)
     if should_engage:
-        reply = _ensure_engagement_question(reply, target_key, salt=f"{session_id}:{api_calls}")
+        # Provide recent user (honeypot) messages so we don't append the same question repeatedly.
+        recent_user_msgs = [m.get("text", "") for m in conversation[-12:] if m.get("sender") == "user"] if "conversation" in locals() else []
+        reply = _ensure_engagement_question(
+            reply,
+            target_key,
+            salt=f"{session_id}:{api_calls}",
+            recent_user_messages=recent_user_msgs,
+        )
 
     # Persist agent reply to keep session transcript and message counts consistent.
     append_message(
@@ -1001,7 +1008,13 @@ def _tone_normalize_reply(text: str) -> str:
     return s.strip()
 
 
-def _ensure_engagement_question(reply: str, target_key: str, *, salt: str) -> str:
+def _ensure_engagement_question(
+    reply: str,
+    target_key: str,
+    *,
+    salt: str,
+    recent_user_messages: list[str] | None = None,
+) -> str:
     """
     Evaluators reward long, coherent engagement. If the reply doesn't naturally ask for the
     next actionable detail, append a short question to keep the scammer responding.
@@ -1012,7 +1025,18 @@ def _ensure_engagement_question(reply: str, target_key: str, *, salt: str) -> st
     if "?" in s:
         return s
 
-    key = (target_key or "other").strip().lower()
+    key_raw = (target_key or "other").strip().lower()
+    # Call sites use "phone/upi/link/bank/other" as target keys.
+    key = {
+        "phone": "ask_phone",
+        "upi": "ask_upi",
+        "link": "ask_link",
+        "bank": "ask_bank",
+        "ask_phone": "ask_phone",
+        "ask_upi": "ask_upi",
+        "ask_link": "ask_link",
+        "ask_bank": "ask_bank",
+    }.get(key_raw, "other")
     pools: dict[str, list[str]] = {
         "ask_phone": [
             "Which phone number should I contact you on (with country code)?",
@@ -1043,9 +1067,23 @@ def _ensure_engagement_question(reply: str, target_key: str, *, salt: str) -> st
         ],
     }
 
-    options = pools.get(key, pools["other"])
-    # Stable selection per call to reduce repetition without needing extra state.
-    digest = hashlib.sha256((salt + "|" + key).encode("utf-8")).hexdigest()
+    options = list(pools.get(key, pools["other"]))
+
+    def _norm_q(x: str) -> str:
+        x = " ".join((x or "").lower().strip().split())
+        for ch in [".", ",", "!", "?", "…", "–", "-", "â€¦", "â€“"]:
+            x = x.replace(ch, "")
+        return x
+
+    # Avoid repeating the same engagement question in a visible loop.
+    if recent_user_messages:
+        recent_norm = {_norm_q(t) for t in recent_user_messages if t and t.strip()}
+        filtered = [q for q in options if _norm_q(q) not in recent_norm]
+        if filtered:
+            options = filtered
+
+    # Stable-ish selection per call (salt changes each API call), but after filtering.
+    digest = hashlib.sha256((salt + "|" + key + "|" + str(len(options))).encode("utf-8")).hexdigest()
     idx = int(digest[:8], 16) % len(options)
     q = options[idx]
 
