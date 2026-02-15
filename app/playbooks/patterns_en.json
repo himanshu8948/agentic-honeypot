@@ -336,6 +336,14 @@
       "My family wants to see the flat once before I pay anything. I can confirm after they see the video/viewing.",
       "My lawyer advised not to pay advance without verification. I can proceed once documents and viewing are confirmed.",
       "I am comparing one more property today. If you share the complete details clearly, I will finalize quickly."
+    ],
+    "ask_phone": [
+      "Please share your exact callback/WhatsApp number (with country code) so I can coordinate the viewing at the gate.",
+      "Can you also share the society secretary/manager contact number? I want to confirm visiting rules before I come."
+    ],
+    "ask_link": [
+      "Please send the Google Maps pin/location link and the exact tower/block/flat number in one message.",
+      "Can you WhatsApp the photo/video link again? It is not loading on my phone."
     ]
   },
   "romance_scam": {

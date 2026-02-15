@@ -367,6 +367,14 @@
       "Family bhi ek baar flat dekhna chahti hai. Video/viewing ke baad main confirm kar dunga.",
       "Lawyer ne bola bina verification advance mat do. Documents + viewing confirm ho jaye toh main proceed karunga.",
       "Main ek aur property compare kar raha hoon. Aap complete details clearly bhej doge toh main jaldi finalize kar dunga."
+    ],
+    "ask_phone": [
+      "Aapka exact callback/WhatsApp number (country code ke saath) bhej do. Gate pe coordinate karna hai.",
+      "Society secretary/manager ka contact number bhi de do. Main visiting rules verify kar lunga."
+    ],
+    "ask_link": [
+      "Google Maps ka pin/location link bhej do aur tower/block/flat number bhi ek message mein likh do.",
+      "Photo/video dobara bhej do beta. Mere phone pe load nahi ho raha."
     ]
   },
   "generic": {

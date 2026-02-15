@@ -215,6 +215,22 @@ def build_reply(
     stage = _infer_stage(domain=domain, conversation=conversation, next_target=next_target)
     bucket = _bucket_for_stage(stage=stage, target_lower=target_lower)
 
+    # If the session is missing a key intel target (phone/upi/link/bank), prefer a
+    # target-specific bucket if the domain defines it. This helps avoid long loops
+    # where we "stall" but forget to explicitly ask for the required contact/payment details.
+    if stage in {"tangent", "friction", "near_miss", "endurance"}:
+        target_bucket = None
+        if "upi" in target_lower:
+            target_bucket = "ask_upi"
+        elif "phone" in target_lower or "contact" in target_lower or "whatsapp" in target_lower:
+            target_bucket = "ask_phone"
+        elif "link" in target_lower or "url" in target_lower:
+            target_bucket = "ask_link"
+        elif any(k in target_lower for k in ["bank", "account", "ifsc", "branch"]):
+            target_bucket = "ask_bank"
+        if target_bucket and isinstance(domain_bank.get(target_bucket), list) and domain_bank.get(target_bucket):
+            bucket = target_bucket
+
     options = domain_bank.get(bucket, []) + templates["generic"].get(bucket, [])
     # Avoid ultra-short acknowledgements that create "yes/okay" loops.
     options = [o for o in options if len(o.strip().split()) >= 3]
