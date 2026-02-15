@@ -248,10 +248,18 @@ async def handle_message(
     # Edge-case: pure gibberish shouldn't trigger honeypot engagement.
     if _looks_like_gibberish(incoming_text):
         log_event("gibberish_input", sessionId=session_id, client=client_host, len=len(incoming_text))
-    inferred_sender = infer_sender_role(incoming_text)
+    # Sender role hardening:
+    # - Never downgrade an explicit "scammer" sender to "user" (prevents shouldEngage dropouts).
+    # - Only upgrade "user" -> "scammer" when content is strongly scam-like (prevents false flips
+    #   on benign messages mentioning "bank/account").
     effective_sender = payload.message.sender
-    if inferred_sender != payload.message.sender:
-        effective_sender = inferred_sender
+    if payload.message.sender == "user":
+        inferred_sender = infer_sender_role(incoming_text)
+        if inferred_sender == "scammer":
+            # Cheap strong-signal check before we treat it as scammer text.
+            quick_score = rule_score(incoming_text) + intent_signal_score(incoming_text)
+            if quick_score >= max(SETTINGS.rule_threshold, 10):
+                effective_sender = "scammer"
 
     append_message(DB, session_id, effective_sender, incoming_text, payload.message.timestamp)
 
@@ -376,7 +384,7 @@ async def handle_message(
         and detector_route != "normal"
     )
 
-    reply = "Thanks. Can you share more details?"
+    reply = ""
     stop_reason = None
     persona_used: str | None = None
     target_key = "other"
@@ -384,6 +392,11 @@ async def handle_message(
         conversation = list_messages(DB, session_id, limit=30)
         domain = _pick_domain(convo_state, incoming_text)
         persona_used = _select_persona_tag(session=session, metadata=payload.metadata, domain=domain)
+        # Always keep a defined language so error paths don't crash the request.
+        language = (convo_state.get("language") if isinstance(convo_state, dict) else None) or (
+            (payload.metadata.language if payload.metadata else None) or ""
+        )
+        language = (language or "").strip() or "hinglish"
         scammer_text = ""
         if effective_sender == "scammer":
             scammer_text = incoming_text
@@ -415,6 +428,7 @@ async def handle_message(
                 intel=intel,
                 conversation=conversation,
                 domain=domain,
+                state=convo_state,
             )
             agent_notes = pb.agent_notes
             stop_reason = pb.stop_reason
@@ -431,6 +445,10 @@ async def handle_message(
             convo_state["domain"] = domain
         _bump_asked_counter(convo_state, target_key)
         conversation_summary = _dump_conversation_state(convo_state)
+    else:
+        # Non-scam / non-engagement path: keep responses short, non-committal, and non-repetitive.
+        # Evaluators may send bursts of benign or gibberish input; we should remain stable.
+        reply = _lightweight_reply(incoming_text, salt=f"{session_id}:{api_calls}")
     # Note: even in high-risk zones, we keep engaging (honeypot) but never reveal detection.
 
     reply = _tone_normalize_reply(reply)
@@ -829,6 +847,8 @@ def _get_next_extraction_target(
     a_link = int(asked.get("link", 0) or 0)
     a_bank = int(asked.get("bank", 0) or 0)
 
+    bank_context = any(k in last_scammer_msg for k in ["account", "ifsc", "branch", "passbook"])
+
     # 1) Prioritize missing intel but vary how we ask as attempts grow.
     if missing_link and ("http" in last_scammer_msg or "link" in last_scammer_msg or "click" in last_scammer_msg):
         if a_link >= 2:
@@ -866,7 +886,32 @@ def _get_next_extraction_target(
     if missing_link:
         return ("Ask for the exact link/URL to proceed", "link")
     if missing_bank:
-        return ("Ask which account number this is about", "bank")
+        # If scammer isn't talking about bank account/IFSC, don't get stuck asking for it every turn.
+        # Ask once early, then rotate other verification questions and only re-ask periodically.
+        if a_bank == 0:
+            return ("Ask which account number this is about (and IFSC if applicable)", "bank")
+        if bank_context and a_bank <= 2:
+            return ("Ask for the exact account number and IFSC/branch name", "bank")
+
+        # Rotate between secondary targets to maintain realism and keep extracting more scammer identifiers.
+        # Pick the least-used key among (phone/link/upi/other); re-ask bank only every 4th time.
+        if a_bank % 4 == 0:
+            return ("Ask which account number this is about (you have multiple accounts)", "bank")
+        candidates = [
+            ("phone", a_phone),
+            ("link", a_link),
+            ("upi", a_upi),
+            ("other", int(asked.get("other", 0) or 0)),
+        ]
+        candidates.sort(key=lambda x: (x[1], x[0]))
+        k = candidates[0][0]
+        if k == "phone":
+            return ("Ask for the exact callback/WhatsApp number again (country code), in case the call drops", "phone")
+        if k == "link":
+            return ("Ask them to paste the official link/domain again so you can avoid a typo", "link")
+        if k == "upi":
+            return ("Ask them to retype the UPI handle letter-by-letter and confirm beneficiary name shown", "upi")
+        return ("Say you are stuck on the next step and ask them to repeat it slowly (you are not technical)", "other")
     return ("Ask what to do next", "other")
 
 
@@ -876,6 +921,7 @@ def _maybe_echo_scammer_intel(
     intel: dict[str, list[str]],
     conversation: list[dict[str, Any]],
     domain: str,
+    state: dict[str, Any] | None = None,
 ) -> str:
     """
     Make replies sound more "legit" to the scammer by repeating *scammer-provided* values
@@ -888,31 +934,62 @@ def _maybe_echo_scammer_intel(
         return reply
 
     low = base.lower()
-    recent_user = [str(m.get("text") or "") for m in conversation[-8:] if m.get("sender") == "user"]
+    # IMPORTANT:
+    # A long (150-300 turn) engagement will naturally push earlier confirmations out of a "recent window".
+    # If we only check the last N replies, we'll re-confirm the same UPI/phone/link repeatedly and sound bot-like.
+    # So we check the whole conversation AND also maintain a small per-session echo memory in `state`.
+    user_texts = [str(m.get("text") or "") for m in conversation if m.get("sender") == "user"]
+    echoed: dict[str, Any] | None = None
+    if isinstance(state, dict):
+        echoed = state.setdefault("echoedIntel", {})  # JSON-serializable
+
+    def _echoed_before(kind: str, value: str) -> bool:
+        if echoed is None or not value:
+            return False
+        arr = echoed.get(kind)
+        if not isinstance(arr, list):
+            return False
+        return value in arr
+
+    def _mark_echoed(kind: str, value: str) -> None:
+        if echoed is None or not value:
+            return
+        arr = echoed.get(kind)
+        if not isinstance(arr, list):
+            arr = []
+        if value not in arr:
+            arr.append(value)
+        # Cap so conversation state stays small.
+        if len(arr) > 25:
+            arr = arr[-25:]
+        echoed[kind] = arr
 
     def _already_said(value: str) -> bool:
-        return any(value and value in t for t in recent_user)
+        return any(value and value in t for t in user_texts)
 
     # Prefer echoing payment redirection intel (most valuable in hackathon scoring).
     if intel.get("upiIds") and ("upi" in low or "handle" in low or "payment" in low or "transfer" in low):
         upi = str(intel["upiIds"][-1]).strip()
-        if upi and not _already_said(upi) and len(base.split()) <= 55:
+        if upi and not _already_said(upi) and not _echoed_before("upiIds", upi) and len(base.split()) <= 55:
             if not base.endswith((".", "!", "?")):
                 base += "."
+            _mark_echoed("upiIds", upi)
             return f"{base} You said the UPI ID is {upi} — is that correct?"
 
     if intel.get("phoneNumbers") and any(k in low for k in ["number", "call", "whatsapp", "sms", "text"]):
         phone = str(intel["phoneNumbers"][-1]).strip()
-        if phone and not _already_said(phone) and len(base.split()) <= 55:
+        if phone and not _already_said(phone) and not _echoed_before("phoneNumbers", phone) and len(base.split()) <= 55:
             if not base.endswith((".", "!", "?")):
                 base += "."
+            _mark_echoed("phoneNumbers", phone)
             return f"{base} Just to confirm, should I contact {phone} or a different number?"
 
     if intel.get("phishingLinks") and any(k in low for k in ["link", "url", "website", "domain"]):
         link = str(intel["phishingLinks"][-1]).strip()
-        if link and not _already_said(link) and len(base.split()) <= 55:
+        if link and not _already_said(link) and not _echoed_before("phishingLinks", link) and len(base.split()) <= 55:
             if not base.endswith((".", "!", "?")):
                 base += "."
+            _mark_echoed("phishingLinks", link)
             return f"{base} The link you mentioned was {link} — should I open the same one?"
 
     # For bank account numbers: avoid repeating full numbers too often; use last-4 for realism.
@@ -920,8 +997,11 @@ def _maybe_echo_scammer_intel(
         acc = str(intel["bankAccounts"][-1]).strip()
         if acc and not _already_said(acc) and len(acc) >= 8 and len(base.split()) <= 60:
             tail = acc[-4:]
+            if _echoed_before("bankAccountsTail", tail):
+                return reply
             if not base.endswith((".", "!", "?")):
                 base += "."
+            _mark_echoed("bankAccountsTail", tail)
             return f"{base} You mean the account ending in {tail}, right?"
 
     return reply
@@ -1090,6 +1170,35 @@ def _ensure_engagement_question(
     if not s.endswith((".", "!", "?", ":")):
         s += "."
     return f"{s} {q}"
+
+
+def _lightweight_reply(incoming_text: str, *, salt: str) -> str:
+    """
+    Non-engagement reply used when we are not in honeypot mode for this turn.
+    Keep it short, stable, and avoid repeating the exact same line on bursts of benign traffic.
+    """
+    txt = (incoming_text or "").strip()
+    if not txt:
+        return "Observed."
+
+    # Gibberish should not crash; ask to rephrase.
+    if _looks_like_gibberish(txt):
+        options = [
+            "Observed. I did not catch that. Can you repeat?",
+            "Observed. That message is unclear to me. Can you rephrase?",
+            "Observed. Sorry, I could not understand. What do you mean?",
+        ]
+    else:
+        options = [
+            "Observed. Can you share a bit more context?",
+            "Observed. What do you need help with exactly?",
+            "Observed. Please explain in one short message.",
+            "Observed. Can you repeat the main point?",
+        ]
+
+    digest = hashlib.sha256((salt + "|" + str(len(txt)) + "|" + txt[:32]).encode("utf-8")).hexdigest()
+    idx = int(digest[:8], 16) % len(options)
+    return options[idx]
 
 
 def _looks_like_gibberish(text: str) -> bool:
