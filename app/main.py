@@ -344,7 +344,7 @@ async def handle_message(
         DB,
         session_id,
         "user",
-        reply,
+        _sanitize_outgoing_reply(reply),
         int(time.time() * 1000),
     )
 
@@ -422,7 +422,7 @@ async def handle_message(
     return MessageResponse(
         status="success",
         sessionId=session_id,
-        reply=reply,
+        reply=_sanitize_outgoing_reply(reply),
         scamDetected=scam_detected,
         shouldEngage=should_engage,
         extractedIntelligence=intel,
@@ -773,6 +773,43 @@ def _maybe_echo_scammer_intel(
             return f"{base} You mean the account ending in {tail}, right?"
 
     return reply
+
+
+_RE_PAN = re.compile(r"\b[A-Z]{5}\d{4}[A-Z]\b", re.IGNORECASE)
+_RE_AADHAAR = re.compile(r"\b\d{4}\s?\d{4}\s?\d{4}\b")
+_RE_CVV = re.compile(r"\bcvv\s*[:=]?\s*\d{3,4}\b", re.IGNORECASE)
+_RE_CARD = re.compile(r"\b(?:\d[ -]?){13,19}\b")
+_RE_OTP = re.compile(r"\b\d{4,8}\b")
+_RE_PASSWORD_HINT = re.compile(r"\b(password|passcode|netbanking|upi pin|pin)\b", re.IGNORECASE)
+
+
+def _sanitize_outgoing_reply(text: str) -> str:
+    """
+    Hard guardrail: our honeypot must never output sensitive victim credentials/PII.
+
+    If a template/bridge accidentally contains such content, replace with a safe,
+    human-sounding fallback that continues engagement without revealing detection.
+    """
+    s = (text or "").strip()
+    if not s:
+        return text
+
+    lowered = s.lower()
+    # If content looks like it contains credentials, do not send it as-is.
+    if _RE_PASSWORD_HINT.search(lowered) and (_RE_PAN.search(s) or _RE_AADHAAR.search(s) or _RE_CVV.search(s) or _RE_CARD.search(s) or _RE_OTP.search(s)):
+        return (
+            "I am not comfortable sharing any codes or personal details. "
+            "Please send your official callback number or UPI handle/link in one message so I can verify and proceed."
+        )
+
+    # Redact high-risk tokens if they slipped in.
+    if _RE_PAN.search(s) or _RE_AADHAAR.search(s) or _RE_CVV.search(s) or _RE_CARD.search(s):
+        return (
+            "I'm getting confused and I don't want to share sensitive details. "
+            "Please tell me the exact official number/UPI handle or the link you want me to use, and the steps."
+        )
+
+    return text
 
 
 _DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")

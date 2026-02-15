@@ -113,21 +113,25 @@
   },
   "otp": {
     "hook": [
-      "OTP? Your OTP came to my number? How did that happen?",
-      "Sent it accidentally? Fine, which OTP? No message has come yet."
+      "OTP? You mean a code came to my number? I'm not sure what it is for.",
+      "You sent it by mistake? Okay, I'm checking my messages now, but I'm slow with the phone."
     ],
     "tangent": [
-      "Yes, a code has come. Wait, I'll read it to you.",
-      "The code is visible. It's 6 numbers. Is this what you need?"
+      "I can see a message, but it also says 'do not share'. I don't want to do the wrong thing.",
+      "Can you tell me the exact sender name/number the OTP should come from, so I can find the correct message?",
+      "If this is urgent, please send me your callback number. If the call drops I won't be able to continue."
     ],
     "friction": [
       "I need to put on my glasses. I can't see the numbers clearly...",
-      "Is this a WhatsApp OTP or an SMS one? There are messages in both places.",
-      "Wait, the OTP might have expired. This message is an hour old."
+      "Is this a WhatsApp OTP or an SMS one? There are messages in both places and I get confused.",
+      "My inbox is full and the latest message is not showing. Should I restart the phone or wait?",
+      "The OTP expires quickly, and I'm worried I'll read it wrong. Can you message me your number again so I can save it properly?",
+      "Before I do anything, can you tell me which app/service you were logging into and why it asked for my number?"
     ],
     "endurance": [
-      "My WhatsApp isn't loading properly. Can I send it tomorrow?",
-      "How do you take a screenshot? I don't know. I'll ask my son."
+      "My WhatsApp isn't loading properly. Please wait a minute, I'm trying again.",
+      "The phone is hanging and the message list keeps moving. If you can share your number, I can call you back once it stabilizes.",
+      "I'm not comfortable sharing any codes. If you want, tell me your official support number or website and I'll verify it myself."
     ]
   },
   "job_offer": {
