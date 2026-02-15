@@ -86,7 +86,10 @@ def detect_domain(text: str) -> str:
         ]
     ) and any(k in lower for k in ["send", "transfer", "help", "pay", "money", "fee", "urgent"]):
         return "romance_scam"
-    if any(k in lower for k in ["grant", "subsidy", "government scheme", "tax refund", "processing fee"]):
+    # Government grant/subsidy scams: require explicit govt/scheme language (avoid matching generic "processing fee")
+    if any(k in lower for k in ["government", "govt", "grant", "subsidy", "scheme", "tax refund", "income tax", "department"]) and any(
+        k in lower for k in ["grant", "subsidy", "scheme", "refund", "tax"]
+    ):
         return "government_grant"
     if any(k in lower for k in ["congratulations", "you won", "winner", "lucky draw", "lottery", "cash prize", "mega draw", "prize"]):
         return "prize_lottery"
@@ -96,6 +99,54 @@ def detect_domain(text: str) -> str:
         return "job_offer"
     if any(k in lower for k in ["bitcoin", "crypto", "forex", "guaranteed returns", "double your money", "investment"]):
         return "investment_crypto"
+    # Insurance scams (LIC/IRDAI/policy/premium) should be detected before generic loan "policy" language.
+    if any(
+        k in lower
+        for k in [
+            "insurance",
+            "life cover",
+            "health insurance",
+            "lic",
+            "irdai",
+            "irda",
+            "policy premium",
+            "sum assured",
+            "maturity",
+            "nominee",
+            "claim settlement",
+            "agent id",
+            "license number",
+            "policy number",
+            "brochure",
+        ]
+    ):
+        return "insurance_scam"
+    if any(
+        k in lower
+        for k in [
+            "loan",
+            "instant loan",
+            "personal loan",
+            "pre-approved loan",
+            "loan approved",
+            "loan application approved",
+            "no credit check",
+            "no documents",
+            "processing fee",
+            "disbursal",
+            "nbfc",
+            "fintech",
+            "interest rate",
+            "emi",
+            "sanction letter",
+            "rbi",
+            "gst",
+            "stamp duty",
+            "insurance fee",
+            "registration fee",
+        ]
+    ):
+        return "loan_scam"
     if any(k in lower for k in ["arrest warrant", "warrant", "police", "investigation", "legal action"]):
         return "police_authority"
     if any(k in lower for k in ["parcel", "courier", "delivery", "customs", "shipment", "tracking number", "package"]):
@@ -106,29 +157,6 @@ def detect_domain(text: str) -> str:
         return "credit_card"
     if any(k in lower for k in ["donate", "donation", "charity", "fundraising", "relief fund"]):
         return "charity_donation"
-    if any(
-        k in lower
-        for k in [
-            "insurance",
-            "life cover",
-            "health insurance",
-            "policy",
-            "premium",
-            "maturity",
-            "nominee",
-            "sum assured",
-            "claim",
-            "claim settlement",
-            "lic",
-            "irda",
-            "irdai",
-            "agent id",
-            "license number",
-            "policy number",
-            "brochure",
-        ]
-    ):
-        return "insurance_scam"
     if any(k in lower for k in ["anydesk", "teamviewer", "rustdesk", "remote access", "access code", "device has virus", "device has malware"]):
         # Route tech-support style scams to phishing-style playbooks (install/link + instructions).
         return "tech_support"
@@ -1098,6 +1126,28 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                             "offer expires",
                             "activation",
                             "processing fee",
+                        ]
+                    ):
+                        return "near_miss"
+                    if domain == "loan_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "processing fee",
+                            "registration fee",
+                            "insurance fee",
+                            "gst",
+                            "stamp duty",
+                            "security deposit",
+                            "pay",
+                            "payment",
+                            "transfer",
+                            "upi",
+                            "account number",
+                            "ifsc",
+                            "disbursal",
+                            "release",
+                            "final step",
+                            "one more payment",
                         ]
                     ):
                         return "near_miss"

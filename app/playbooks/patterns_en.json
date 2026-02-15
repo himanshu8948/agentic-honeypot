@@ -386,6 +386,46 @@
       "The brochure link is not opening on my phone. Please resend the exact link and policy name again."
     ]
   },
+  "loan_scam": {
+    "hook": [
+      "Hello. You said instant loan approval. What is the exact company/NBFC name and where are you calling from?",
+      "I urgently need funds for a medical expense. Please explain the loan amount, interest rate, EMI, and disbursal timeline clearly.",
+      "You said no documents and no credit check. Can you explain how approval works then, and what is the eligibility?",
+      "Is this RBI approved/registered? Please share the registration/CIN and where I can verify online."
+    ],
+    "tangent": [
+      "Please send the fee breakdown in writing: processing, GST, insurance, registration, stamp duty. I want it in one message.",
+      "Can you share the office address and a landline number? I want to verify the company before paying anything.",
+      "Do you have a sanction letter/offer letter preview and the loan agreement draft? Please WhatsApp/email it to me.",
+      "If any fee is required, can it be deducted from the loan amount? Please confirm the net disbursal amount."
+    ],
+    "friction": [
+      "I am ready to proceed but I need complete verification details first: website link, office address, and your employee ID.",
+      "I found many scams like this. Please resend your company details and the official contact so I don't make a mistake.",
+      "My bank app is slow and I don't want to send to the wrong handle. Please type the payment details clearly in one message.",
+      "Before any payment, please confirm the final total fees and confirm there will be no additional fees after this."
+    ],
+    "near_miss": [
+      "If you need a processing fee now, share the exact UPI ID or bank account details and the beneficiary name that should show in the app.",
+      "Please send the loan application/reference ID, sanction letter number (if any), and the disbursal timeline in one message before I pay.",
+      "You said this is the last payment. Please confirm in writing: 'after this payment, loan will be disbursed' with company name and contact.",
+      "I can pay once you share your senior manager/supervisor contact and the office address for verification."
+    ],
+    "endurance": [
+      "I need 1-2 hours to arrange the fee. Please keep the same payment handle and details and do not change them.",
+      "My family and CA want to check this for safety. Please send all details (company, CIN, office address, payment handle) in one message.",
+      "I found negative reviews online. If you share official verification links and landline, I can proceed faster.",
+      "I can come to the office in person to pay and sign. Please share the exact address and visiting hours."
+    ],
+    "ask_phone": [
+      "Please share your exact callback/WhatsApp number (with country code) and the company's landline number for verification.",
+      "Can you share your official email ID and your supervisor/manager contact number as well?"
+    ],
+    "ask_link": [
+      "Please share the official website link and the exact page where your loan product is listed. Also share a Google Maps pin for the office.",
+      "If you have a form/portal link for the loan application, send the exact URL. My phone sometimes opens the wrong page."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",

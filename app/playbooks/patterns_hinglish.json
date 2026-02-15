@@ -168,6 +168,47 @@
     ]
   }
   ,
+  "loan_scam": {
+    "hook": [
+      "Hello. Instant loan bol rahe ho. Exact company/NBFC name kya hai and aap kahan se bol rahe ho?",
+      "Medical emergency hai. Loan amount, interest rate, EMI, and disbursal timeline simple words mein batao.",
+      "No documents and no credit check? Approval kaise hoga then? Eligibility criteria kya hai?",
+      "RBI approved/registered hai kya? CIN/registration reference + verify link bhej do."
+    ],
+    "tangent": [
+      "Fees breakup written mein bhej do: processing, GST, insurance, registration, stamp duty. Ek message mein.",
+      "Office address + landline share karo. Main payment se pehle verify karna chahta hoon.",
+      "Sanction letter/offer letter preview + loan agreement draft WhatsApp/email pe bhej do.",
+      "Fees loan se deduct ho sakti hai? Net disbursal amount confirm kar do."
+    ],
+    "friction": [
+      "Proceed karne se pehle verification chahiye: website link, office address, and your employee ID.",
+      "Aajkal bahut scam hota hai. Company details + official contact dobara bhej do so I don't make mistake.",
+      "Banking app slow hai. Payment details ek message mein clearly type kar do please.",
+      "Payment se pehle final total fees confirm karo and confirm karo after this no extra fee."
+    ],
+    "near_miss": [
+      "If processing fee now, share exact UPI ID/bank details + beneficiary name that should show in the app.",
+      "Before payment, loan application/reference ID + sanction letter number (if any) + disbursal timeline ek message mein bhej do.",
+      "You said last payment. Written confirm karo: 'after this payment, loan disbursed' with company name + contact.",
+      "Senior manager/supervisor contact + office address share karo then I can pay."
+    ],
+    "endurance": [
+      "Fee arrange karne mein 1-2 hours lagenge. Payment handle/details same rakhna please, change mat karna.",
+      "Family + CA safety ke liye check karenge. Company, CIN, office address, payment handle ek message mein bhej do.",
+      "Negative reviews mil rahe hain. Official verification links + landline share kar doge toh I proceed faster.",
+      "Main office aa ke pay/sign kar sakta hoon. Exact address + visiting hours bhej do."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (with country code) + company landline share karo please.",
+      "Official email ID + supervisor/manager contact number bhi bhej do."
+    ],
+    "ask_link": [
+      "Official website link + exact page bhejo jahan loan product listed ho. Office Google Maps pin bhi bhej do.",
+      "Loan application portal/form link hai toh exact URL bhej do. Kabhi wrong page open ho jata hai."
+    ]
+  }
+  ,
   "romance_scam": {
     "hook": [
       "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",

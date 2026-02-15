@@ -417,6 +417,46 @@
       "Brochure link open nahi ho raha. Exact link aur policy name dobara bhej do beta."
     ]
   },
+  "loan_scam": {
+    "hook": [
+      "Hello. Aap instant loan bol rahe ho. Exact company/NBFC name kya hai aur aap kahan se bol rahe ho?",
+      "Mujhe medical emergency ke liye paisa chahiye. Loan amount, interest rate, EMI, aur disbursal timeline clearly batao.",
+      "Aap bol rahe ho no documents aur no credit check. Phir approval kaise hota hai? Eligibility kya hai?",
+      "RBI approved/registered hai kya? Registration/CIN share kar do aur verify kahan karna hai?"
+    ],
+    "tangent": [
+      "Fees ka breakup written mein bhej do: processing, GST, insurance, registration, stamp duty. Ek message mein.",
+      "Office address aur landline number do. Main payment se pehle company verify karna chahta hoon.",
+      "Sanction letter/offer letter preview aur loan agreement draft hai kya? WhatsApp/email pe bhej do.",
+      "Agar fees required hai toh kya loan amount se deduct ho sakta hai? Net disbursal amount confirm kar do."
+    ],
+    "friction": [
+      "Main proceed karne ko ready hoon par verification details chahiye: website link, office address, aur aapka employee ID.",
+      "Aajkal bahut scam hota hai. Company details aur official contact dobara bhej do so I don't make mistake.",
+      "Banking app slow hai. Payment details ek message mein clearly type kar do.",
+      "Payment se pehle final total fees confirm karo aur ye bhi confirm karo iske baad koi extra fee nahi aayegi."
+    ],
+    "near_miss": [
+      "Agar processing fee abhi bhejni hai toh exact UPI ID ya bank details bhejo, aur beneficiary name bhi jo app pe show hoga.",
+      "Pay karne se pehle loan application/reference ID aur sanction letter number (agar hai) aur disbursal timeline ek message mein bhej do.",
+      "Aap bol rahe ho last payment hai. Written mein confirm karo: 'is payment ke baad loan disburse ho jayega' with company name aur contact.",
+      "Senior manager/supervisor ka contact aur office address share kar do, phir main pay kar dunga."
+    ],
+    "endurance": [
+      "Fee arrange karne mein 1-2 ghanta lagega. Please payment handle/details same rakhna, change mat karna.",
+      "Family aur CA safety ke liye check karna chahte hain. Company, CIN, office address, payment handle ek message mein bhej do.",
+      "Online negative reviews mil rahe hain. Official verification links aur landline bhej doge toh main jaldi proceed karunga.",
+      "Main office aa kar personally sign aur pay kar sakta hoon. Exact address aur visiting hours bhej do."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (country code ke saath) bhej do aur company ka landline number bhi.",
+      "Official email ID aur supervisor/manager contact number bhi share kar do."
+    ],
+    "ask_link": [
+      "Official website link bhej do aur exact page ka naam bhi jahan loan product listed ho. Office ka Google Maps pin bhi bhej do.",
+      "Loan application portal/form ka link hai toh exact URL bhej do. Mere phone pe kabhi wrong page open ho jata hai."
+    ]
+  },
   "generic": {
     "ask_more": [
       "Beta mujhe samajh nahi aaya. Zara dheere bolo.",
