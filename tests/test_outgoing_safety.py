@@ -1,4 +1,4 @@
-from app.main import _sanitize_outgoing_reply
+from app.main import _sanitize_outgoing_reply, _tone_normalize_reply
 
 
 def test_sanitize_blocks_pan() -> None:
@@ -17,3 +17,10 @@ def test_sanitize_blocks_card_and_cvv() -> None:
     assert "4111" not in out
     assert "CVV 123" not in out
 
+
+def test_tone_normalize_removes_excited_language() -> None:
+    out = _tone_normalize_reply("Oh no! Arre bhagwan!! Wow!!! Please help!")
+    assert "oh no" not in out.lower()
+    assert "arre bhagwan" not in out.lower()
+    assert "wow" not in out.lower()
+    assert "!" not in out

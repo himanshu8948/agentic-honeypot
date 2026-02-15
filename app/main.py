@@ -52,6 +52,15 @@ STAT_MODEL = None
 INFLIGHT_SEM: asyncio.Semaphore | None = None
 INFLIGHT_WAIT_S = 1.5
 
+_EXCITED_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"\boh\s+no\b", re.IGNORECASE), "Observed"),
+    (re.compile(r"\boh\s+my\s+god\b", re.IGNORECASE), "Observed"),
+    (re.compile(r"\boh\s+my\s+goodness\b", re.IGNORECASE), "Observed"),
+    (re.compile(r"\barre\s+bhagwan\b", re.IGNORECASE), "Observed"),
+    (re.compile(r"\barre\s+baap\s+re\b", re.IGNORECASE), "Observed"),
+    (re.compile(r"\bwow\b", re.IGNORECASE), "Observed"),
+]
+
 
 def _health_payload() -> dict[str, str]:
     return {"status": "ok"}
@@ -420,6 +429,8 @@ async def handle_message(
         conversation_summary = _dump_conversation_state(convo_state)
     # Note: even in high-risk zones, we keep engaging (honeypot) but never reveal detection.
 
+    reply = _tone_normalize_reply(reply)
+
     # Persist agent reply to keep session transcript and message counts consistent.
     append_message(
         DB,
@@ -510,7 +521,7 @@ async def handle_message(
     return MessageResponse(
         status="success",
         sessionId=session_id,
-        reply=_sanitize_outgoing_reply(reply),
+        reply=_sanitize_outgoing_reply(_tone_normalize_reply(reply)),
         scamDetected=scam_detected,
         shouldEngage=should_engage,
         extractedIntelligence=intel,
@@ -954,6 +965,25 @@ def _sanitize_incoming_text(text: str) -> str:
         s = _HTML_TAG_RE.sub(" ", s)
     # Normalize whitespace (keeps extraction stable).
     s = " ".join(s.split())
+    return s.strip()
+
+
+def _tone_normalize_reply(text: str) -> str:
+    """
+    Keep the honeypot calm/observational (avoid excited language that looks scripted),
+    without changing the extraction intent.
+    """
+    s = str(text or "").strip()
+    if not s:
+        return s
+
+    for pat, repl in _EXCITED_PATTERNS:
+        s = pat.sub(repl, s)
+
+    # Replace excitement punctuation with neutral punctuation.
+    s = re.sub(r"!{1,}", ".", s)
+    s = re.sub(r"\.{2,}", ".", s)
+    s = re.sub(r"\s+\.", ".", s)
     return s.strip()
 
 
