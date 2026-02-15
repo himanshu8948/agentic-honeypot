@@ -506,6 +506,46 @@
       "If you have a PDF brochure link, resend the exact URL. My phone is not opening it properly."
     ]
   },
+  "crypto_recovery_scam": {
+    "hook": [
+      "Hello. I lost money in a crypto scam before. How did you find me and what is your exact service?",
+      "If you can recover funds, please explain the process in simple steps. Which blockchain/exchange are you talking about?",
+      "What is your company/agency name and where are you located? Please share your website and official email.",
+      "Do you have proof of successful recoveries? Any case reference or written confirmation (with sensitive info hidden)?"
+    ],
+    "tangent": [
+      "You said you can trace transactions. Please tell me what details you need from me (TXID, wallet address) and what you will do with it.",
+      "Are you working with cyber cell/police? Share your credentials, badge/ID (if any), and an office/landline number to verify.",
+      "What is the expected success rate and timeline? Please write it clearly so I can understand.",
+      "Please send a written agreement/terms: your fee model, refund policy, and what you guarantee."
+    ],
+    "friction": [
+      "I have already been scammed once. I am scared to pay anything upfront. Can the fee be after recovery?",
+      "Before I proceed, share your phone/WhatsApp number and email again. I want to keep record and verify.",
+      "If you need documents, please list them clearly. I will not share OTP/PIN/password. Only public transaction details.",
+      "I am checking online warnings about recovery scams. Please share verification links and your official registration details."
+    ],
+    "near_miss": [
+      "If you are asking a recovery fee, share the exact UPI ID/bank details or crypto wallet address and the beneficiary name that should show.",
+      "Please send the exact fee breakdown (recovery fee, legal filing fee, tracing fee) and the final total amount in one message.",
+      "I want escrow or pay-after-recovery. If you insist upfront, confirm in writing: what you will deliver and the deadline.",
+      "Share your supervisor/manager contact and office address so I can verify before any payment."
+    ],
+    "endurance": [
+      "I need time to arrange money and verify. Please keep the same payment details and do not change them.",
+      "My bank/UPI is showing error. Resend the exact payment handle/address and the beneficiary name again in one message.",
+      "I will also verify with the cyber cell. Share your office landline and official email so they can contact you.",
+      "I am not refusing, I just need your process explained again in a simple step-by-step message."
+    ],
+    "ask_phone": [
+      "Please share your exact callback/WhatsApp number (with country code) and the office landline number.",
+      "Send your official email ID and the website domain again so I can verify properly."
+    ],
+    "ask_link": [
+      "Please share your official website link and any portal link you want me to use. Also share your office location/Google Maps pin.",
+      "If you are sending a payment link/QR or a wallet address, send it in one clear message so I can copy-paste."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",

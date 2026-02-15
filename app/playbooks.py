@@ -19,6 +19,37 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    # Crypto recovery / scam-recovery scams (secondary scam targeting past victims)
+    if any(
+        k in lower
+        for k in [
+            "crypto recovery",
+            "recover crypto",
+            "recover funds",
+            "recovery service",
+            "recovery team",
+            "asset recovery",
+            "chargeback",
+            "trace transaction",
+            "blockchain tracing",
+            "txid",
+            "transaction hash",
+            "wallet address",
+            "metamask",
+            "binance",
+            "coinbase",
+            "usdt",
+            "tether",
+            "tronscan",
+            "etherscan",
+            "cyber cell",
+            "cyber crime",
+            "legal filing fee",
+            "recovery fee",
+            "tracing fee",
+        ]
+    ):
+        return "crypto_recovery_scam"
     # Medical tourism / miracle cure scams
     if any(
         k in lower
@@ -1251,6 +1282,32 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                             "consultation fee",
                             "visa fee",
                             "processing fee",
+                        ]
+                    ):
+                        return "near_miss"
+                    if domain == "crypto_recovery_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "fee",
+                            "recovery fee",
+                            "legal fee",
+                            "filing fee",
+                            "tracing fee",
+                            "service fee",
+                            "pay",
+                            "payment",
+                            "transfer",
+                            "upi",
+                            "bank",
+                            "account number",
+                            "ifsc",
+                            "wallet",
+                            "address",
+                            "usdt",
+                            "deposit",
+                            "advance",
+                            "today",
+                            "urgent",
                         ]
                     ):
                         return "near_miss"

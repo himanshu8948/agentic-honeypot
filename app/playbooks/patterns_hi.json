@@ -537,6 +537,46 @@
       "PDF brochure link hai toh exact URL dobara bhej do. Mere phone pe open nahi ho raha."
     ]
   },
+  "crypto_recovery_scam": {
+    "hook": [
+      "Hello. Main pehle crypto scam mein paisa lose kar chuka hoon. Aapko mera number kaise mila aur aapka exact service kya hai?",
+      "Agar aap funds recover kar sakte ho toh simple steps mein process batao. Kaunsi blockchain/exchange ki baat hai?",
+      "Aapka company/agency name kya hai aur aap kahan located ho? Website aur official email bhej do.",
+      "Kya aapke paas successful recovery ka proof hai? Koi case reference ya written confirmation (sensitive info hide karke) bhej do."
+    ],
+    "tangent": [
+      "Aap transaction trace bol rahe ho. Mujhse kya details chahiye (TXID, wallet address) aur aap kya karoge usse?",
+      "Aap cyber cell/police ke saath kaam karte ho? Credentials, ID/badge (agar hai), aur office/landline number share kar do verify ke liye.",
+      "Expected success rate aur timeline kya hai? Clearly likh do.",
+      "Written agreement/terms bhej do: fee model, refund policy, aur aap kya guarantee karte ho."
+    ],
+    "friction": [
+      "Main already ek baar scam ho chuka hoon. Upfront pay karne se darr lagta hai. Fee recovery ke baad ho sakti hai kya?",
+      "Proceed karne se pehle apna phone/WhatsApp number aur email dobara bhej do. Main record aur verify karna chahta hoon.",
+      "Agar documents chahiye toh list clearly bhejo. Main OTP/PIN/password share nahi karunga. Sirf public transaction details.",
+      "Main online warnings check kar raha hoon. Verification links aur official registration details bhej do."
+    ],
+    "near_miss": [
+      "Agar recovery fee maang rahe ho toh exact UPI ID/bank details ya crypto wallet address bhejo aur beneficiary name bhi jo app pe show hoga.",
+      "Fee breakup ek message mein bhej do (recovery fee, legal filing fee, tracing fee) aur final total amount.",
+      "Main escrow ya pay-after-recovery chahta hoon. Agar upfront insist hai toh written mein confirm karo: deliverable + deadline.",
+      "Supervisor/manager ka contact aur office address share kar do, phir main decide karunga."
+    ],
+    "endurance": [
+      "Mujhe time chahiye arrange aur verify karne ke liye. Payment details same rakhna, change mat karna.",
+      "UPI/bank error aa raha hai. Payment handle/address aur beneficiary name ek message mein dobara bhej do.",
+      "Main cyber cell se bhi verify karunga. Office landline aur official email bhej do taaki woh contact kar sakein.",
+      "Main mana nahi kar raha, bas process simple step-by-step dobara ek message mein samjha do."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (country code ke saath) bhej do aur office landline number bhi.",
+      "Official email ID aur website domain dobara bhej do so I can verify."
+    ],
+    "ask_link": [
+      "Official website link aur agar koi portal link hai toh bhej do. Office location/Google Maps pin bhi bhej do.",
+      "Agar payment link/QR ya wallet address bhej rahe ho toh ek clear message mein bhejo so I can copy-paste."
+    ]
+  },
   "generic": {
     "ask_more": [
       "Beta mujhe samajh nahi aaya. Zara dheere bolo.",

@@ -291,6 +291,47 @@
     ]
   }
   ,
+  "crypto_recovery_scam": {
+    "hook": [
+      "Hello. I lost money in a crypto scam before. Aapko mera number kaise mila and what is your exact service?",
+      "If you can recover funds, process simple steps mein batao. Which blockchain/exchange are you talking about?",
+      "Company/agency name kya hai and location kahan hai? Website + official email bhej do please.",
+      "Any proof of successful recoveries? Case reference ya written confirmation (sensitive info hide karke) bhej do."
+    ],
+    "tangent": [
+      "Transaction tracing bol rahe ho. Mujhse kya details chahiye (TXID, wallet address) and aap kya karoge?",
+      "Cyber cell/police ke saath work? Credentials + ID/badge (if any) + office/landline share karo for verification.",
+      "Expected success rate + timeline kya hai? Clearly type karo.",
+      "Written agreement/terms bhejo: fee model, refund policy, and what you guarantee."
+    ],
+    "friction": [
+      "Main already scammed once. Upfront pay karne se darr lagta hai. Fee after recovery possible hai?",
+      "Proceed karne se pehle phone/WhatsApp number + email dobara bhej do. I want record + verify.",
+      "Documents list clearly bhejo. I will not share OTP/PIN/password. Only public transaction details.",
+      "Online warnings dekh raha hoon recovery scams ki. Verification links + official registration details bhej do."
+    ],
+    "near_miss": [
+      "If recovery fee, share exact UPI ID/bank details or crypto wallet address + beneficiary name that should show in the app.",
+      "Fee breakup ek message mein bhejo (recovery fee, legal filing fee, tracing fee) + final total amount.",
+      "I want escrow / pay-after-recovery. If upfront insist, written confirm karo: deliverable + deadline.",
+      "Supervisor/manager contact + office address share karo so I can verify before any payment."
+    ],
+    "endurance": [
+      "Arrange + verify karne ke liye time chahiye. Payment details same rakhna, change mat karna please.",
+      "UPI/bank error aa raha hai. Payment handle/address + beneficiary name ek message mein again bhej do.",
+      "Main cyber cell se verify karunga. Office landline + official email bhej do so they can contact you.",
+      "Main refuse nahi kar raha, bas process simple step-by-step dobara ek message mein explain karo."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (with country code) + office landline share karo.",
+      "Official email ID + website domain dobara bhej do so I can verify properly."
+    ],
+    "ask_link": [
+      "Official website link + portal link (if any) bhejo. Office location/Google Maps pin bhi bhej do.",
+      "Payment link/QR ya wallet address ek clear message mein bhejo so I can copy-paste."
+    ]
+  }
+  ,
   "romance_scam": {
     "hook": [
       "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",
