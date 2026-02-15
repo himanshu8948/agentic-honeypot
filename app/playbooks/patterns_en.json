@@ -89,16 +89,26 @@
     ],
     "tangent": [
       "OTP? Yes, a message came. Wait, let me check the messages...",
-      "Account number? Yes, I have it. I'll tell you from the passbook."
+      "Account number? Yes, I have it. I'll tell you from the passbook.",
+      "Okay, I will cooperate, but I'm confused. Where exactly should I reply the OTP — on SMS, WhatsApp, email, or inside the app?",
+      "Before I type anything, please tell me the exact contact/handle/number you want me to send it to. I don't want to send it to the wrong place.",
+      "My phone is new and I get confused switching screens. Can you write the steps in one message, slowly?"
     ],
     "friction": [
       "Which OTP? I just got 3-4 messages. Which one should I read?",
       "What is this UPI ID? Do I have one? How will I find out?",
-      "How do I send the payment? I use Google Pay, but I don't have your number."
+      "How do I send the payment? I use Google Pay, but I don't have your number.",
+      "If I must send the OTP, tell me the exact destination first (your official number/UPI ID).",
+      "The OTP message says 'do not share'. You are saying share it. Can you confirm your callback number and the exact UPI handle again so I can note it down?",
+      "I am not able to find the OTP. Can you tell me what sender name/number it should come from (like SBIINB / VM-XXXX)?",
+      "My SMS inbox is full and the OTP is not showing. Should I wait, or should I restart the phone?",
+      "The app is loading slowly. Please stay on the line and type the exact UPI ID or contact number in the message so I can copy it."
     ],
     "endurance": [
       "I'll ask my son when he comes. He understands banking.",
-      "Network problem is happening. The phone balance is also about to run out."
+      "Network problem is happening. The phone balance is also about to run out.",
+      "The OTP is not arriving. Please resend the exact contact number/UPI handle and I will try again once the message comes.",
+      "I wrote the details down, but I'm not sure if I copied it correctly. Can you repeat the UPI handle/number one more time, letter by letter?"
     ]
   },
   "otp": {

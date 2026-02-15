@@ -106,8 +106,9 @@ def detect_domain(text: str) -> str:
         return "otp"
     if any(k in lower for k in ["refund", "chargeback", "reversal", "transaction failed", "credited back"]):
         return "refund"
-    if any(k in lower for k in ["kyc", "update kyc", "reactivate", "suspended", "blocked", "freeze"]):
-        return "bank_block"
+    if any(k in lower for k in ["kyc", "update kyc", "reactivate", "suspended", "blocked", "freeze", "account will be blocked"]):
+        # Alias to bank_fraud templates to avoid generic fallback and repetition.
+        return "bank_fraud"
     if any(k in lower for k in ["link", "http://", "https://", "apk", "install app"]):
         return "phishing"
     return "generic"
@@ -898,6 +899,21 @@ def _filter_recent_repeats(options: list[str], conversation: list[dict[str, str]
 
     def _norm(s: str) -> str:
         s = " ".join((s or "").lower().strip().split())
+        # Strip common persona prefixes so trivial variations don't defeat repetition checks.
+        for pfx in (
+            "haan beta",
+            "arre bhagwan",
+            "achha suno",
+            "ruko zara",
+            "sir please",
+            "oh my god sir",
+            "good evening officer",
+            "officer sir",
+            "officer ji",
+        ):
+            if s.startswith(pfx):
+                s = s[len(pfx):].strip(' ,.-')
+                break
         # strip lightweight punctuation so near-duplicates match
         for ch in [".", ",", "!", "?", "…", "–", "-"]:
             s = s.replace(ch, "")

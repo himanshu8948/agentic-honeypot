@@ -105,19 +105,29 @@
       "Haan haan main cooperate karunga. Bank account important hai. Batao kya process hai?",
       "OTP? Haan wo message aaya tha. Ruko, messages check karta hoon...",
       "Verify karne ke liye kya chahiye? Aadhaar? PAN card? Batao.",
-      "Theek hai beta, main sab details de dunga. Account unblock hona chahiye."
+      "Theek hai beta, main sab details de dunga. Account unblock hona chahiye.",
+      "Par beta main confuse hoon. OTP kahan bhejna hai exactly - SMS reply, WhatsApp, email, ya app ke andar?",
+      "Aap exact number/UPI handle likh ke bhej do. Main galat jagah send nahi karna chahta.",
+      "Mera phone naya hai, screens switch karte time galti ho jati hai. Ek message mein steps slowly likh do."
     ],
     "friction": [
       "OTP kaunsa? Abhi 3-4 messages aaye hain. Konse wala padhun?",
       "Account number kahaan likha hai passbook mein... arre kahaan gaya... ek minute...",
       "Beta ye UPI ID kya hota hai? Mere paas hai kya? Kaise pata chalega?",
-      "Payment kaise bhejun? Google Pay use karta hoon, lekin number nahi pata tumhara."
+      "Payment kaise bhejun? Google Pay use karta hoon, lekin number nahi pata tumhara.",
+      "OTP bhejna hai toh pehle aapka exact destination batao - number/UPI ID kya hai?",
+      "OTP message mein 'do not share' likha hai. Aap bol rahe share karo. Aap apna callback number aur UPI handle phir se confirm kar do.",
+      "OTP kis sender se aata hai? SBIINB ya VM-XXXX jaisa? Main search kar leta hoon.",
+      "SMS inbox full lag raha hai. OTP dikh nahi raha. Main wait karoon ya phone restart?",
+      "App slow hai. Aap exact UPI ID ya number message mein type kar do, main copy kar lunga."
     ],
     "endurance": [
       "Beta mera beta aayega toh usse poochunga. Wo banking samajhta hai.",
       "Haan toh account blocked tha na? Unblock ke liye kya karna tha? Dobara batao.",
       "Arre ek baar bank branch jaa kar baat karta hoon. Wo log batayenge.",
-      "Network problem ho raha hai. Phone ka balance bhi khatam hone wala hai."
+      "Network problem ho raha hai. Phone ka balance bhi khatam hone wala hai.",
+      "OTP nahi aa raha. Aap number/UPI handle phir se bhejo, message aate hi main try karunga.",
+      "Mainne likh liya, par confirm nahi ho pa raha. Ek baar aur UPI handle/number letter by letter repeat kar do."
     ]
   },
   "job_offer": {
@@ -298,4 +308,3 @@
     ]
   }
 }
-
