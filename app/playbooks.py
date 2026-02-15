@@ -618,6 +618,17 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             "ask_phone": [
                 "Where should I send it? Share the exact phone number with country code.",
                 "Okay, tell me the exact number to contact you on.",
+                "Please type the exact callback number in one line, including +country code.",
+                "If the call drops, what exact number should I call back?",
+                "Do I send it by SMS or WhatsApp? If WhatsApp, share the exact number to message.",
+                "Please repeat the number slowly with spaces between digits so I can copy it correctly.",
+                "Which exact number should I forward the OTP/message to? Please write it clearly.",
+                "Is this an official helpline number or your direct number? Share the official number.",
+                "My phone shows multiple contacts. Please send the exact number again so I don't pick wrong.",
+                "Can you send the number in message format like +91-XXXXXXXXXX so I can copy-paste?",
+                "I am on a different SIM right now. Which number should I send to, exactly?",
+                "If you want me to reply, should I reply here or to a different number? Share the exact number.",
+                "I want to note this down. Please confirm the exact number once more.",
             ],
             "ask_upi": [
                 "Okay. Send the exact UPI ID and name so I can do it correctly.",
@@ -868,6 +879,18 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             "ask_phone": [
                 "You said OTP will come. Which number will it come from? Tell me the exact number.",
                 "Okay, where do I send the OTP? Give the exact phone number or UPI handle.",
+                "I got 2-3 SMS alerts. Which sender name/number should I look for, exactly?",
+                "Should I forward the full SMS or only the 6-digit code? And to which exact number?",
+                "If it is WhatsApp OTP, do I send it to your WhatsApp number? Share the exact number.",
+                "My notifications disappear quickly. Please type the exact destination number again so I can send fast.",
+                "Do you want the OTP here in chat, or should I text it to a separate number? Which exact number?",
+                "I am writing it down. Confirm the exact recipient number (with country code) before I send anything.",
+                "Which last 4 digits should the sender number have? I see multiple messages and I am confused.",
+                "My phone shows 'Do not share OTP'. You still want it? Okay, but where exactly should I send it?",
+            ],
+            "ask_more": [
+                "Okay I am checking messages now. Tell me one step: which app/screen should I be on while reading the OTP?",
+                "I opened the SMS thread. What exactly should I tap next so I don't lose the code?",
             ],
         },
         "refund": {
@@ -895,6 +918,14 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             "ask_phone": [
                 "Kahan send karna hai? Country code ke saath exact number likh do.",
                 "Theek hai, aapka exact number message kar do.",
+                "Call drop ho gaya toh main kis exact number pe wapas call karun? +country code ke saath likh do.",
+                "SMS karna hai ya WhatsApp? Agar WhatsApp hai toh exact number bhejo.",
+                "Number ko dheere dheere space ke saath likh do (example: +91 98xx...).",
+                "Main galti nahi karna chahta. Recipient ka exact number ek baar phir message kar do.",
+                "Yeh helpline hai ya aapka direct number? Official number bhejo.",
+                "Mere phone mein do SIM hain. Aap kaunsa number use karne bol rahe ho? Exact number bhejo.",
+                "Main copy-paste karna chahta hoon. +91-XXXXXXXXXX format mein number bhejo.",
+                "Reply yahin karna hai ya alag number pe SMS? Exact number bata do.",
             ],
             "ask_upi": [
                 "UPI ID exact bhej do (jaise name@bank), main galti nahi karna chahta.",
@@ -908,6 +939,19 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             ],
             "ask_more": [
                 "Achha, ab next step kya hai? Dhyan se batao.",
+            ],
+        },
+        "otp": {
+            "ask_phone": [
+                "OTP aayega toh kis sender/number se aayega? Exact bata do.",
+                "OTP kahan bhejna hai? Exact number ya WhatsApp number message kar do.",
+                "Mere paas 2-3 OTP SMS aa rahe hain. Kaunsa sender name/number dekhun? Exact bolo.",
+                "Full SMS forward karna hai ya sirf 6 digit code? Aur exact number kya hai?",
+                "Do not share OTP likha aa raha hai. Phir bhi bhejna hai? Theek hai, par kahan send karun?",
+                "Destination number +country code ke saath ek baar phir likh do, main jaldi bhej dunga.",
+            ],
+            "ask_more": [
+                "Main message list mein hoon. Next step simple batao, main confuse ho jata hoon.",
             ],
         },
         "upi_refund": {
