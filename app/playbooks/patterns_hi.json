@@ -146,7 +146,7 @@
     "friction": [
       "Registration fee online payment karni hai? Beta mujhe nahi aata ye.",
       "Resume email pe bhejni hai? Mera email password bhool gaya. Reset karna padega.",
-      "₹500 fees? Arre pehle job confirm ho toh payment karoon. Pakka hai na?",
+      "\u20b9500 fees? Arre pehle job confirm ho toh payment karoon. Pakka hai na?",
       "Company ka office kahaan hai? Address batao, ek baar jaake dekh loon.",
       "Beta phone number do company ka. Main verify kar loon pehle."
     ],
@@ -161,24 +161,45 @@
       "Investment? Crypto? Beta ye kya hota hai? Pehle samjhao.",
       "Bitcoin? Haan suna hai naam. Lekin kya hai ye? Kaise kaam karta hai?",
       "30% returns? Ek hafte mein? Arre itna jaldi? Pakka hai na?",
-      "Guaranteed profit? Lekin market toh kabhi guaranteed nahi hota beta."
+      "Guaranteed profit? Lekin market toh kabhi guaranteed nahi hota beta.",
+      "Beta crypto mein fraud bahut hota hai. Aap simple shabdon mein samjhao.",
+      "Company ka naam kya hai aur aap kahan se ho? Office address hai?",
+      "Government/SEBI/RBI approval ka kuch hai kya? Koi registration number?"
     ],
     "tangent": [
       "Haan interested hoon. Minimum kitna invest karna padega?",
       "Platform ka naam kya hai? Trusted hai? Government approved hai?",
       "Demo account hai kya? Pehle practice kar loon?",
-      "Returns kaise milenge? Bank account mein aayenge ya wallet mein?"
+      "Returns kaise milenge? Bank account mein aayenge ya wallet mein?",
+      "Beta official website ka exact link bhej do. Main pehle padh ke samajh loon.",
+      "Company registration details (CIN/GST) aur office address bhej do.",
+      "Main pehle chhota amount se start karna chahta hoon. Small test possible hai?",
+      "Mera CA poochega fees aur risk. Aap ek message mein clearly likh do."
     ],
     "friction": [
       "Wallet kaise banate hain? KYC kya hota hai? Mujhe ye sab nahi pata.",
-      "Minimum ₹10,000? Arre itna? Pehle ₹1000 se try kar sakte hain kya?",
+      "Minimum \u20b910,000? Arre itna? Pehle \u20b91000 se try kar sakte hain kya?",
       "Platform pe register kaise karoon? Link do, lekin safe hai na?",
-      "Beta ye cryptocurrency legal hai India mein? News mein suna tha kuch problem hai."
+      "Beta ye cryptocurrency legal hai India mein? News mein suna tha kuch problem hai.",
+      "Beta aapka WhatsApp/phone number bhej do. Main CA/bete ko forward karke confirm karunga.",
+      "Aap bol rahe aaj invest karo. Steps aur official contact ek message mein likh do.",
+      "Mera net slow hai. Aap website aur number dobara clearly type kar do, main copy kar lunga.",
+      "Kaunsi app use karni hai? Play Store app hai? Exact app name aur link bhej do."
     ],
     "endurance": [
       "Beta mera CA se baat karni hai pehle. Investment ke liye uski advice chahiye.",
       "Beta family se discuss kar loon. Bina unhe bataye investment nahi kar sakta.",
-      "Beta ek do din soch loon. Itni jaldi decision nahi le sakta."
+      "Beta ek do din soch loon. Itni jaldi decision nahi le sakta.",
+      "Mainne details likh liye, par confirm nahi ho raha. Website/number ek baar aur slowly repeat kar do.",
+      "Net unstable hai. 5-10 minute mein reply karunga. Aap details change mat karna.",
+      "Main reviews check karunga. Official website aur support contact dobara bhej do."
+    ],
+    "near_miss": [
+      "Aap bol rahe paise bhejo. Pehle exact destination do: UPI ID ya bank account, aur beneficiary name kya aayega?",
+      "Main sirf small test amount karunga. UPI handle letter-by-letter bhejo aur naam confirm kar do.",
+      "Main koi OTP/PIN share nahi karunga. Legit hai toh official website link aur callback number bhejo.",
+      "QR code hai toh UPI ID text mein bhi bhejo, camera ka issue hai.",
+      "Guaranteed bol rahe ho. Company website + registration details phir se bhejo, family ko dikhana hai."
     ]
   },
   "police_authority": {
@@ -239,7 +260,7 @@
     ],
     "tangent": [
       "Haan beta, paisa bhej deta hoon. Bank account number batao.",
-      "Kitne paise chahiye? ₹10,000? Theek hai. UPI se bhej sakta hoon?",
+      "Kitne paise chahiye? \u20b910,000? Theek hai. UPI se bhej sakta hoon?",
       "Hospital ka naam kya hai? Main bhi aa sakta hoon agar zaroori ho.",
       "Haan beta tension mat lo. Paise arrange kar deta hoon. Thoda time do."
     ],

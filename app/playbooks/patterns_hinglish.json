@@ -29,5 +29,31 @@
       "Internet slow hai aur baar baar hang ho raha hai. Kal try karte hain? Abhi time waste ho raha hai."
     ]
   }
+  ,
+  "investment_crypto": {
+    "hook": [
+      "Crypto investment? Sir I have heard many scams in this. Please explain slowly in simple words.",
+      "Guaranteed returns in one week sounds too good. How is it guaranteed, and what is the catch?",
+      "Okay I am interested but nervous. Company name and location kya hai?"
+    ],
+    "tangent": [
+      "Do you have an official website? Exact link bhej do so I can read first.",
+      "Government approval/registration hai kya? SEBI/RBI ya CIN/GST number share kar do.",
+      "Main family se discuss karna chahta hoon. WhatsApp number de do so I can forward details."
+    ],
+    "friction": [
+      "Wallet/KYC mujhe samajh nahi aa raha. Step by step type karke bhejo please.",
+      "My internet is slow. Link aur number ek baar aur clearly type kar do.",
+      "I want to start small. Small test amount possible hai? If yes, tell the exact destination."
+    ],
+    "near_miss": [
+      "If you want money transfer, please share exact UPI handle/bank details and the beneficiary name that should show.",
+      "I will not share any OTP/PIN. Legit hai toh website link + callback number send karo.",
+      "UPI handle letter-by-letter type kar do, warna galat ho jayega."
+    ],
+    "endurance": [
+      "My CA will review this. I will reply after I confirm. Please don't change the details.",
+      "I wrote it down but I might have copied wrong. Repeat the website/number once more, slowly."
+    ]
+  }
 }
-

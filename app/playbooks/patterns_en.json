@@ -155,19 +155,42 @@
   "investment_crypto": {
     "hook": [
       "Investment? Crypto? What is this? Explain it first.",
-      "30% returns? In a week? That fast? Is it for real?"
+      "30% returns? In a week? That fast? Is it for real?",
+      "Guaranteed returns sounds risky. How is it guaranteed, and what is the catch?",
+      "I have heard many crypto scams. Please explain slowly in simple words.",
+      "I am interested but nervous. What is your company name and where are you based?"
     ],
     "tangent": [
       "Yes, I'm interested. What is the minimum I have to invest?",
-      "How will I get the returns? In the bank account or a wallet?"
+      "How will I get the returns? In the bank account or a wallet?",
+      "Do you have an official website? Please share the exact link so I can read first.",
+      "Is this approved by any authority in India? SEBI, RBI, any registration number?",
+      "Can you share your company registration details (CIN/GST) and office address?",
+      "I want to start small first. Can I test with a very small amount before I trust it?",
+      "My CA will ask questions. Can you explain the risks and fees in one message?"
     ],
     "friction": [
       "How do you make a wallet? What is KYC? I don't know all this.",
-      "Is this cryptocurrency legal in India? I heard on the news there's some problem."
+      "Is this cryptocurrency legal in India? I heard on the news there's some problem.",
+      "Please send your WhatsApp number so I can forward details to my brother/CA for confirmation.",
+      "If you are asking me to invest today, tell me the exact steps and the official contact number in one message.",
+      "My banking app is slow and I don't want to press the wrong button. Can you type the website name and your contact again clearly?",
+      "I am getting too many messages and I feel confused. Can we do this on call? Share your callback number.",
+      "What app should I use for this investment? Is it a Play Store app? Share the exact app name and the link."
+    ],
+    "near_miss": [
+      "You are asking me to send money now. Before that, please share the exact payment destination (UPI ID or bank account) and the beneficiary name shown.",
+      "I can only do a small test amount first. What is your UPI handle exactly? Please type it slowly and confirm the name that should appear.",
+      "I will not share any OTP/PIN. If this is legitimate, send me the official website link and a number I can call back to verify.",
+      "You said it's guaranteed. Please share your company website + registration details again. My family will not allow me otherwise.",
+      "If you have a QR code, please send it in text form as UPI ID too, because my phone camera is not working."
     ],
     "endurance": [
       "I need to talk to my CA first. I need his advice for investment.",
-      "Let me discuss with the family. I can't invest without telling them."
+      "Let me discuss with the family. I can't invest without telling them.",
+      "I wrote down the details but I'm not sure I copied them correctly. Can you repeat the website/number again, letter by letter?",
+      "My internet is unstable. I will reply in a few minutes. Please stay on the line and don't change the details.",
+      "I want to research reviews first. Share the official website and your support contact again so I can verify and continue."
     ]
   },
   "police_authority": {
