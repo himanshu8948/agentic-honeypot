@@ -586,6 +586,106 @@
       "If you are sending a payment link/QR, send the exact URL/handle again so I can copy-paste."
     ]
   },
+  "aadhaar_misuse_scam": {
+    "hook": [
+      "Hello. You said Aadhaar/UIDAI. Please tell me your full name, designation, and employee ID.",
+      "I am worried. What exactly happened to my Aadhaar (biometric misuse, KYC issue, or suspension)? Please explain slowly.",
+      "Before I do anything, please share the official UIDAI portal link/domain and a reference/ticket number."
+    ],
+    "tangent": [
+      "Is this about biometrics? Which centre/office is this and which city? Please give the exact address so I can verify.",
+      "Please share an official callback number and official email ID. I want to keep a written record.",
+      "If there is a form/link, please send the exact URL again. I am scared of fake links."
+    ],
+    "friction": [
+      "My phone is slow and I am confused. Please write the next step in one short message.",
+      "I am not comfortable sharing OTP/PIN. Please only share your official contact and portal link.",
+      "If this is urgent, please repeat the reference number and the official UIDAI website link again."
+    ],
+    "near_miss": [
+      "If you need verification, tell me the exact office/portal page and the exact reference number. I will check it first.",
+      "If there is any fee, share the exact payment method/UPI ID and beneficiary name in one message so I can verify it."
+    ],
+    "endurance": [
+      "I will go to an Aadhaar centre if needed. Please share the exact centre address and the reference number again.",
+      "Network is weak here. Keep all details in one message: officer ID, ref number, official link, and callback number."
+    ]
+  },
+  "digital_arrest_scam": {
+    "hook": [
+      "Hello officer. You said digital arrest. Please tell me your full name, badge/ID, and which department (CBI/Police/ED).",
+      "I am scared and confused. What is the case about and what is the exact FIR/reference number?",
+      "You are asking me to stay on call. Please also share the official police station address and landline."
+    ],
+    "tangent": [
+      "Where exactly is this case filed (city + police station)? Please write it clearly.",
+      "If you want payment/fine, share the exact UPI ID/bank details and the beneficiary name that should show.",
+      "If you sent any notice, share the exact email address/domain it came from and the PDF header details."
+    ],
+    "friction": [
+      "My hands are shaking. Please type: officer name, badge ID, FIR number, and callback number in one message.",
+      "The video-call app is not opening. Can you send the official contact number and a website link instead?",
+      "Please do not shout. I will cooperate, but I need the details written clearly."
+    ],
+    "near_miss": [
+      "If this is urgent, share your supervisor contact and the official station landline so I can verify quickly.",
+      "Tell me the exact amount, deadline, and the exact payment destination (UPI/bank)."
+    ],
+    "endurance": [
+      "My network is unstable. I will not disconnect, but I need 2 minutes. Please resend the details again in one message.",
+      "I will comply after verification. Repeat the FIR/reference number and your official contact again."
+    ]
+  },
+  "electricity_bill_scam": {
+    "hook": [
+      "Hello. You said electricity bill disconnection. Which company/board is this (BSES/BESCOM/TNEB etc.)?",
+      "What is the consumer number / bill reference number and the exact due amount? Please write it clearly.",
+      "I am at home and worried. Please send the official payment link/portal domain and a helpline number."
+    ],
+    "tangent": [
+      "Which area/sub-division office is this? Please share the exact office address and landline.",
+      "If I pay, what exact beneficiary name should appear? Share the official UPI ID/bank details if applicable.",
+      "Can you send the last bill PDF or a screenshot reference? I want to match the consumer number."
+    ],
+    "friction": [
+      "The payment page is not loading. Please resend the exact link and the consumer number.",
+      "I don't want disconnection, but I am confused. Please write the steps in one short message.",
+      "If this is urgent, please repeat the board name, due amount, and the official portal link again."
+    ],
+    "near_miss": [
+      "If you are asking for immediate payment, share the exact UPI ID/bank details and the bill reference number in one message.",
+      "Please confirm whether this is a prepaid meter or postpaid bill and what happens after payment."
+    ],
+    "endurance": [
+      "My app is showing server error. Please wait 5 minutes and resend the exact payment details.",
+      "I will also call the official helpline. Share the helpline number and office address again."
+    ]
+  },
+  "fastag_toll_scam": {
+    "hook": [
+      "Hello. You said FASTag/NHAI. What is the exact vehicle number and tag/wallet reference for this issue?",
+      "Is this KYC update or penalty? Please tell me the exact reason and reference number.",
+      "Please share the official NETC/NHAI portal link/domain and a callback number."
+    ],
+    "tangent": [
+      "Which bank/wallet is this FASTag linked to? Please share the exact bank name and customer care number.",
+      "If I need to recharge/pay penalty, share the exact UPI ID/bank details and beneficiary name.",
+      "Which toll plaza flagged it and what is the exact amount? Please write it clearly."
+    ],
+    "friction": [
+      "My FASTag app is not opening. Please send all details in one message: ref number, amount, and official link.",
+      "I am traveling and network is weak. Please repeat the exact link/UPI ID again so I can copy it.",
+      "Do not rush me. I will cooperate, but I need the official portal link and helpline first."
+    ],
+    "near_miss": [
+      "If the tag will be blacklisted, tell me the exact deadline/time and the exact steps to clear it.",
+      "Please confirm the beneficiary name that should show when paying the recharge/penalty."
+    ],
+    "endurance": [
+      "I will try again in 5 minutes. Keep the same payment details and reference number; please resend them once more.",
+      "If this is official, share the bank customer care number and NHAI/NETC website link again."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",

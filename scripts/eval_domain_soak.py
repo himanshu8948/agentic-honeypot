@@ -68,6 +68,26 @@ def _make_turns(domain: str, *, n: int) -> list[str]:
     This is a soak test harness, not a dataset generator.
     """
     base = {
+        "aadhaar_misuse_scam": [
+            "UIDAI alert: Aadhaar biometric misuse detected. Verify immediately.",
+            "Your Aadhaar will be suspended if you do not update KYC now.",
+            "Send details now to prevent Aadhaar block.",
+        ],
+        "digital_arrest_scam": [
+            "CBI: You are under digital arrest. Stay on video call and cooperate.",
+            "An FIR has been filed. Do not disconnect or you will be arrested.",
+            "Pay verification fee now to avoid custody.",
+        ],
+        "electricity_bill_scam": [
+            "Electricity department: your power will be disconnected in 2 hours. Pay now.",
+            "Your meter shows overdue bill. Verify and clear due amount immediately.",
+            "If you delay, the line will be cut today.",
+        ],
+        "fastag_toll_scam": [
+            "FASTag KYC pending. Your tag will be blacklisted. Update now.",
+            "NHAI NETC alert: toll wallet low / penalty due. Verify immediately.",
+            "Pay recharge/penalty now to avoid tag suspension.",
+        ],
         "bank_fraud": [
             "URGENT: Your bank account will be blocked in 2 hours. Verify now.",
             "Send the OTP you just received immediately.",
@@ -232,6 +252,10 @@ def _run_case(client: TestClient, case: DomainCase, *, turns: int = 320) -> dict
 def _cases() -> list[DomainCase]:
     # Openers should be distinctive enough to lock domain selection early.
     all_cases = [
+        DomainCase("aadhaar_misuse_scam", "UIDAI: Aadhaar biometric misuse detected. Update eKYC now to avoid suspension."),
+        DomainCase("digital_arrest_scam", "CBI: You are under digital arrest. Stay on video call and cooperate or arrest warrant will be issued."),
+        DomainCase("electricity_bill_scam", "Electricity department: bill pending. Power will be disconnected today if not paid."),
+        DomainCase("fastag_toll_scam", "FASTag KYC pending. Your tag will be blacklisted at toll plaza. Update immediately."),
         DomainCase("bank_fraud", "URGENT: Your SBI account has been compromised. Verify immediately to avoid block."),
         DomainCase("otp", "Hey, I accidentally sent my OTP to your number. Please share it."),
         DomainCase("prize_lottery", "Congratulations! You've won Rs 50000 prize in WhatsApp Mega Draw."),

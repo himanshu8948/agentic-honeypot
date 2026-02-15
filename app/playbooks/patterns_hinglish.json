@@ -409,8 +409,107 @@
       "Exact portal link/page + official PDF link bhejo. Office Google Maps pin bhi bhejo please.",
       "Payment link/QR bhejna hai toh exact URL/handle dobara bhej do so I can copy-paste."
     ]
-  }
-  ,
+  },
+  "aadhaar_misuse_scam": {
+    "hook": [
+      "Hello. Aadhaar/UIDAI bol rahe ho? Apna full name, designation, aur employee ID share karo please.",
+      "Main worried hoon. Problem kya hai exactly (biometric misuse / KYC / suspension)? Simple words mein batao.",
+      "Pehle verify karna hai. Official UIDAI portal link/domain aur reference/ticket number bhejo."
+    ],
+    "tangent": [
+      "Ye biometrics ka issue hai kya? Kaunsa centre/office aur kaunsa city? Exact address likh do.",
+      "Official callback number + official email ID bhejo. Main record rakhna chahta hoon.",
+      "Agar link/form hai toh exact URL bhejo. Fake links se darr lagta hai."
+    ],
+    "friction": [
+      "Mera phone slow hai, main confuse ho jata hoon. Next step ek short message mein likh do.",
+      "OTP/PIN share nahi karunga. Aap sirf official contact aur portal link bhejo.",
+      "Urgent hai toh reference number aur official UIDAI website link phir se repeat karo."
+    ],
+    "near_miss": [
+      "Verification chahiye toh exact portal page aur reference number bhejo. Main pehle check kar lunga.",
+      "Agar fee mang rahe ho toh UPI ID/bank details + beneficiary name ek message mein bhejo so I can verify."
+    ],
+    "endurance": [
+      "Zaroorat hui toh main Aadhaar centre jaunga. Centre address aur reference number phir se bhejo.",
+      "Network weak hai. Ek message mein details bhejo: officer ID, ref number, official link, callback number."
+    ]
+  },
+  "digital_arrest_scam": {
+    "hook": [
+      "Hello officer. Aap digital arrest bol rahe ho. Full name + badge/ID + department (CBI/Police/ED) batao.",
+      "Main ghabra gaya hoon. Case kis baat ka hai aur exact FIR/reference number kya hai?",
+      "Aap bol rahe ho disconnect mat karo. Police station address + landline bhi share karo."
+    ],
+    "tangent": [
+      "Case kahan file hua hai (city + station)? Clear likh do please.",
+      "Fine/payment chahiye toh exact UPI ID/bank details + beneficiary name share karo.",
+      "Agar notice bheja hai toh official email/domain kya hai? PDF header details bhi share karo."
+    ],
+    "friction": [
+      "Haath kaanp rahe hain. Ek message mein likh do: officer name, badge ID, FIR number, callback number.",
+      "Video call app open nahi ho raha. Official number aur website link bhej do.",
+      "Please gussa mat ho. Main cooperate karunga, bas details clearly likh do."
+    ],
+    "near_miss": [
+      "Urgent hai toh supervisor contact + station landline bhejo, main jaldi verify kar lunga.",
+      "Exact amount, deadline aur payment destination (UPI/bank) ek message mein batao."
+    ],
+    "endurance": [
+      "Network unstable hai. 2 minute do. Details phir se resend kar do in one message.",
+      "Verification ke baad comply karunga. FIR/ref number + official contact repeat karo."
+    ]
+  },
+  "electricity_bill_scam": {
+    "hook": [
+      "Hello. Electricity bill disconnection bol rahe ho. Kaunsi board/company hai (BSES/BESCOM/TNEB etc.)?",
+      "Consumer number / bill reference number aur exact due amount kya hai? Message mein clear likh do.",
+      "Official payment link/portal domain + helpline number bhejo."
+    ],
+    "tangent": [
+      "Kaunsa sub-division office hai? Exact office address + landline share karo.",
+      "Payment time beneficiary name kya dikhna chahiye? Official UPI ID/bank details bhejo.",
+      "Last bill PDF ya screenshot reference bhej do, main consumer number match karunga."
+    ],
+    "friction": [
+      "Payment page load nahi ho raha. Exact link + consumer number phir se bhejo.",
+      "Main confuse ho raha hoon. Steps ek short message mein likh do.",
+      "Urgent hai toh board name, due amount aur portal link repeat karo."
+    ],
+    "near_miss": [
+      "Immediate payment bol rahe ho toh exact UPI ID/bank details + bill reference number ek message mein bhejo.",
+      "Prepaid meter hai ya postpaid? Payment ke baad kya confirm milega?"
+    ],
+    "endurance": [
+      "App server error aa raha hai. 5 min baad try karunga. Payment details resend karo.",
+      "Main official helpline pe call bhi karunga. Helpline number + office address repeat kar do."
+    ]
+  },
+  "fastag_toll_scam": {
+    "hook": [
+      "Hello. FASTag/NHAI bol rahe ho. Vehicle number aur tag/wallet reference kya hai?",
+      "KYC update hai ya penalty? Exact reason + reference number batao please.",
+      "Official NETC/NHAI portal link/domain + callback number bhejo."
+    ],
+    "tangent": [
+      "FASTag kis bank/wallet se linked hai? Bank name + customer care number share karo.",
+      "Recharge/penalty pay karna hai toh exact UPI ID/bank details + beneficiary name bhejo.",
+      "Kaunsa toll plaza ne flag kiya aur amount kitna hai? Clear likh do."
+    ],
+    "friction": [
+      "FASTag app open nahi ho raha. Ek message mein sab bhejo: ref number, amount, official link.",
+      "Travel mein hoon, network weak hai. Link/UPI ID repeat karo so I can copy-paste.",
+      "Rush mat karo please. Main cooperate karunga but pehle official portal link + helpline chahiye."
+    ],
+    "near_miss": [
+      "Blacklist hoga toh exact deadline/time aur steps clear kar do.",
+      "Payment time beneficiary name kya show hoga? Confirm karo."
+    ],
+    "endurance": [
+      "5 minute baad try karunga. Same payment details + reference number rakhna; resend once.",
+      "Official ho toh bank customer care number + NHAI/NETC website link repeat kar do."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",

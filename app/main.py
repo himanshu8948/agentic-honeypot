@@ -810,6 +810,10 @@ def _pick_domain(state: dict[str, Any], text: str) -> str:
                 "investment_crypto",
                 "government_grant",
                 "friend_emergency",
+                "aadhaar_misuse_scam",
+                "digital_arrest_scam",
+                "electricity_bill_scam",
+                "fastag_toll_scam",
             }
             if detected in hard:
                 state["domain"] = detected

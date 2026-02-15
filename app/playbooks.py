@@ -19,6 +19,93 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    # Aadhaar / UIDAI / biometric misuse scams
+    if any(
+        k in lower
+        for k in [
+            "aadhaar",
+            "aadhar",
+            "uidai",
+            "biometric",
+            "fingerprint",
+            "iris",
+            "myaadhaar",
+            "m-aadhaar",
+            "e-aadhaar",
+            "ekyc",
+            "e-kyc",
+            "aadhaar update",
+            "update aadhaar",
+            "aadhaar suspended",
+            "aadhaar blocked",
+            "link aadhaar",
+            "seeding",
+        ]
+    ):
+        return "aadhaar_misuse_scam"
+
+    # Digital arrest / virtual custody scams (CBI/ED/Police video-call pressure)
+    if any(
+        k in lower
+        for k in [
+            "digital arrest",
+            "virtual arrest",
+            "digital custody",
+            "online arrest",
+            "stay on video",
+            "do not disconnect",
+            "cbi",
+            "ed",
+            "enforcement directorate",
+            "money laundering",
+            "hawala",
+            "narco",
+            "fedex scam",
+            "parcel with drugs",
+            "courier fraud",
+            "customs case",
+            "skype",
+            "google meet",
+            "zoom",
+            "video call",
+            "police station",
+        ]
+    ) and any(k in lower for k in ["arrest", "warrant", "case", "fir", "legal action", "court", "custody", "investigation"]):
+        return "digital_arrest_scam"
+
+    # Electricity bill / power disconnection scams
+    if any(
+        k in lower
+        for k in [
+            "electricity bill",
+            "power bill",
+            "light bill",
+            "meter",
+            "disconnection",
+            "disconnect",
+            "power will be cut",
+            "current will be cut",
+            "line will be cut",
+            "due amount",
+            "overdue bill",
+            "bill pending",
+            "bescom",
+            "tneb",
+            "mseb",
+            "mppkvvcl",
+            "tpddl",
+            "bses",
+            "torrent power",
+        ]
+    ):
+        return "electricity_bill_scam"
+
+    # FASTag / Toll / NHAI / NETC scams
+    if any(k in lower for k in ["fastag", "fas tag", "toll", "toll plaza", "nhai", "netc", "tag blacklisted", "blacklisted fastag"]) and any(
+        k in lower for k in ["kyc", "update", "wallet", "recharge", "penalty", "block", "suspend", "verify", "link"]
+    ):
+        return "fastag_toll_scam"
+
     # Income tax refund / notice / penalty scams
     if any(
         k in lower
