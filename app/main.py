@@ -167,7 +167,7 @@ async def handle_message(
     api_calls = get_api_calls(DB, session_id)
     if int(session["total_messages"]) == 0 and payload.conversationHistory:
         for msg in payload.conversationHistory:
-            append_message(DB, session_id, msg.sender, msg.text, msg.timestamp)
+            append_message(DB, session_id, msg.sender, _sanitize_incoming_text(msg.text), msg.timestamp)
 
     incoming_text = _sanitize_incoming_text(payload.message.text)
     inferred_sender = infer_sender_role(incoming_text)
