@@ -104,6 +104,14 @@ THREAT_KEYWORDS = [
     "locked",
 ]
 
+PHISHING_OPENERS = [
+    "account is at risk",
+    "click here to verify",
+    "account will be suspended",
+    "verify your details immediately",
+    "security alert for your account",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -119,6 +127,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         "click link",
         "update kyc",
         "update details",
+        *PHISHING_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -187,6 +196,8 @@ def rule_score(text: str) -> int:
     score = 0
 
     # High-signal buckets (weighted)
+    if any(p in lower for p in PHISHING_OPENERS):
+        score += 3
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
     if any(k in lower for k in URGENCY_KEYWORDS):

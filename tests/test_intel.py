@@ -26,3 +26,9 @@ def test_rule_score_high_confidence_combo():
     text = "URGENT: SBI account blocked today. Share OTP and UPI ID immediately to verify. Rs. 5000 refund pending."
     score = rule_score(text)
     assert score >= 10
+
+
+def test_rule_score_phishing_openers():
+    text = "Security alert for your account. Click here to verify your information."
+    score = rule_score(text)
+    assert score >= 4
