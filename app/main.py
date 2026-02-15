@@ -169,14 +169,15 @@ async def handle_message(
         for msg in payload.conversationHistory:
             append_message(DB, session_id, msg.sender, msg.text, msg.timestamp)
 
-    inferred_sender = infer_sender_role(payload.message.text)
+    incoming_text = _sanitize_incoming_text(payload.message.text)
+    inferred_sender = infer_sender_role(incoming_text)
     effective_sender = payload.message.sender
     if inferred_sender != payload.message.sender:
         effective_sender = inferred_sender
 
-    append_message(DB, session_id, effective_sender, payload.message.text, payload.message.timestamp)
+    append_message(DB, session_id, effective_sender, incoming_text, payload.message.timestamp)
 
-    interpreter = interpret_message(payload.message.text, effective_sender)
+    interpreter = interpret_message(incoming_text, effective_sender)
     signal_assessment = assess_sender_signals(
         platform=payload.metadata.platform if payload.metadata else None,
         sender_header=payload.metadata.senderHeader if payload.metadata else None,
@@ -188,20 +189,20 @@ async def handle_message(
     raw_intel = load_intel(DB, session_id)
     raw_user_intel = load_user_intel(DB, session_id)
     if effective_sender == "user":
-        raw_user_intel = extract_intel(payload.message.text, raw_user_intel)
+        raw_user_intel = extract_intel(incoming_text, raw_user_intel)
         save_user_intel(DB, session_id, raw_user_intel)
     else:
-        raw_intel = extract_intel(payload.message.text, raw_intel)
+        raw_intel = extract_intel(incoming_text, raw_intel)
         save_intel(DB, session_id, raw_intel)
 
-    score = rule_score(payload.message.text)
-    intent_score = intent_signal_score(payload.message.text)
+    score = rule_score(incoming_text)
+    intent_score = intent_signal_score(incoming_text)
     combined_score = score + intent_score + interpreter.risk_boost + signal_assessment.delta
 
     stat_prob = None
     if STAT_MODEL is not None:
         try:
-            stat_prob = float(STAT_MODEL.predict_proba_scam(payload.message.text))
+            stat_prob = float(STAT_MODEL.predict_proba_scam(incoming_text))
         except Exception:
             stat_prob = None
     if stat_prob is not None:
@@ -242,7 +243,7 @@ async def handle_message(
                     threshold = float(threshold_raw)
                 except Exception:
                     threshold = 0.22
-            match = best_match(payload.message.text, FRAUD_CORPUS)
+            match = best_match(incoming_text, FRAUD_CORPUS)
             if match.score >= threshold:
                 detector_route = "scammer"
                 detector_confidence = min(0.99, 0.7 + match.score)
@@ -296,11 +297,11 @@ async def handle_message(
     persona_used: str | None = None
     if should_engage:
         conversation = list_messages(DB, session_id, limit=30)
-        domain = _pick_domain(convo_state, payload.message.text)
+        domain = _pick_domain(convo_state, incoming_text)
         persona_used = _select_persona_tag(session=session, metadata=payload.metadata, domain=domain)
         scammer_text = ""
         if effective_sender == "scammer":
-            scammer_text = payload.message.text
+            scammer_text = incoming_text
         else:
             for m in reversed(conversation):
                 if m.get("sender") == "scammer":
@@ -860,6 +861,27 @@ def _sanitize_outgoing_reply(text: str) -> str:
 
 
 _DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
+_SCRIPT_TAG_RE = re.compile(r"(?is)<\s*script\b[^>]*>.*?<\s*/\s*script\s*>")
+_HTML_TAG_RE = re.compile(r"(?s)<[^>]{1,200}>")
+_CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0B\x0C\x0E-\x1F]")
+
+
+def _sanitize_incoming_text(text: str) -> str:
+    """
+    Basic input sanitization.
+
+    We treat incoming messages as untrusted user content. We do not execute or render it,
+    but some UIs might display stored transcripts. Strip obvious script/html tags and
+    control chars to reduce XSS/log injection risk while preserving the main content.
+    """
+    s = str(text or "")
+    s = _CONTROL_CHARS_RE.sub(" ", s)
+    s = _SCRIPT_TAG_RE.sub(" ", s)
+    if "<" in s and ">" in s:
+        s = _HTML_TAG_RE.sub(" ", s)
+    # Normalize whitespace (keeps extraction stable).
+    s = " ".join(s.split())
+    return s.strip()
 
 
 def _detect_lang_style(text: str) -> str:
