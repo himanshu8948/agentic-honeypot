@@ -112,6 +112,15 @@ PHISHING_OPENERS = [
     "security alert for your account",
 ]
 
+FAKE_REFUND_OPENERS = [
+    "eligible for",
+    "refund is pending",
+    "your refund of",
+    "get cashback",
+    "claim your discount",
+    "unclaimed refund",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -128,6 +137,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         "update kyc",
         "update details",
         *PHISHING_OPENERS,
+        *FAKE_REFUND_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -198,6 +208,9 @@ def rule_score(text: str) -> int:
     # High-signal buckets (weighted)
     if any(p in lower for p in PHISHING_OPENERS):
         score += 3
+    # Common refund/cashback hooks: keyword + amount is very high confidence.
+    if any(p in lower for p in FAKE_REFUND_OPENERS) and (MONEY_RE.search(text) or any(k in lower for k in ["refund", "cashback", "discount"])):
+        score += 4
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
     if any(k in lower for k in URGENCY_KEYWORDS):

@@ -32,3 +32,9 @@ def test_rule_score_phishing_openers():
     text = "Security alert for your account. Click here to verify your information."
     score = rule_score(text)
     assert score >= 4
+
+
+def test_rule_score_fake_refund_openers():
+    text = "Congratulations! Get 50000 cashback. Your refund of ₹5,000 is pending. Claim your discount now."
+    score = rule_score(text)
+    assert score >= 8
