@@ -4,6 +4,8 @@ import random
 from dataclasses import dataclass
 from typing import Any
 
+from difflib import SequenceMatcher
+
 from .lookup_table import lookup_response
 
 
@@ -145,6 +147,8 @@ def build_reply(
     bucket = _bucket_for_stage(stage=stage, target_lower=target_lower)
 
     options = domain_bank.get(bucket, []) + templates["generic"].get(bucket, [])
+    # Avoid ultra-short acknowledgements that create "yes/okay" loops.
+    options = [o for o in options if len(o.strip().split()) >= 3]
     options = _filter_recent_repeats(options, conversation)
     if not options:
         options = domain_bank.get(bucket, []) or templates["generic"].get(bucket, []) or ["Okay, please share the details."]
@@ -869,9 +873,29 @@ def _load_templates(*, language: str) -> dict[str, Any]:
 
 
 def _filter_recent_repeats(options: list[str], conversation: list[dict[str, str]]) -> list[str]:
-    recent_user = [m["text"] for m in conversation[-8:] if m.get("sender") == "user"]
-    recent_user_set = {t.strip() for t in recent_user if t and t.strip()}
-    return [o for o in options if o.strip() not in recent_user_set]
+    recent_user = [m["text"] for m in conversation[-10:] if m.get("sender") == "user"]
+
+    def _norm(s: str) -> str:
+        s = " ".join((s or "").lower().strip().split())
+        # strip lightweight punctuation so near-duplicates match
+        for ch in [".", ",", "!", "?", "…", "–", "-"]:
+            s = s.replace(ch, "")
+        return s
+
+    recent_norm = [_norm(t) for t in recent_user if t and t.strip()]
+    out: list[str] = []
+    for o in options:
+        cand = o.strip()
+        if not cand:
+            continue
+        n = _norm(cand)
+        # exact repeat or high-similarity repeat
+        if any(n == r for r in recent_norm):
+            continue
+        if any(SequenceMatcher(None, n, r).ratio() >= 0.92 for r in recent_norm):
+            continue
+        out.append(o)
+    return out
 
 
 def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target: str) -> str:
