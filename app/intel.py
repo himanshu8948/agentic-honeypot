@@ -1,40 +1,137 @@
 import re
 from typing import Iterable
 
-SUSPICIOUS_KEYWORDS = [
-    "urgent",
-    "verify",
-    "account blocked",
-    "account suspended",
-    "otp",
-    "upi",
-    "bank",
-    "kyc",
+MONEY_KEYWORDS = [
+    "rupees",
     "refund",
-    "limited time",
-    "click link",
-    "verify now",
-    "win",
-    "gift",
+    "loan",
     "prize",
-    "loan approved",
-    "account freeze",
-    "immediately",
-    "pay now",
-    "pay immediately",
-    "dear customer",
-    "your account",
-    "link below",
-    "customer care",
-    "support team",
-    "suspend",
-    "security alert",
-    "chargeback",
-    "transaction failed",
-    "reactivate",
-    "update kyc",
-    "update details",
+    "discount",
+    "cashback",
+    "investment",
+    "returns",
+    "profit",
+    "earning",
+    "payout",
+    "commission",
+    "bonus",
+    "reward",
 ]
+
+URGENCY_KEYWORDS = [
+    "urgent",
+    "immediately",
+    "now",
+    "today",
+    "expire",
+    "limited",
+    "last chance",
+    "hurry",
+    "quick",
+    "fast",
+    "within",
+    "deadline",
+    "soon",
+    "asap",
+    "final warning",
+]
+
+ACTION_KEYWORDS = [
+    "click",
+    "verify",
+    "confirm",
+    "send",
+    "share",
+    "pay",
+    "install",
+    "download",
+    "update",
+    "activate",
+    "unblock",
+    "claim",
+    "register",
+    "submit",
+    "transfer",
+]
+
+PERSONAL_INFO_KEYWORDS = [
+    "otp",
+    "aadhaar",
+    "pan",
+    "bank details",
+    "account number",
+    "card number",
+    "cvv",
+    "pin",
+    "password",
+    "upi id",
+    "ifsc",
+    "routing number",
+]
+
+IMPERSONATION_KEYWORDS = [
+    "hdfc",
+    "icici",
+    "axis",
+    "sbi",
+    "kotak",
+    "bank of india",
+    "airtel",
+    "jio",
+    "vi",
+    "bsnl",
+    "income tax",
+    "gst",
+    "government",
+    "police",
+    "court",
+    "legal",
+    "rbi",
+]
+
+THREAT_KEYWORDS = [
+    "blocked",
+    "suspended",
+    "legal action",
+    "police complaint",
+    "arrest",
+    "fraud",
+    "illegal",
+    "terminated",
+    "cancelled",
+    "deactivated",
+    "freeze",
+    "locked",
+]
+
+SUSPICIOUS_KEYWORDS = sorted(
+    {
+        # Common scam phrasing / UI cues
+        "account blocked",
+        "account suspended",
+        "account freeze",
+        "security alert",
+        "customer care",
+        "support team",
+        "dear customer",
+        "link below",
+        "verify now",
+        "click link",
+        "update kyc",
+        "update details",
+        # Keyword bundles
+        *MONEY_KEYWORDS,
+        *URGENCY_KEYWORDS,
+        *ACTION_KEYWORDS,
+        *PERSONAL_INFO_KEYWORDS,
+        *IMPERSONATION_KEYWORDS,
+        *THREAT_KEYWORDS,
+        # Broad anchors
+        "bank",
+        "upi",
+        "kyc",
+    }
+)
 
 UPI_RE = re.compile(r"[a-zA-Z0-9._-]{2,}@[a-zA-Z]{2,}")
 PHONE_RE = re.compile(r"\+?\d[\d -]{8,}\d")
@@ -42,6 +139,7 @@ LINK_RE = re.compile(r"https?://\S+")
 BANK_RE = re.compile(r"\b\d{9,18}\b")
 IFSC_RE = re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b", re.IGNORECASE)
 ACCOUNT_CONTEXT_RE = re.compile(r"(account\s*(number|no\.?)|bank\s*account)", re.IGNORECASE)
+MONEY_RE = re.compile(r"(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d{1,2})?", re.IGNORECASE)
 
 
 def _unique_extend(target: list[str], values: Iterable[str]) -> None:
@@ -77,6 +175,8 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
     _unique_extend(intel["phishingLinks"], links)
 
     keywords = [k for k in SUSPICIOUS_KEYWORDS if k in lower]
+    if MONEY_RE.search(text):
+        keywords.append("money_amount")
     _unique_extend(intel["suspiciousKeywords"], keywords)
 
     return intel
@@ -86,25 +186,38 @@ def rule_score(text: str) -> int:
     lower = text.lower()
     score = 0
 
-    if any(k in lower for k in ["urgent", "immediately", "now", "today"]):
+    # High-signal buckets (weighted)
+    if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
+        score += 2
+    if any(k in lower for k in URGENCY_KEYWORDS):
+        score += 2
+    if any(k in lower for k in THREAT_KEYWORDS):
+        score += 2
+    if any(k in lower for k in IMPERSONATION_KEYWORDS):
+        score += 2
+    if any(k in lower for k in ACTION_KEYWORDS):
         score += 1
-    if any(k in lower for k in ["verify", "kyc", "otp"]):
-        score += 1
-    if any(k in lower for k in ["upi", "bank", "account", "payment", "transfer"]):
-        score += 1
-    if any(k in lower for k in ["suspend", "blocked", "freeze", "security alert"]):
-        score += 1
+    if any(k in lower for k in PERSONAL_INFO_KEYWORDS):
+        score += 3
+    if any(k in lower for k in ["anydesk", "teamviewer", "rustdesk", "quick support", "quicksupport", "apk"]):
+        score += 3
     if LINK_RE.search(text):
-        score += 1
-    if any(k in lower for k in ["blocked", "suspended", "freeze"]):
-        score += 1
-    if any(k in lower for k in ["prize", "gift", "lottery", "offer"]):
-        score += 1
-    if any(k in lower for k in ["customer care", "support team", "dear customer"]):
-        score += 1
+        score += 2
+
+    # Combo pattern: "send/share" + sensitive token is very high confidence
     if any(k in lower for k in ["share", "send", "provide", "submit"]) and any(
-        k in lower for k in ["otp", "upi", "account", "card", "password", "pin"]
+        k in lower for k in ["otp", "upi", "account", "card", "password", "pin", "cvv", "aadhaar", "pan"]
     ):
+        score += 4
+
+    # Bonus if multiple scam dimensions show up together
+    dimensions = 0
+    dimensions += 1 if (MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS)) else 0
+    dimensions += 1 if any(k in lower for k in URGENCY_KEYWORDS) else 0
+    dimensions += 1 if any(k in lower for k in PERSONAL_INFO_KEYWORDS) else 0
+    dimensions += 1 if any(k in lower for k in IMPERSONATION_KEYWORDS) else 0
+    dimensions += 1 if any(k in lower for k in THREAT_KEYWORDS) else 0
+    if dimensions >= 3:
         score += 2
 
     return score
@@ -113,26 +226,20 @@ def rule_score(text: str) -> int:
 def infer_sender_role(text: str) -> str:
     lower = text.lower()
     scam_signals = [
-        "verify",
-        "otp",
+        *URGENCY_KEYWORDS,
+        *ACTION_KEYWORDS,
+        *PERSONAL_INFO_KEYWORDS,
+        *IMPERSONATION_KEYWORDS,
+        *THREAT_KEYWORDS,
         "kyc",
-        "blocked",
-        "suspended",
-        "freeze",
         "bank",
         "upi",
         "payment",
-        "click link",
-        "verify now",
-        "urgent",
-        "dear customer",
-        "customer care",
-        "support team",
         "account will be",
         "share your",
         "send your",
     ]
-    if any(s in lower for s in scam_signals) or LINK_RE.search(text):
+    if any(s in lower for s in scam_signals) or LINK_RE.search(text) or MONEY_RE.search(text):
         return "scammer"
     return "user"
 

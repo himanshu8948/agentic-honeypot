@@ -20,3 +20,9 @@ def test_rule_score():
     text = "Urgent: your account is blocked. Verify now via this link."
     score = rule_score(text)
     assert score >= 3
+
+
+def test_rule_score_high_confidence_combo():
+    text = "URGENT: SBI account blocked today. Share OTP and UPI ID immediately to verify. Rs. 5000 refund pending."
+    score = rule_score(text)
+    assert score >= 10

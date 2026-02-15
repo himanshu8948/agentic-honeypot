@@ -18,28 +18,31 @@ def assess_sender_signals(
     p = (platform or "").strip().lower()
     header = normalize_sender_header(sender_header)
     number = (sender_number or "").strip()
+    trusted_norm = {normalize_sender_header(h) for h in trusted_headers}
     reasons: list[str] = []
     delta = 0
 
     if p in {"sms", "telecom", "rcs"}:
         if header:
-            if header not in trusted_headers:
-                delta += 2
+            if header not in trusted_norm:
+                # Untrusted SMS sender headers are a strong risk signal.
+                delta += 20
                 reasons.append("unknown_sms_header")
             else:
                 reasons.append("trusted_sms_header")
         elif number:
-            delta += 2
+            delta += 10
             reasons.append("sender_number_without_header")
         else:
-            delta += 1
+            delta += 5
             reasons.append("missing_sender_identity")
 
         if in_contacts is False:
-            delta += 1
+            delta += 3
             reasons.append("sender_not_in_contacts")
         elif in_contacts is True:
-            delta = max(0, delta - 1)
+            # Contacts reduce uncertainty but never override "unknown_sms_header".
+            delta = max(0, delta - 3)
             reasons.append("sender_in_contacts")
     elif p in {"whatsapp", "telegram", "signal", "ott"}:
         if in_contacts is False:
@@ -54,9 +57,9 @@ def assess_sender_signals(
 
 
 def risk_to_zone(risk: int) -> str:
-    if risk >= 90:
+    if risk >= 80:
         return "lethal"
-    if risk >= 65:
+    if risk >= 55:
         return "block_high_risk_actions"
     if risk >= 35:
         return "warn_and_confirm"
@@ -71,5 +74,5 @@ def normalize_sender_header(sender_header: str | None) -> str:
     if len(parts) >= 2:
         # Common Indian telecom format: XX-HEADER or VX-HEADER.
         # Canonical trusted token is the right-most sender header part.
-        header = parts[-1]
+        return parts[-1]
     return header
