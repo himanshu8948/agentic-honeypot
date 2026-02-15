@@ -161,6 +161,17 @@ FAKE_JOB_OPENERS = [
     "selected for",
 ]
 
+CRYPTO_INVEST_OPENERS = [
+    "crypto investment",
+    "limited slots",
+    "guaranteed returns",
+    "double your money",
+    "exclusive trading opportunity",
+    "trading opportunity",
+    "invest",
+    "returns of",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -182,6 +193,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         *OTP_WHATSAPP_HACK_OPENERS,
         *PRIZE_LOTTERY_OPENERS,
         *FAKE_JOB_OPENERS,
+        *CRYPTO_INVEST_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -266,6 +278,11 @@ def rule_score(text: str) -> int:
         score += 4
     # Fake job offer hooks: fee + job phrases.
     if any(p in lower for p in FAKE_JOB_OPENERS) and (MONEY_RE.search(text) or "fee" in lower):
+        score += 4
+    # Crypto/investment hooks: invest/returns + amount/percentage/timeframe.
+    if any(p in lower for p in CRYPTO_INVEST_OPENERS) and (
+        MONEY_RE.search(text) or "%" in text or any(t in lower for t in ["week", "weeks", "days", "day", "month", "months"])
+    ):
         score += 4
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
