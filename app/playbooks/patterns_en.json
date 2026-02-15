@@ -426,6 +426,46 @@
       "If you have a form/portal link for the loan application, send the exact URL. My phone sometimes opens the wrong page."
     ]
   },
+  "sextortion_scam": {
+    "hook": [
+      "Please stop. I am very scared. What exactly are you claiming you have, and what do you want from me?",
+      "I don't understand. Which platform are you talking about and when did this 'video call' happen?",
+      "If you have something, show proof first. What is the exact name/ID you are messaging from?",
+      "Please tell me calmly: what amount are you asking and where do you want me to send it?"
+    ],
+    "tangent": [
+      "You said you will share it to contacts. Which app/platform will you post on (WhatsApp, Instagram, Facebook)? Please write it clearly.",
+      "How did you even get my contact list? Which number/email are you using to contact me?",
+      "If you want me to cooperate, type your details in one message: your name/alias, your number, and your payment method.",
+      "I need written assurance: if I pay, you will delete everything and never contact me again. Please write it clearly."
+    ],
+    "friction": [
+      "I am panicking and my hands are shaking. I need 10 minutes. Please do not send anything yet.",
+      "My bank has a transfer limit today and the app is not loading. Please resend the exact payment details slowly.",
+      "I can't send such a big amount at once. Can you share the exact final amount and why it is that amount?",
+      "Before I do anything, tell me exactly where you will share it (group name/platform) so I can understand what you mean."
+    ],
+    "near_miss": [
+      "If you want money, send the exact UPI ID or bank details and the beneficiary name that should show in the app.",
+      "Please send the amount again and the deadline. Also share your phone number and email so I can keep it for reference.",
+      "I will not share any OTP/PIN. Just send payment details in one clear message: UPI/bank, name, and screenshot of the payment page (if any).",
+      "If this is your last warning, then write your exact demands once: amount, platform you will share on, and where I should pay."
+    ],
+    "endurance": [
+      "I am arranging money from a friend. I need some time. Please don't message my contacts.",
+      "UPI is showing error. Please send the payment handle and beneficiary name again in one message.",
+      "My family is nearby so I cannot talk loudly. Please text everything clearly: amount, payment method, and where you will post it.",
+      "I am not refusing, I just need to confirm the payment details. Repeat the UPI/bank details again slowly."
+    ],
+    "ask_phone": [
+      "Please share your exact phone number (with country code) and any WhatsApp number you are using.",
+      "Send your email ID too. I need it to keep record of this conversation."
+    ],
+    "ask_link": [
+      "If you have any proof link/screenshot, send the exact link. Also tell me where you will post it (platform/link).",
+      "If you are sending me a payment link/QR, send the exact URL/handle again. My phone opens wrong pages sometimes."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",

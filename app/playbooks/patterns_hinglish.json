@@ -209,6 +209,47 @@
     ]
   }
   ,
+  "sextortion_scam": {
+    "hook": [
+      "Please ruk jao. Main bahut panic mein hoon. Aap exactly kya claim kar rahe ho and what do you want from me?",
+      "Mujhe samajh nahi aa raha. Which platform are you talking about and ye 'video call' kab hua?",
+      "Agar aapke paas kuch hai toh proof bhejo first. Aap kis name/ID se message kar rahe ho?",
+      "Calmly batao: kitna amount chahiye and where should I pay?"
+    ],
+    "tangent": [
+      "You said contacts ko bhej doge. Exactly which app/platform (WhatsApp/Instagram/Facebook)? Clearly type karo.",
+      "Aapko mera contact list kaise mila? Aap kis number/email se contact kar rahe ho?",
+      "Main cooperate karunga but apni details ek message mein bhejo: name/alias, number, payment method.",
+      "Written assurance chahiye: pay ke baad you will delete everything and never contact again. Please write clearly."
+    ],
+    "friction": [
+      "Mere hands shaking hain. 10 minutes do please. Abhi kuch share mat karo.",
+      "Bank limit hai and app load nahi ho raha. Payment details slowly repeat kar do.",
+      "Itna big amount ek baar mein nahi bhej sakta. Final amount + reason clear batao.",
+      "Exactly kahan share karoge (platform/group) pehle batao so I understand."
+    ],
+    "near_miss": [
+      "If money chahiye, share exact UPI ID/bank details + beneficiary name that should show in the app.",
+      "Amount + deadline dobara bhej do. Apna phone number + email bhi bhej do for reference.",
+      "I will not share OTP/PIN. Payment details ek message mein clear bhejo: UPI/bank, name, and if any payment link screenshot.",
+      "If last warning, then write exact demand once: amount, where you will post it, and where I should pay."
+    ],
+    "endurance": [
+      "Main friend se money arrange kar raha hoon. Time do. Please contacts ko message mat karo.",
+      "UPI error aa raha hai. Payment handle + beneficiary name ek message mein again bhej do.",
+      "Family nearby hai so I can't talk loudly. Text mein sab clear bhej do: amount, payment method, where you will post.",
+      "Main refuse nahi kar raha, bas payment details confirm karna hai. UPI/bank details slowly repeat karo please."
+    ],
+    "ask_phone": [
+      "Apna exact phone number (with country code) + WhatsApp number bhejo.",
+      "Email ID bhi bhej do. Mujhe record ke liye chahiye."
+    ],
+    "ask_link": [
+      "Agar proof ka link/screenshot hai toh exact link bhej do. And where you will post (platform/link) bhi batao.",
+      "Payment link/QR bhejna hai toh exact URL/handle dobara bhej do. Kabhi wrong page open ho jata hai."
+    ]
+  }
+  ,
   "romance_scam": {
     "hook": [
       "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",

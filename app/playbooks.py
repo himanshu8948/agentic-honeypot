@@ -19,6 +19,38 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    # Sextortion / honey trap / blackmail threats
+    if any(
+        k in lower
+        for k in [
+            "recorded you",
+            "i recorded you",
+            "your video",
+            "your nude",
+            "nude video",
+            "sex video",
+            "porn",
+            "adult video",
+            "private video",
+            "compromising",
+            "masturbat",
+            "video call",
+            "screenshare",
+            "screen recording",
+            "leak",
+            "expose",
+            "share to contacts",
+            "send to your contacts",
+            "friends and family",
+            "contact list",
+            "facebook friends",
+            "instagram followers",
+            "whatsapp contacts",
+            "blackmail",
+            "extortion",
+        ]
+    ) and any(k in lower for k in ["pay", "payment", "send", "transfer", "upi", "money", "rupees", "rs", "₹", "today", "urgent"]):
+        return "sextortion_scam"
     # Rental / property advance-payment scams
     rental_context = any(
         k in lower
@@ -1126,6 +1158,28 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                             "offer expires",
                             "activation",
                             "processing fee",
+                        ]
+                    ):
+                        return "near_miss"
+                    if domain == "sextortion_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "pay",
+                            "payment",
+                            "transfer",
+                            "upi",
+                            "bank",
+                            "account number",
+                            "ifsc",
+                            "wallet",
+                            "qr",
+                            "send money",
+                            "rupees",
+                            "₹",
+                            "delete the video",
+                            "i will delete",
+                            "last chance",
+                            "final warning",
                         ]
                     ):
                         return "near_miss"

@@ -457,6 +457,46 @@
       "Loan application portal/form ka link hai toh exact URL bhej do. Mere phone pe kabhi wrong page open ho jata hai."
     ]
   },
+  "sextortion_scam": {
+    "hook": [
+      "Please ruk jao. Main bahut darr gaya hoon. Aap exactly kya claim kar rahe ho aur aapko mujhse kya chahiye?",
+      "Mujhe samajh nahi aa raha. Kaunsi platform ki baat kar rahe ho aur ye 'video call' kab hua?",
+      "Agar aapke paas kuch hai toh proof dikhao pehle. Aap kis naam/ID se message kar rahe ho?",
+      "Shanti se batao: kitna amount chahiye aur kahan bhejna hai?"
+    ],
+    "tangent": [
+      "Aap bol rahe ho contacts ko bhej doge. Kaunsi app/platform pe (WhatsApp/Instagram/Facebook)? Clearly likh do.",
+      "Aapko mera contact list kaise mila? Aap kis number/email se contact kar rahe ho?",
+      "Main cooperate karunga, par aap apni details ek message mein likh do: name/alias, number, payment method.",
+      "Written assurance chahiye: pay karne ke baad aap sab delete kar doge aur dubara contact nahi karoge. Please clearly likh do."
+    ],
+    "friction": [
+      "Mere haath kaanp rahe hain. Mujhe 10 minute do. Please abhi kuch share mat karo.",
+      "Bank mein limit hai aur app load nahi ho raha. Payment details slowly repeat kar do.",
+      "Itna bada amount ek baar mein nahi bhej sakta. Final amount aur reason clear batao.",
+      "Aap exactly kahan share karoge (group name/platform) ye pehle batao, tab main samajh paunga."
+    ],
+    "near_miss": [
+      "Agar paisa chahiye toh exact UPI ID ya bank details bhejo aur beneficiary name bhi jo app pe show hoga.",
+      "Amount aur deadline dobara bhej do. Apna phone number aur email bhi bhej do reference ke liye.",
+      "Main OTP/PIN share nahi karunga. Bas payment details ek message mein clear bhejo: UPI/bank, name, (agar hai toh) payment page ka screenshot.",
+      "Agar last warning hai toh ek baar exact demand likh do: amount, kahan share karoge, aur kahan pay karna hai."
+    ],
+    "endurance": [
+      "Main friend se paisa arrange kar raha hoon. Thoda time do. Please mere contacts ko message mat karo.",
+      "UPI error aa raha hai. Payment handle aur beneficiary name ek message mein dobara bhej do.",
+      "Family paas mein hai, main loud nahi bol sakta. Text mein sab clear likh do: amount, payment method, aur kahan post karoge.",
+      "Main mana nahi kar raha, bas payment details confirm karna hai. UPI/bank details slowly repeat kar do."
+    ],
+    "ask_phone": [
+      "Apna exact phone number (country code ke saath) bhej do aur WhatsApp number bhi.",
+      "Email ID bhi bhej do. Mujhe record ke liye chahiye."
+    ],
+    "ask_link": [
+      "Agar proof ka link/screenshot hai toh exact link bhej do. Aur kahan post karoge (platform/link) bhi batao.",
+      "Payment link/QR bhejna hai toh exact URL/handle dobara bhej do. Kabhi wrong page open ho jata hai."
+    ]
+  },
   "generic": {
     "ask_more": [
       "Beta mujhe samajh nahi aaya. Zara dheere bolo.",
