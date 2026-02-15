@@ -267,6 +267,16 @@ async def handle_message(
     elif combined_score >= SETTINGS.rule_threshold:
         scam_detected = True
 
+    # Latch scam_detected for the session once it has been detected. This keeps the honeypot
+    # engaging even if later scammer messages temporarily look benign (common in evaluations).
+    prior_scam_detected = bool(session["scam_detected"]) if "scam_detected" in session.keys() else False
+    if prior_scam_detected and effective_sender == "scammer":
+        scam_detected = True
+        # Ensure shouldEngage stays on for latched scam sessions.
+        if detector_route == "normal":
+            detector_route = "scammer"
+            detector_confidence = max(detector_confidence, 0.6)
+
     if scam_detected:
         confidence = max(0.2, min(0.99, risk_percent / 100.0))
     else:
@@ -356,11 +366,11 @@ async def handle_message(
 
     engagement_complete = False
     target_messages = int(getattr(SETTINGS, "target_messages_exchanged", 0) or 0)
-    if stop_reason == "scammer_left":
-        engagement_complete = True
-    elif target_messages > 0:
+    if target_messages > 0:
         # Force long exchanges for evaluation if requested.
         engagement_complete = total_messages >= target_messages
+    elif stop_reason == "scammer_left":
+        engagement_complete = True
     else:
         min_complete = int(getattr(SETTINGS, "min_messages_before_complete", 10) or 10)
         min_complete_intel = int(getattr(SETTINGS, "min_messages_before_complete_with_intel", 6) or 6)
