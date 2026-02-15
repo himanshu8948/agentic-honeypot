@@ -813,17 +813,55 @@ def _load_templates(*, language: str) -> dict[str, Any]:
         base = base_en
 
     # Optional external JSON file(s)
+    # Language-aware merging:
+    # - *_en.json applies to en and hinglish
+    # - *_hi.json applies to hi and hinglish
+    # - *_hinglish.json applies to hinglish
     folder = os.path.join(os.path.dirname(__file__), "playbooks")
     if os.path.isdir(folder):
-        for name in os.listdir(folder):
-            if not name.lower().endswith(".json"):
+        names = [n for n in os.listdir(folder) if n.lower().endswith(".json")]
+        names.sort()
+
+        def _should_load(fname: str) -> bool:
+            low = fname.lower()
+            if low.endswith("_hinglish.json"):
+                return lang == "hinglish"
+            if low.endswith("_hi.json"):
+                return lang in {"hi", "hinglish"}
+            if low.endswith("_en.json"):
+                return lang in {"en", "hinglish"}
+            # Unknown naming: treat as common/shared
+            return True
+
+        def _merge(dst: dict[str, Any], src: dict[str, Any]) -> None:
+            for k, v in src.items():
+                if not isinstance(v, dict):
+                    dst[k] = v
+                    continue
+                existing = dst.get(k)
+                if not isinstance(existing, dict):
+                    dst[k] = dict(v)
+                    continue
+                for bk, bv in v.items():
+                    if isinstance(bv, list):
+                        cur = existing.get(bk)
+                        if isinstance(cur, list):
+                            # concatenate to increase variety for hinglish
+                            existing[bk] = cur + list(bv)
+                        else:
+                            existing[bk] = list(bv)
+                    else:
+                        existing[bk] = bv
+
+        for name in names:
+            if not _should_load(name):
                 continue
             path = os.path.join(folder, name)
             try:
                 with open(path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 if isinstance(data, dict):
-                    base.update(data)
+                    _merge(base, data)
             except Exception:
                 continue
 

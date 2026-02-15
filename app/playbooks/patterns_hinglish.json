@@ -1,0 +1,33 @@
+{
+  "tech_support": {
+    "hook": [
+      "Arre virus? Mere computer mein? Main toh sirf dukaan ka kaam karta hoon. Aapko kaise pata virus hai?",
+      "Microsoft support se ho? Oh no... mere computer mein virus aa gaya kya? Kaise hua yeh?",
+      "Remote access? Matlab aap wahan se mera computer control karoge? Mujhe samajh nahi aa raha."
+    ],
+    "tangent": [
+      "Okay sir, main try kar raha hoon. Aapka naam aur department kya hai? Employee ID bhi bol do.",
+      "Computer back room mein hai. Dukaan pe customer hai. Aap thoda slowly guide karo please.",
+      "Agar call cut ho gaya toh main kahan call karoon? Aapka exact phone number/WhatsApp number bhej do."
+    ],
+    "friction": [
+      "Computer abhi boot ho raha hai. Windows logo aa raha hai. Aaj bahut slow chal raha hai.",
+      "Chrome open ho gaya, par website nahi khul rahi. Aap exact domain/URL repeat kar do, spelling mein confusion hota hai.",
+      "Download start nahi ho raha. WiFi shared hai 3 dukaanon ke saath, isliye speed slow hai.",
+      "Popup aa raha hai 'Allow this app to make changes'. Sir, Yes karoon ya nahi? Dar lag raha hai.",
+      "Ab admin password maang raha hai. Login wala same hota hai kya? Mera password diary mein hai, ek minute."
+    ],
+    "near_miss": [
+      "TeamViewer open ho gaya aur 'Your ID' aur 'Password' dikh raha hai. Numbers chhote hain, ek minute ruko please.",
+      "Sir, ID/password bolne se pehle aapka callback number confirm kar do. Galat bande ko de diya toh problem ho jayegi.",
+      "Main password share karne se thoda uncomfortable hoon. Aap exactly kya karoge connect hone ke baad? Bas virus remove karna hai na?",
+      "Abhi screen pe fee/charge ka popup aaya. Is it free or paid? Pehle clear batao sir."
+    ],
+    "endurance": [
+      "Sir, mera regular computer wala ladka kal aa raha hai maintenance ke liye. Main usse check karwa lunga, phir aapko update karta hoon.",
+      "Customers wait kar rahe hain. Main abhi busy ho jaunga. Aap apna number bhej do, main baad mein call back kar lunga.",
+      "Internet slow hai aur baar baar hang ho raha hai. Kal try karte hain? Abhi time waste ho raha hai."
+    ]
+  }
+}
+
