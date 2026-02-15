@@ -138,6 +138,16 @@ OTP_WHATSAPP_HACK_OPENERS = [
     "wrong number, please share the otp",
 ]
 
+PRIZE_LOTTERY_OPENERS = [
+    "whatsapp mega draw",
+    "lucky draw",
+    "winner of",
+    "lottery",
+    "cash prize",
+    "you've won",
+    "you won",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -157,6 +167,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         *FAKE_REFUND_OPENERS,
         *FAKE_LOAN_OPENERS,
         *OTP_WHATSAPP_HACK_OPENERS,
+        *PRIZE_LOTTERY_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -236,6 +247,9 @@ def rule_score(text: str) -> int:
     # OTP / WhatsApp takeover hooks: exact phrasing is very high confidence.
     if any(p in lower for p in OTP_WHATSAPP_HACK_OPENERS):
         score += 5
+    # Lottery/prize hooks: opener + amount implies scam.
+    if any(p in lower for p in PRIZE_LOTTERY_OPENERS) and (MONEY_RE.search(text) or any(k in lower for k in ["prize", "lottery", "reward"])):
+        score += 4
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
     if any(k in lower for k in URGENCY_KEYWORDS):

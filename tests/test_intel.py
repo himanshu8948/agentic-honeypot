@@ -50,3 +50,9 @@ def test_rule_score_otp_whatsapp_hack_openers():
     text = "Wrong number, please share the OTP. Hi, I sent you OTP by mistake."
     score = rule_score(text)
     assert score >= 6
+
+
+def test_rule_score_prize_lottery_openers():
+    text = "Congratulations! You've won ₹1,00,000 in WhatsApp Mega Draw. You are selected for cash prize."
+    score = rule_score(text)
+    assert score >= 6
