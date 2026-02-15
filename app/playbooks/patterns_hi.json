@@ -577,6 +577,46 @@
       "Agar payment link/QR ya wallet address bhej rahe ho toh ek clear message mein bhejo so I can copy-paste."
     ]
   },
+  "income_tax_scam": {
+    "hook": [
+      "Hello. Aap bol rahe ho Income Tax se ho. Apna full name, designation, aur officer ID batao.",
+      "Refund/notice ki baat ho rahi hai. Exact reference number / DIN / file number kya hai? Clearly type kar do.",
+      "Maine returns file kiya hai isliye nervous hoon. Exact issue kya hai ya refund amount kitna hai aur kaunsa assessment year?",
+      "Official domain se written notice/email bhej do so I can verify before kuch bhi karu."
+    ],
+    "tangent": [
+      "E-filing portal pe ye kyun nahi dikh raha? Exact portal link/page bhej do jahan main check kar sakun.",
+      "Mera CA taxes handle karta hai. Office landline aur email bhej do taaki CA verify karke call back kar sake.",
+      "Refund normally automatic aata hai. Phir aapko details kyun chahiye? Process step by step samjhao.",
+      "Penalty/demand hai toh portal pe pay kaise hota hai? Exact steps aur kaunsa section hai, wo likh do."
+    ],
+    "friction": [
+      "Main confuse ho raha hoon. Ek message mein resend karo: officer ID, reference number, reason, amount.",
+      "Document/logo low quality lag raha aur grammar mistakes hain. Official PDF dobara bhej do aur jis email se aaya woh bhi.",
+      "Main office visit karna chahta hoon. Exact office address, working hours, aur Google Maps pin bhej do.",
+      "Please rush mat karo. Main CA aur portal se confirm karke hi proceed karunga. Sab kuch written mein bhejo."
+    ],
+    "near_miss": [
+      "Agar payment maang rahe ho toh exact UPI ID ya bank details bhejo aur beneficiary name bhi jo app pe show hoga.",
+      "Agar refund ke liye bank details chahiye toh exactly kaunsi details aur kyun? Official email aur office contact bhi bhej do.",
+      "Amount (refund/penalty) aur deadline ek message mein clearly bhej do, reference number ke saath.",
+      "Urgent hai toh supervisor contact aur official office landline bhej do so we can verify quickly."
+    ],
+    "endurance": [
+      "Mera portal/banking load nahi ho raha. Main baad mein check karunga. Officer ID, ref number, amount, contact ek message mein bhej do.",
+      "CA meeting mein hai. Verify karke main reply karunga. Reference number ya payment details change mat karna.",
+      "Login kar raha hoon par OTP delay ho raha. Please wait. Aap apna email/number dobara bhej do so I can save.",
+      "Main mana nahi kar raha, bas written verification chahiye. Reference number aur official contact dobara repeat kar do."
+    ],
+    "ask_phone": [
+      "Apna exact callback/WhatsApp number (country code ke saath) bhej do aur office landline number bhi.",
+      "Official email ID aur department office address bhi bhej do."
+    ],
+    "ask_link": [
+      "Exact portal link/page bhej do aur official PDF link bhi. Office Google Maps pin bhi bhej do.",
+      "Payment link/QR bhejna hai toh exact URL/handle dobara bhej do so I can copy-paste."
+    ]
+  },
   "generic": {
     "ask_more": [
       "Beta mujhe samajh nahi aaya. Zara dheere bolo.",

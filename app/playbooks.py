@@ -19,6 +19,36 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    # Income tax refund / notice / penalty scams
+    if any(
+        k in lower
+        for k in [
+            "income tax",
+            "incometax",
+            "itr",
+            "e-filing",
+            "efiling",
+            "refund pending",
+            "tax refund",
+            "refund of",
+            "notice u/s",
+            "notice us",
+            "section 143",
+            "section 144",
+            "section 148",
+            "penalty",
+            "demand notice",
+            "outstanding demand",
+            "tds mismatch",
+            "ais",
+            "form 26as",
+            "pan verification",
+            "pay now to avoid",
+            "gov.in",
+            "incometax.gov.in",
+        ]
+    ):
+        return "income_tax_scam"
     # Crypto recovery / scam-recovery scams (secondary scam targeting past victims)
     if any(
         k in lower
@@ -1306,6 +1336,30 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                             "usdt",
                             "deposit",
                             "advance",
+                            "today",
+                            "urgent",
+                        ]
+                    ):
+                        return "near_miss"
+                    if domain == "income_tax_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "pay",
+                            "payment",
+                            "transfer",
+                            "upi",
+                            "bank",
+                            "account number",
+                            "ifsc",
+                            "penalty",
+                            "fine",
+                            "demand",
+                            "gst",
+                            "charges",
+                            "service fee",
+                            "processing fee",
+                            "refund fee",
+                            "deadline",
                             "today",
                             "urgent",
                         ]

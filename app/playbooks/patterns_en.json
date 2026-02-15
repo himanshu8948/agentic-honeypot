@@ -546,6 +546,46 @@
       "If you are sending a payment link/QR or a wallet address, send it in one clear message so I can copy-paste."
     ]
   },
+  "income_tax_scam": {
+    "hook": [
+      "Hello. You said this is Income Tax. Please tell me your full name, designation, and officer ID.",
+      "You mentioned a refund/notice. What is the exact reference number / DIN / file number? Please type it clearly.",
+      "I filed my returns, so I am nervous. Can you tell me what exactly is the issue or refund amount and which assessment year?",
+      "Please send the written notice/email from an official domain so I can verify before doing anything."
+    ],
+    "tangent": [
+      "Why am I not seeing this on the e-filing portal? Please send the exact portal link/page where I can check.",
+      "My CA handles my taxes. Can you share your office landline and email so my CA can verify and call back?",
+      "If this is a refund, refunds usually come automatically. Why do you need any details? Please explain the process step by step.",
+      "If this is a penalty/demand, how do I pay on the portal? Please share the exact steps and the section you are referring to."
+    ],
+    "friction": [
+      "I am confused and I don't want to make a mistake. Please resend: officer ID, reference number, and the exact reason in one message.",
+      "The document/logo looks low quality and has grammar mistakes. Please send the official PDF again and the official email it came from.",
+      "I want to visit the office in person. Share the exact office address and working hours (and a Google Maps pin).",
+      "Please do not rush me. I will confirm with my CA and portal first. Keep everything in writing."
+    ],
+    "near_miss": [
+      "If you are asking for payment, share the exact UPI ID or bank details and the beneficiary name that should show in the app.",
+      "If you are asking for bank details for refund, tell me exactly which details you need and why. Also share your official email and office contact.",
+      "Please send the amount (refund/penalty) and deadline clearly in one message, along with the reference number.",
+      "If this is urgent, share your supervisor contact and the official office landline so we can verify quickly."
+    ],
+    "endurance": [
+      "My banking/portal is not loading. I will check again later. Please keep all details in one message: officer ID, ref number, amount, and contact.",
+      "My CA is in a meeting. I will revert after I confirm. Please do not change the reference number or payment details.",
+      "I am trying to log in but OTP is delayed. Please wait. Also resend your email/number so I can save it correctly.",
+      "I am not refusing. I just need written verification first. Repeat the reference number and your official contact again."
+    ],
+    "ask_phone": [
+      "Please share your exact callback/WhatsApp number (with country code) and the office landline number.",
+      "Send your official email ID and the department office address as well."
+    ],
+    "ask_link": [
+      "Please share the exact portal link/page and any official PDF link. Also share the office Google Maps pin.",
+      "If you are sending a payment link/QR, send the exact URL/handle again so I can copy-paste."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",
