@@ -778,11 +778,45 @@ def _bump_asked_counter(state: dict[str, Any], key: str) -> None:
 
 
 def _pick_domain(state: dict[str, Any], text: str) -> str:
-    # Lock to the first strong domain to avoid drifting across long chats.
+    """
+    Pick a domain for the current turn.
+
+    Default behaviour: lock to the first strong domain to avoid drifting across long chats.
+    Evaluator edge case: scammers may mix multiple scam types in a single session; in that case
+    we should switch domains when the new message is a *strong* match for a different domain.
+    """
+    detected = detect_domain(text)
     locked = state.get("domain")
+
     if isinstance(locked, str) and locked.strip() and locked.strip().lower() != "generic":
-        return locked.strip()
-    return detect_domain(text)
+        locked_norm = locked.strip()
+        if detected and detected != "generic" and detected != locked_norm:
+            # Allow immediate switch for "hard" domains that are typically unambiguous.
+            hard = {
+                "tech_support",
+                "prize_lottery",
+                "job_offer",
+                "loan_scam",
+                "insurance_scam",
+                "rental_scam",
+                "sextortion_scam",
+                "romance_scam",
+                "medical_tourism_scam",
+                "crypto_recovery_scam",
+                "income_tax_scam",
+                "delivery_package",
+                "credit_card",
+                "charity_donation",
+                "investment_crypto",
+                "government_grant",
+                "friend_emergency",
+            }
+            if detected in hard:
+                state["domain"] = detected
+                return detected
+        return locked_norm
+
+    return detected or "generic"
 
 
 def _pick_language_with_state(state: dict[str, Any], metadata: Metadata | None, session_id: str, turn: int, scammer_text: str) -> str:
@@ -1321,8 +1355,17 @@ def _pick_language(metadata: Metadata | None, session_id: str, turn: int, scamme
 def _normalize_session_id(value: str) -> str:
     # Keep session IDs URL-safe and bounded to avoid malformed IDs across clients.
     candidate = value.strip()
-    if candidate and re.fullmatch(r"[A-Za-z0-9._-]{8,80}", candidate):
+    # Important: some clients send short IDs (e.g. "test-1"). If we reject them and generate
+    # a new random ID, we silently break multi-turn context. So:
+    # - Accept safe IDs of length 1..80
+    # - Otherwise derive a stable sanitized ID from a hash of the incoming value
+    if candidate and re.fullmatch(r"[A-Za-z0-9._-]{1,80}", candidate):
         return candidate
+    if candidate:
+        import hashlib
+
+        h = hashlib.sha256(candidate.encode("utf-8", "ignore")).hexdigest()[:20]
+        return f"sess_{h}"
     return f"sess_{uuid.uuid4().hex[:20]}"
 
 
