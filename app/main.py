@@ -4,6 +4,7 @@ import re
 import time
 import uuid
 import hashlib
+import json
 from typing import Any, Optional
 
 import httpx
@@ -228,6 +229,7 @@ async def handle_message(
     agent_notes = "; ".join(layer_reasons)
     intents = {"intentScammer": "", "intentUser": ""}
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
+    convo_state = _load_conversation_state(conversation_summary)
     detector_route = "uncertain"
     detector_confidence = 0.0
 
@@ -286,9 +288,8 @@ async def handle_message(
     persona_used: str | None = None
     if should_engage:
         conversation = list_messages(DB, session_id, limit=30)
-        domain = detect_domain(payload.message.text)
+        domain = _pick_domain(convo_state, payload.message.text)
         persona_used = _select_persona_tag(session=session, metadata=payload.metadata, domain=domain)
-        next_target = _get_next_extraction_target(conversation=conversation, intel=intel)
         scammer_text = ""
         if effective_sender == "scammer":
             scammer_text = payload.message.text
@@ -297,7 +298,14 @@ async def handle_message(
                 if m.get("sender") == "scammer":
                     scammer_text = str(m.get("text") or "")
                     break
-        language = _pick_language(payload.metadata, session_id, len(conversation), scammer_text)
+        language = _pick_language_with_state(convo_state, payload.metadata, session_id, len(conversation), scammer_text)
+
+        next_target, target_key = _get_next_extraction_target(
+            conversation=conversation,
+            intel=intel,
+            state=convo_state,
+            domain=domain,
+        )
         verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
         try:
             pb = build_reply(
@@ -315,6 +323,15 @@ async def handle_message(
             # Absolute fallback to keep the API stable in evaluation harnesses.
             reply = "Sorry, I'm confused. What should I do next?"
             agent_notes = "playbook_failed"
+            target_key = "other"
+
+        # Update minimal conversation state so long transcripts stay coherent even if we only
+        # load the last N messages for generation.
+        convo_state["language"] = language
+        if scam_detected and domain and domain != "generic":
+            convo_state["domain"] = domain
+        _bump_asked_counter(convo_state, target_key)
+        conversation_summary = _dump_conversation_state(convo_state)
     # Note: even in high-risk zones, we keep engaging (honeypot) but never reveal detection.
 
     # Persist agent reply to keep session transcript and message counts consistent.
@@ -547,8 +564,97 @@ def _select_persona_tag(*, session: Any, metadata: Metadata | None, domain: str)
     return "bittu_vet_doctor" if domain == "upi_authority" else "bittu_shopkeeper"
 
 
-def _get_next_extraction_target(*, conversation: list[dict[str, Any]], intel: dict[str, list[str]]) -> str:
-    # Minimal, "dumb-but-cooperative" target selection for playbooks.
+def _load_conversation_state(raw: str) -> dict[str, Any]:
+    """
+    Persisted state to reduce "context loss" across long sessions.
+
+    Stored in sessions.conversation_summary as a small JSON object, e.g.:
+      {"language":"en","domain":"bank_block","asked":{"upi":2,"phone":1}}
+    """
+    s = (raw or "").strip()
+    if not s or not s.startswith("{"):
+        return {"asked": {}}
+    try:
+        obj = json.loads(s)
+        if not isinstance(obj, dict):
+            return {"asked": {}}
+        asked = obj.get("asked")
+        if not isinstance(asked, dict):
+            obj["asked"] = {}
+        return obj
+    except Exception:
+        return {"asked": {}}
+
+
+def _dump_conversation_state(state: dict[str, Any]) -> str:
+    # Keep it bounded for DB + logs.
+    safe: dict[str, Any] = {"asked": {}}
+    if isinstance(state.get("language"), str):
+        safe["language"] = state["language"]
+    if isinstance(state.get("domain"), str):
+        safe["domain"] = state["domain"]
+    asked = state.get("asked")
+    if isinstance(asked, dict):
+        out_asked: dict[str, int] = {}
+        for k, v in asked.items():
+            if not isinstance(k, str):
+                continue
+            try:
+                out_asked[k] = int(v)
+            except Exception:
+                continue
+        safe["asked"] = out_asked
+    try:
+        dumped = json.dumps(safe, ensure_ascii=True)
+    except Exception:
+        dumped = ""
+    if len(dumped) > 1200:
+        # If it grows unexpectedly, drop asked counters beyond a small set.
+        safe["asked"] = {k: safe["asked"].get(k, 0) for k in ["upi", "phone", "link", "bank", "other"] if k in safe["asked"]}
+        dumped = json.dumps(safe, ensure_ascii=True)
+    return dumped
+
+
+def _bump_asked_counter(state: dict[str, Any], key: str) -> None:
+    if not key:
+        return
+    asked = state.get("asked")
+    if not isinstance(asked, dict):
+        asked = {}
+        state["asked"] = asked
+    try:
+        asked[key] = int(asked.get(key, 0) or 0) + 1
+    except Exception:
+        asked[key] = 1
+
+
+def _pick_domain(state: dict[str, Any], text: str) -> str:
+    # Lock to the first strong domain to avoid drifting across long chats.
+    locked = state.get("domain")
+    if isinstance(locked, str) and locked.strip() and locked.strip().lower() != "generic":
+        return locked.strip()
+    return detect_domain(text)
+
+
+def _pick_language_with_state(state: dict[str, Any], metadata: Metadata | None, session_id: str, turn: int, scammer_text: str) -> str:
+    locked = state.get("language")
+    if isinstance(locked, str) and locked.strip():
+        return locked.strip().lower()
+    # Pick once and then lock for the rest of the session (prevents perceived "context breaks").
+    return _pick_language(metadata, session_id, turn, scammer_text)
+
+
+def _get_next_extraction_target(
+    *,
+    conversation: list[dict[str, Any]],
+    intel: dict[str, list[str]],
+    state: dict[str, Any],
+    domain: str,
+) -> tuple[str, str]:
+    """
+    Returns (target_prompt, target_key).
+    target_key is used for asked counters so we don't ask the exact same thing forever.
+    """
     last_scammer_msg = ""
     for msg in reversed(conversation):
         if msg.get("sender") == "scammer":
@@ -560,24 +666,51 @@ def _get_next_extraction_target(*, conversation: list[dict[str, Any]], intel: di
     missing_link = not intel.get("phishingLinks")
     missing_bank = not intel.get("bankAccounts")
 
-    if missing_link and ("http" in last_scammer_msg or "link" in last_scammer_msg or "click" in last_scammer_msg):
-        return "Ask for the exact link/domain again (to avoid opening the wrong page)"
-    if missing_phone and any(k in last_scammer_msg for k in ["call", "whatsapp", "number", "contact", "sms", "text"]):
-        return "Ask for the exact phone/WhatsApp number to contact"
-    if missing_upi and any(k in last_scammer_msg for k in ["upi", "pay", "payment", "transfer", "send money"]):
-        return "Ask for the exact UPI ID/handle (and beneficiary name)"
-    if missing_bank and any(k in last_scammer_msg for k in ["account", "ifsc", "bank", "branch"]):
-        return "Ask for the exact account number and IFSC/branch name"
+    asked = state.get("asked") if isinstance(state.get("asked"), dict) else {}
+    a_upi = int(asked.get("upi", 0) or 0)
+    a_phone = int(asked.get("phone", 0) or 0)
+    a_link = int(asked.get("link", 0) or 0)
+    a_bank = int(asked.get("bank", 0) or 0)
 
+    # 1) Prioritize missing intel but vary how we ask as attempts grow.
+    if missing_link and ("http" in last_scammer_msg or "link" in last_scammer_msg or "click" in last_scammer_msg):
+        if a_link >= 2:
+            return ("Ask them to type the exact domain + page path (slowly), because the link is not opening", "link")
+        return ("Ask for the exact link/domain again (to avoid opening the wrong page)", "link")
+
+    if missing_phone and any(k in last_scammer_msg for k in ["call", "whatsapp", "number", "contact", "sms", "text"]):
+        if a_phone >= 2:
+            return ("Ask for the exact phone/WhatsApp number with country code and spacing (so you can save it correctly)", "phone")
+        return ("Ask for the exact phone/WhatsApp number to contact", "phone")
+
+    if missing_upi and any(k in last_scammer_msg for k in ["upi", "pay", "payment", "transfer", "send money", "collect request"]):
+        if a_upi >= 2:
+            return ("Ask them to retype the UPI handle letter-by-letter and confirm the beneficiary name shown", "upi")
+        return ("Ask for the exact UPI ID/handle (and beneficiary name)", "upi")
+
+    if missing_bank and any(k in last_scammer_msg for k in ["account", "ifsc", "bank", "branch"]):
+        if a_bank >= 2:
+            return ("Ask them to repeat the account number and IFSC slowly (you are writing it down)", "bank")
+        return ("Ask for the exact account number and IFSC/branch name", "bank")
+
+    # 2) If we already have all required intel, stay contextual based on domain.
+    if not (missing_phone or missing_upi or missing_link or missing_bank):
+        if domain == "tech_support":
+            return ("Say you are stuck on the next step and ask them to repeat it slowly (you are not technical)", "other")
+        if domain in {"bank_block", "upi_security", "upi_refund", "upi_authority"}:
+            return ("Say the app is slow and ask what to do next (step by step) to avoid mistakes", "other")
+        return ("Ask what to do next", "other")
+
+    # 3) Otherwise, keep collecting missing items in a stable order but don't loop forever.
     if missing_phone:
-        return "Ask for the exact phone number / WhatsApp contact to call back (so you don't make a mistake)"
+        return ("Ask for the exact phone number / WhatsApp contact to call back (so you don't make a mistake)", "phone")
     if missing_upi:
-        return "Ask for the UPI handle to use"
+        return ("Ask for the UPI handle to use", "upi")
     if missing_link:
-        return "Ask for the exact link/URL to proceed"
+        return ("Ask for the exact link/URL to proceed", "link")
     if missing_bank:
-        return "Ask which account number this is about"
-    return "Ask what to do next"
+        return ("Ask which account number this is about", "bank")
+    return ("Ask what to do next", "other")
 
 
 _DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
