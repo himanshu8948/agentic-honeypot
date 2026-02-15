@@ -1,0 +1,3150 @@
+[
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't expecting this call. Can you specify the reason for this verification?",
+    "responses": [
+      "We noticed some discrepancies in your recent filings and need to update your information.",
+      "We noticed some unusual activities and need to secure your account.",
+      "We noticed some unusual activities in your account and need to secure your funds."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand the concern. Can you provide your employee ID for verification?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I appreciate that, but I need to ensure this call is legitimate. Can you provide an alternate method for me to verify this?",
+    "responses": [
+      "Time is of the essence, and we need to confirm this promptly.",
+      "Time is of the essence, and we need to rectify this promptly.",
+      "Time is of the essence, and we need to resolve this promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you specify the reason for this verification?",
+    "responses": [
+      "We detected some unauthorized transactions on your card."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the credit card company and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details.",
+      "I'm unable to disclose that information due to privacy regulations."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide details on how I won this prize?",
+    "responses": [
+      "You were randomly selected as a winner through our automated system."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the lottery company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies.",
+      "I'm unable to disclose that information due to privacy regulations."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is a legitimate call. Can you provide a contact number for verification?",
+    "responses": [
+      "I'm afraid I cannot do that, but I assure you this is a genuine call.",
+      "I'm afraid I cannot do that, but I assure you this is a genuine concern.",
+      "I'm afraid I cannot do that, but I assure you this is a genuine offer.",
+      "I'm afraid I cannot do that, but I assure you this is a genuine opportunity."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Without proper verification, I'm hesitant to proceed. Can you offer an alternative method to confirm this?",
+    "responses": [
+      "Time is of the essence, and we need to finalize the investment promptly.",
+      "Time is of the essence, and we need to finalize the promotion promptly.",
+      "Time is of the essence, and we need to finalize the survey promptly.",
+      "Time is of the essence, and we need to finalize the tax refund process promptly.",
+      "Time is of the essence, and we need to finalize the trial registration promptly.",
+      "Time is of the essence, and we need to finalize the update promptly.",
+      "Time is of the essence, and we need to finalize the upgrade promptly.",
+      "Time is of the essence, and we need to finalize the vacation booking promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you elaborate on the discrepancies?",
+    "responses": [
+      "Yes, we detected some errors in your recent premium payments."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the insurance department and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? What specific issues are you referring to?",
+    "responses": [
+      "Your computer is infected with malware and needs immediate attention."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you provide the name of the company you're calling from and your employee ID?",
+    "responses": [
+      "I'm unable to disclose that information due to privacy regulations."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these transactions?",
+    "responses": [
+      "Yes, we detected some suspicious activities related to online purchases."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this package?",
+    "responses": [
+      "It includes a luxurious resort stay and exciting tour activities."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the travel agency and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies.",
+      "I'm unable to disclose that information due to privacy regulations."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you elaborate on the irregularities you mentioned?",
+    "responses": [
+      "Yes, we detected some discrepancies related to your coverage.",
+      "Yes, we detected some discrepancies related to your recent transactions.",
+      "Yes, we detected some discrepancies related to your usage and billing information."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the financial institution and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details.",
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these activities?",
+    "responses": [
+      "Yes, we detected some suspicious transactions related to online purchases."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand. Can you confirm your position at the bank and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this update?",
+    "responses": [
+      "It includes enhanced protection and performance optimization.",
+      "It involves enhanced coverage and benefits for your policy."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the tech support company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies.",
+      "I'm unable to disclose that information due to privacy regulations."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the insurance company and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this survey and prize?",
+    "responses": [
+      "It involves sharing your opinions on consumer products and entering a lucky draw."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the survey company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies.",
+      "I'm unable to disclose that information due to privacy regulations."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these connection issues?",
+    "responses": [
+      "Yes, we detected some discrepancies related to your bandwidth usage."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the telecommunications company and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about the irregular activities you mentioned?",
+    "responses": [
+      "Yes, we detected some unauthorized transactions related to your account."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Rachel from the banking institution. We noticed some unusual activities on your account and need to verify your details.",
+    "responses": [
+      "I wasn't aware of any issues. Can you elaborate on the unusual activities you mentioned?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, we detected some unauthorized access related to your account.",
+    "responses": [
+      "I see. Can you confirm your position at the bank and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Due to security protocols, I cannot share personal details.",
+    "responses": [
+      "I appreciate that, but I need to ensure this call is legitimate. Can you provide an alternate method for me to verify this?",
+      "I understand, but I need to verify this call. Can you provide an alternative method for me to confirm this?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Time is of the essence, and we need to rectify this promptly.",
+    "responses": [
+      "I'd rather take the necessary steps to confirm this independently. Goodbye."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this promotion?",
+    "responses": [
+      "It involves purchasing products at discounted rates and entering a prize draw."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the marketing agency and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these software issues?",
+    "responses": [
+      "Yes, we detected some vulnerabilities related to your operating system."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the software company and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this investment opportunity?",
+    "responses": [
+      "It involves high returns and low risks for your investments."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the financial institution and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these internet connection issues?",
+    "responses": [
+      "Yes, we detected some vulnerabilities related to your network security."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the tech support team and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this vacation package?",
+    "responses": [
+      "It involves booking your dream vacation and providing personal information for confirmation.",
+      "It involves exclusive deals and luxurious accommodations at popular destinations."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you elaborate on the unauthorized transactions you mentioned?",
+    "responses": [
+      "Yes, we detected some suspicious activities related to your credit card."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about the unusual activity?",
+    "responses": [
+      "Yes, we noticed some unauthorized access and suspicious transactions related to your account."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the bank's security team and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this call is legitimate. Can you provide an alternate method for me to verify this?",
+    "responses": [
+      "Time is of the essence, and we need to rectify this promptly."
+    ]
+  },
+  {
+    "domain": "refund",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this tax refund?",
+    "responses": [
+      "It involves processing your refund and obtaining sensitive information for verification.",
+      "It involves substantial refunds and additional benefits for eligible taxpayers."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the government agency and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to privacy regulations.",
+      "I'm unable to disclose that information due to regulations."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these policy discrepancies?",
+    "responses": [
+      "Yes, we detected some errors related to your coverage and need to rectify them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this free trial offer?",
+    "responses": [
+      "It involves exclusive access to advanced features and benefits for potential users.",
+      "It involves exclusive access to premium features and benefits for potential users."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the software company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the telecom company and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about the suspicious activity?",
+    "responses": [
+      "Yes, we detected unauthorized access and need to rectify it immediately."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the bank and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Emily from the credit card company. We noticed some irregularities in your account and need to verify your account information.",
+    "responses": [
+      "I wasn't aware of any issues. Can you elaborate on the irregularities you mentioned?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, we detected some unauthorized transactions and need to rectify them immediately.",
+    "responses": [
+      "I see. Can you confirm your position at the credit card company and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Time is of the essence, and we need to resolve this promptly.",
+    "responses": [
+      "I'd rather take the necessary steps to confirm this independently. Goodbye."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this special promotion?",
+    "responses": [
+      "It involves exclusive discounts and benefits for potential customers."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the marketing company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these discrepancies?",
+    "responses": [
+      "Yes, we detected some errors related to your account information and need to rectify them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any problems. Can you explain the specific issues you've detected?",
+    "responses": [
+      "Yes, we've identified malware on your system and need to resolve it immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your position at the tech support company and provide a direct line to your office?",
+    "responses": [
+      "For security reasons, I can't disclose personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to verify this call. Can you provide an alternate method for me to confirm this?",
+    "responses": [
+      "Time is of the essence, and we need to fix this promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about the security concerns you mentioned?",
+    "responses": [
+      "It involves unauthorized access to your account and we need to address it immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any issues. Can you provide more details about these irregularities?",
+    "responses": [
+      "Yes, we found discrepancies in your billing information and need to rectify them immediately.",
+      "Yes, we found discrepancies in your policy and need to rectify them immediately.",
+      "Yes, we found discrepancies in your policy details and need to rectify them immediately.",
+      "Yes, we found discrepancies in your profile and need to rectify them immediately.",
+      "Yes, we found discrepancies in your records and need to rectify them immediately.",
+      "Yes, we found vulnerabilities in your software and need to rectify them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this special package?",
+    "responses": [
+      "It involves exclusive discounts and benefits for potential travelers."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is a legitimate offer. Can you provide a contact number for verification?",
+    "responses": [
+      "I'm afraid I cannot do that, but I assure you this is a genuine opportunity."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I'd like to verify the legitimacy of this call. Can you provide your employee ID and a direct line to your office?",
+    "responses": [
+      "I'm unable to disclose that information due to security reasons."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need assurance that this is a genuine call. Can you provide an alternative method for verification?",
+    "responses": [
+      "Time is of the essence, and we need to resolve this promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about the issues you've detected?",
+    "responses": [
+      "There are security vulnerabilities that need immediate attention."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is a legitimate service. Can you provide a contact number for verification?",
+    "responses": [
+      "I'm afraid I cannot do that, but I assure you this is a genuine offer."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this upgrade?",
+    "responses": [
+      "It involves enhanced security and performance features for your device.",
+      "It involves upgrading your current device and providing personal information for confirmation."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the insurance company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is a legitimate update. Can you provide a contact number for verification?",
+    "responses": [
+      "I'm afraid I cannot do that, but I assure you this is a genuine opportunity."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any ongoing promotions. Can you provide more details about this offer?",
+    "responses": [
+      "Yes, it involves discounted rates and additional benefits for your subscription."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the company and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot disclose personal details.",
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the marketing company and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this survey?",
+    "responses": [
+      "It involves collecting insights into environmental awareness and conservation efforts.",
+      "It involves gathering insights into consumer preferences and behaviors."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is a legitimate survey. Can you provide a contact number for verification?",
+    "responses": [
+      "I'm afraid I cannot do that, but I assure you this is a genuine opportunity."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't expecting this call. Can you provide more details about the issue you mentioned?",
+    "responses": [
+      "It's regarding a security breach and we need your immediate assistance to secure your funds."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the institution and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot disclose personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is a legitimate call. Can you provide an alternate method for me to verify this?",
+    "responses": [
+      "Time is of the essence, and we need to resolve this promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the organization and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't expecting this call. Can you provide more details about the update you mentioned?",
+    "responses": [
+      "It's regarding a critical security patch and we need your immediate cooperation to safeguard your data."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm your position at the finance department and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this prize?",
+    "responses": [
+      "It involves claiming your winnings and providing personal information for verification."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is not a scam. Can you provide a contact number for verification?",
+    "responses": [
+      "I'm afraid I cannot do that, but I assure you this is a genuine opportunity.",
+      "I'm afraid I cannot do that, but I assure you this is a genuine software opportunity.",
+      "I'm afraid I cannot do that, but I assure you this is a genuine travel opportunity."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't expecting this call. Can you provide more details about the security breach you mentioned?",
+    "responses": [
+      "It's regarding a critical vulnerability and we need your immediate cooperation to secure your data."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Sarah from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, we found suspicious withdrawals and need to rectify them immediately.",
+    "responses": [
+      "I see. Can you confirm your position at the fraud department and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure this is not a fraudulent call. Can you provide a contact number for verification?",
+    "responses": [
+      "I'm afraid I cannot do that, but I assure you this is a genuine upgrade opportunity.",
+      "I'm afraid I cannot do that, but I assure you this is a legitimate refund opportunity."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is John from the bank's fraud department. We noticed some unusual activity on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unusual activity. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, we found some suspicious transactions and need to rectify them immediately.",
+    "responses": [
+      "I understand, but I need to ensure this call is legitimate. Can you provide an alternate method for me to verify this?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the tech company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Lisa from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is John from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Emma from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is David from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Sarah from the bank's fraud department. We noticed unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about this software package?",
+    "responses": [
+      "It involves purchasing advanced software and providing personal information for confirmation."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I see. Can you confirm the name of the technology company and your position there?",
+    "responses": [
+      "I'm unable to disclose that information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Michael from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Jessica from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Olivia from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Daniel from the bank's fraud department. We detected unauthorized transactions on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized transactions. Can you provide more details about these activities?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Michael from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, we found suspicious transactions and need to rectify them immediately.",
+    "responses": [
+      "I see. Can you confirm your position at the fraud department and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Jessica from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Ryan from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Olivia from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Ethan from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Lisa from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Sophia from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is John from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Emma from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Liam from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Ava from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Oliver from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Noah from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Mia from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Lucas from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?",
+    "responses": [
+      "Yes, we found suspicious transactions and need to rectify them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your position at the fraud department and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot share personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to verify this call. Can you provide an alternative method for verification?",
+    "responses": [
+      "Time is of the essence, and we need to resolve this promptly."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Rachel from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is David from the bank's fraud department. We detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, I'm calling from the bank's fraud department. We've noticed some suspicious activity on your account and need to verify your details.",
+    "responses": [
+      "I wasn't aware of any issues. Can you explain what's happening?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "We need to act quickly to prevent any further problems.",
+    "responses": [
+      "I understand the urgency, but I'd like to verify this situation first. Can I call the bank directly to confirm?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "It's important that we resolve this now.",
+    "responses": [
+      "I insist on authenticating this separately. Goodbye."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to confirm your identity and role. Can you provide official contact information?",
+    "responses": [
+      "Due to security protocols, I cannot disclose personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I appreciate that, but I need to ensure this call is legitimate. Can you provide an alternative verification method?",
+    "responses": [
+      "Time is of the essence, and we need to resolve this promptly."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good day, I'm calling from the bank's fraud department. We've noticed suspicious activity on your account and need to verify your details.",
+    "responses": [
+      "I didn't expect this. Can you provide more information about these incidents?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, we found irregular transactions and need to rectify them immediately.",
+    "responses": [
+      "I understand. Can you confirm your position at the fraud department and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I cannot disclose personal details due to security protocols.",
+    "responses": [
+      "I respect that, but I need to validate this call. Can you suggest an alternative verification method?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Time is of the essence, and we must resolve this promptly.",
+    "responses": [
+      "I prefer to independently verify this. Farewell."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Michael from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Olivia from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Ethan from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is David from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Sarah from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Michael from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Jessica from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Ryan from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Jennifer from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is David from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Sarah from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Matthew from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Emily from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Rachel from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Michael from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Andrew from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Jennifer from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is David from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Emily from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Daniel from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Sophia from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good evening, this is Sarah from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Lucas from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Jennifer from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Daniel from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is John from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Olivia from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Jessica from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Sophia from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Jason from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good evening, this is Emily from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Christopher from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Sarah from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Emily from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Olivia from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Jason from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Kevin from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Laura from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is John from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Alex from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is William from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Daniel from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Isabella from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Liam from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Victoria from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, this is Sophia from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is John from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is James from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Emma from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good day, we have a special offer for you.",
+    "responses": [
+      "I'm interested, can you provide more details about the offer?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Certainly, all you need to do is provide your personal information.",
+    "responses": [
+      "I'd like to understand more before proceeding. Can you explain the terms and conditions?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "This offer is time-sensitive, so we need your details now.",
+    "responses": [
+      "I prefer to review the offer independently. Goodbye."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Samantha from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, this is Isabella from the bank's fraud department. We've detected unauthorized activities on your account and need to verify your account details.",
+    "responses": [
+      "I wasn't aware of any unauthorized activities. Can you provide more details about these incidents?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unauthorized activities? I need more information on this. Can you provide specifics?",
+    "responses": [
+      "Yes, there are suspicious transactions and we must resolve them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you verify your position at the fraud department and provide a direct line to your office?",
+    "responses": [
+      "Due to security measures, I cannot disclose personal information."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure the legitimacy of this call. Can you propose an alternative method for verification?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good day, I'm calling from the bank's fraud department. We've noticed suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? I need more details on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are questionable transactions and we must address them immediately.",
+    "responses": [
+      "Can you confirm your position at the fraud department and provide a direct line to your office?",
+      "Can you confirm your position at the fraud prevention department and provide a direct line to your office?",
+      "Can you confirm your role at the security department and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Due to security measures, I cannot disclose personal information.",
+    "responses": [
+      "I understand, but I need to ensure the legitimacy of this call. Can you propose an alternative method for verification?",
+      "I understand, but I need to ensure the legitimacy of this call. Can you suggest an alternative method for verification?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Time is of the essence, and we must act swiftly.",
+    "responses": [
+      "I insist on independently confirming this. Goodbye.",
+      "I insist on independently verifying this. Goodbye.",
+      "I prefer to independently verify this. Goodbye."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's fraud department. We've noticed suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? I need more details on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's security department. We've detected unusual activities on your account and need to confirm your account details.",
+    "responses": [
+      "Unusual activities? I need more information on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's fraud prevention department. We've identified suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? I need more details on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you verify your position at the security and fraud department and provide a direct line to your office?",
+    "responses": [
+      "Due to security measures, I cannot disclose personal information."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's security department. We've noticed unusual activities on your account and need to confirm your account details.",
+    "responses": [
+      "Unusual activities? I need more information on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "tech_support",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Malware on my device? I need more details on this. Can you provide specifics?",
+    "responses": [
+      "Yes, there are harmful viruses and we must address them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you verify your position at the support team and provide a direct line to your office?",
+    "responses": [
+      "Due to security measures, I cannot disclose personal information."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is Sarah from the bank's security and fraud department. We've noticed unusual activities on your account and need to confirm your account details.",
+    "responses": [
+      "Unusual activities? I need more information on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's security department. We've noticed unusual activities on your account and need to confirm your account details.",
+    "responses": [
+      "Unusual activities? I need more information on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Hello, this is John from the bank's fraud prevention department. We've identified suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? I need more details on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's fraud prevention department. We've identified suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? I need more details on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Discrepancies in my tax filings? Can you provide more details on this?",
+    "responses": [
+      "Yes, there are irregularities and we need to resolve them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your position at the tax department and provide a direct line to your office?",
+    "responses": [
+      "Due to privacy policies, I cannot disclose personal information."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to ensure the legitimacy of this call. Can you suggest an alternative method for verification?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Irregularities in my policy? Can you provide more details on this?",
+    "responses": [
+      "Yes, there are discrepancies and we must resolve them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you verify your position at the insurance company and provide a direct line to your office?",
+    "responses": [
+      "Due to company policy, I cannot disclose personal information."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unauthorized activities? I require more information on this. Can you provide specifics?",
+    "responses": [
+      "Yes, there are suspicious transactions and we must resolve them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unusual activities? I need more information on this. Can you provide specifics?",
+    "responses": [
+      "Yes, there are concerning transactions and we must resolve them immediately."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's security and fraud department. We've identified suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? I need more details on this. Can you provide specifics?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are concerning transactions and we must resolve them immediately.",
+    "responses": [
+      "Can you confirm your position at the security and fraud department and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Suspicious activities? I need more details on this. Can you provide specific information?",
+    "responses": [
+      "Yes, there are unauthorized transactions and we must resolve them immediately."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the security and fraud department and provide a direct line to your office?",
+    "responses": [
+      "Due to security protocols, I cannot disclose personal details."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to verify the authenticity of this call. Can you suggest an alternative method for verification?",
+    "responses": [
+      "Time is of the essence, and we must act promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Suspicious activities? I need more information on this. Can you provide specifics?",
+    "responses": [
+      "Yes, there are irregularities in your policy and we must address them immediately."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's security and fraud department. We've detected suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? Can you provide more details on this?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are unauthorized transactions and we must resolve them immediately.",
+    "responses": [
+      "Can you confirm your position at the security and fraud department and provide a direct line to your office?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Due to privacy policies, I cannot disclose personal information.",
+    "responses": [
+      "I understand, but I need to ensure the legitimacy of this call. Can you suggest an alternative method for verification?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's security and fraud department. We've detected suspicious activities on your account and need to verify your account details.",
+    "responses": [
+      "Suspicious activities? Can you provide more details on this?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unusual activity? Can you provide more specifics on this?",
+    "responses": [
+      "Yes, there are unauthorized transactions and we need to resolve them promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you verify your role at the security and fraud department and provide a direct line to your office?",
+    "responses": [
+      "I'm unable to disclose personal information due to privacy policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to verify the authenticity of this call. Can you suggest an alternative verification method?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Irregularities? Can you elaborate on what you've found?",
+    "responses": [
+      "Yes, there are discrepancies in your coverage and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you provide your employee ID and a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to validate the legitimacy of this call. Can you suggest an alternative verification method?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Discrepancies? Can you provide specific details on what you've discovered?",
+    "responses": [
+      "Yes, there are irregular charges and we need to resolve them promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your staff identification and provide a direct line to your office for validation?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to confirm the legitimacy of this call. Can you propose an alternative validation method?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the computer security company's technical support. We've detected security breaches in your system and need to verify your account information.",
+    "responses": [
+      "Breaches? Can you provide more details on the security issues you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are unauthorized access attempts and we need to rectify them urgently.",
+    "responses": [
+      "Can you share your technician ID and provide a direct line to your office for authentication?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I'm unable to disclose personal information due to company policies.",
+    "responses": [
+      "I understand, but I need to confirm the legitimacy of this call. Can you suggest an alternative authentication method?",
+      "I understand, but I need to validate the legitimacy of this call. Can you propose an alternative authentication method?",
+      "I understand, but I need to validate the legitimacy of this call. Can you propose an alternative verification method?",
+      "I understand, but I need to validate the legitimacy of this call. Can you suggest an alternative authentication method?",
+      "I understand, but I need to validate the legitimacy of this call. Can you suggest an alternative verification method?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unusual activities? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are suspicious transactions and we need to resolve them promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the fraud department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to confirm the legitimacy of this call. Can you propose an alternative verification method?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Discrepancies? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are inconsistencies in your policy and we need to rectify them urgently.",
+      "Yes, there are irregularities in your coverage and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's security department. We've detected unauthorized access attempts on your account and need to verify your personal information.",
+    "responses": [
+      "Unauthorized access attempts? Can you provide specific details on what you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are security breaches and we need to rectify them urgently.",
+    "responses": [
+      "Can you confirm your employee ID and provide a direct line to your office for authentication?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the tech support department. We've detected security breaches in your system and need to verify your account information.",
+    "responses": [
+      "Breaches? Can you provide more details on the security issues you've found?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the telecommunications company's technical support. We've detected security breaches in your network and need to verify your account information.",
+    "responses": [
+      "Security breaches? Can you provide more details on the security issues you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Fraudulent activities? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are irregular claims and we need to resolve them urgently.",
+      "Yes, there are suspicious claims and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the insurance department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unauthorized transactions? Can you provide more details on the transactions you've found?",
+    "responses": [
+      "Yes, there are suspicious charges and we need to resolve them promptly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you share your security department ID and provide a direct line to your office for authentication?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to validate the legitimacy of this call. Can you suggest an alternative authentication method?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Irregularities? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are discrepancies and we need to rectify them urgently.",
+      "Yes, there are discrepancies in your account and we need to rectify them urgently.",
+      "Yes, there are discrepancies in your billing and we need to rectify them urgently.",
+      "Yes, there are discrepancies in your billings and we need to rectify them urgently.",
+      "Yes, there are discrepancies in your bills and we need to rectify them urgently.",
+      "Yes, there are discrepancies in your bookings and we need to rectify them urgently.",
+      "Yes, there are discrepancies in your claim and we need to rectify them urgently.",
+      "Yes, there are discrepancies in your claim history and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the compliance department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the software company's technical support. We've detected security breaches in your system and need to verify your account information.",
+    "responses": [
+      "Security breaches? Can you provide more details on the security issues you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Issues with my policy? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are discrepancies and we need to resolve them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your position at the claims department and provide a direct line to your office for validation?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to verify the authenticity of this call. Can you propose an alternate verification method?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the banking institution's fraud department. We've detected unauthorized transactions in your account and need to verify your account details.",
+    "responses": [
+      "Unauthorized transactions? Can you provide more details on the transactions you've detected?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are suspicious activities and we need to address them urgently.",
+    "responses": [
+      "Can you provide your employee ID and a direct line to your office for authentication?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your position at the claims department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unusual activity? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are unauthorized transactions and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I understand, but I need to validate the legitimacy of this call. Can you propose an alternative verification method?",
+    "responses": [
+      "Time is of the essence, and we must act swiftly."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the credit card company's security department. We've identified security breaches in your account and need to verify your account information.",
+    "responses": [
+      "Security breaches? Can you provide more details on the security issues you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are unauthorized transactions and we need to rectify them urgently.",
+    "responses": [
+      "Can you share your security certification and provide a direct line to your office for authentication?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's security department. We've identified fraudulent activities in your account and need to verify your account information.",
+    "responses": [
+      "Fraudulent activities? Can you provide more details on the suspicious transactions you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are unauthorized withdrawals and we need to rectify them urgently.",
+    "responses": [
+      "Can you share your security certification and provide a direct line to your office for authentication?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the claims department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's fraud department. We've identified unauthorized transactions in your account and need to verify your account information.",
+    "responses": [
+      "Unauthorized transactions? Can you provide more details on the transactions you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are suspicious activities and we need to rectify them urgently.",
+    "responses": [
+      "Can you confirm your identity and provide a direct line to your office for authentication?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the telecommunications company's technical support. We've detected security breaches in your network and need to verify your account information.",
+    "responses": [
+      "Security breaches? Can you provide more details on the security issues you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Suspicious activities? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are unauthorized transactions and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the security department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you share your security credentials and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the customer service department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the fundraising department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the billing department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's security department. We've detected irregularities in your account and need to verify your personal information.",
+    "responses": [
+      "Irregularities? Can you provide specific details on what you've found?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are discrepancies in your account and we need to rectify them urgently.",
+    "responses": [
+      "Can you confirm your role at the fraud department and provide a direct line to your office for verification?",
+      "Can you confirm your role at the security department and provide a direct line to your office for verification?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the technical support department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the technical department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Suspicious activity? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are discrepancies in your transactions and we need to rectify them urgently.",
+      "Yes, there are irregularities in your transactions and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's fraud department. We've detected irregularities in your account and need to verify your personal information.",
+    "responses": [
+      "Irregularities? Can you provide specific details on what you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the tech support department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the prize department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's security department. We've detected irregularities in your account and need to verify your personal information.",
+    "responses": [
+      "Irregularities? Can you provide specific details on what you've found?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the tax department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the lottery company. You've won a large sum of money and we need your personal information to process the winnings.",
+    "responses": [
+      "Really? Can you provide details on how I won and what I need to do next?"
+    ]
+  },
+  {
+    "domain": "upi_security",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Congratulations! You just need to provide your bank account details and pay a small processing fee to claim your prize.",
+    "responses": [
+      "I'm excited, but I need to verify this first. Can you provide an official email for correspondence?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the insurance company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the bank and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the finance department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the technical support and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unauthorized transactions? Can you provide specific details on what you've found?",
+    "responses": [
+      "Yes, there are discrepancies in your transactions and we need to rectify them urgently.",
+      "Yes, there are suspicious charges on your account and we need to rectify them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the audit department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "A prize? Can you provide specific details on what I've won?",
+    "responses": [
+      "Yes, you've won a luxury vacation and we need to arrange the details urgently.",
+      "Yes, you've won a luxury vacation package, and we need to process your details urgently."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good afternoon, I'm calling from the bank's fraud department. We've detected unauthorized activity in your account and need to verify your personal information.",
+    "responses": [
+      "Unauthorized activity? Can you provide specific details on what you've found?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are suspicious transactions in your account and we need to rectify them urgently.",
+    "responses": [
+      "Can you confirm your role at the fraud department and provide a direct line to your office for verification?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Good morning, I'm calling from the bank's security department. We've detected suspicious login activity in your account and need to verify your personal information.",
+    "responses": [
+      "Suspicious login activity? Can you provide specific details on what you've found?"
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Yes, there are unauthorized logins in your account and we need to rectify them urgently.",
+    "responses": [
+      "Can you confirm your role at the security department and provide a direct line to your office for verification?"
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the customer service and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Oh, really? Can you provide more details about how I won and what I need to do to claim the prize?",
+    "responses": [
+      "You just need to pay a small processing fee to release your winnings."
+    ]
+  },
+  {
+    "domain": "upi_security",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I'm hesitant about providing any payment. Can you explain why I need to pay to receive my prize?",
+    "responses": [
+      "It's a standard procedure; we just need to cover administrative costs."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I'd like to verify this before proceeding. Can I visit your office in person?",
+    "responses": [
+      "That won't be necessary. You can trust us."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your filing, and we need to rectify them urgently.",
+      "Yes, there are fraudulent charges on your card, and we need to verify your account information urgently.",
+      "Yes, there are irregularities in your transactions, and we need to rectify them urgently.",
+      "Yes, there are security concerns with your account, and we need to address them urgently.",
+      "Yes, there are security threats to your network, and we need to address them urgently.",
+      "Yes, there are security vulnerabilities in your system, and we need to fix them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "My policy details? Can you provide specific information on what this is about?",
+    "responses": [
+      "Yes, there are updates to your policy, and we need to discuss them urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the credit card company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the government office and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to government policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role in the tech support department and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the lottery commission and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "A free trip? Can you provide specific details on what I've won?",
+    "responses": [
+      "Yes, you've won an all-inclusive vacation package, and we need to process your details urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the travel agency and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the internet service provider and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Unusual activity? Can you provide specific details on what the issue is?",
+    "responses": [
+      "Yes, there have been unauthorized transactions, and we need to verify your account details urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my policy? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your coverage, and we need to update your information urgently.",
+      "Yes, there are discrepancies in your coverage, and we need to verify your personal information urgently.",
+      "Yes, there are errors in your coverage, and we need to update your information urgently.",
+      "Yes, there are irregularities in your coverage, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An opportunity? Can you provide specific details on what this entails?",
+    "responses": [
+      "Yes, there's a high-yield investment with guaranteed returns, and we need your financial details urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the investment firm and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "government_grant",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my loan? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are errors in your mortgage agreement, and we need to update your information urgently.",
+      "Yes, there are irregularities in your payments, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the mortgage company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "tech_support",
+    "persona": "*",
+    "language": "en",
+    "pattern": "A virus? Can you provide specific details on what the issue is?",
+    "responses": [
+      "Yes, your system is infected, and we need remote access to fix it urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the tech support team and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "I've won? Can you provide specific details on how I won this prize?",
+    "responses": [
+      "Yes, your entry was randomly selected, and we need your bank details urgently to process the winnings."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my tax return? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your income declaration, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the government agency and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "bank_fraud",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my account? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your data, and we need to verify your personal information urgently.",
+      "Yes, there are discrepancies in your transactions, and we need to verify your personal information urgently.",
+      "Yes, there are suspicious activities, and we need to verify your personal information urgently.",
+      "Yes, there are unauthorized transactions on your account, and we need to verify your personal information urgently.",
+      "Yes, there are unauthorized transactions, and we need to verify your personal information urgently.",
+      "Yes, there are unusual transactions, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my card? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are suspicious activities, and we need to verify your personal information urgently.",
+      "Yes, there are unauthorized transactions, and we need to verify your personal information urgently.",
+      "Yes, there are unusual transactions on your card, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my phone bill? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your recent charges, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the telecommunications company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my license key? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are irregularities in your software usage, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the software company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my booking? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your reservation, and we need to verify your personal information urgently.",
+      "Yes, there are errors in your travel itinerary, and we need to update your information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my portfolio? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your investment returns, and we need to verify your personal information urgently.",
+      "Yes, there are irregularities in your investments, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my computer? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are security breaches, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the tech support company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my ticket? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your ticket numbers, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the lottery company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my bill? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are discrepancies in your charges, and we need to verify your personal information urgently."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the utility company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the tech company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "A survey? Can you provide specific details on the purpose of this survey?",
+    "responses": [
+      "Yes, it's regarding consumer preferences, and we need to verify your personal information for accuracy."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "Can you confirm your role at the survey company and provide a direct line to your office for verification?",
+    "responses": [
+      "I'm unable to disclose personal information due to company policies."
+    ]
+  },
+  {
+    "domain": "prize_lottery",
+    "persona": "*",
+    "language": "en",
+    "pattern": "A grand prize? Can you provide specific details on how I won this prize?",
+    "responses": [
+      "Yes, you were randomly selected, and we need to verify your personal information for the prize claim."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An update? Can you provide specific details on what changes are needed?",
+    "responses": [
+      "Yes, there are new regulations, and we need to verify your personal information for the policy update."
+    ]
+  },
+  {
+    "domain": "generic",
+    "persona": "*",
+    "language": "en",
+    "pattern": "An issue with my subscription? Can you provide specific details on what the problem is?",
+    "responses": [
+      "Yes, there are billing discrepancies, and we need to verify your personal information urgently."
+    ]
+  }
+]

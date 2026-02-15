@@ -23,6 +23,10 @@ def load_corpus_lines() -> list[str]:
     extra_seed_path = os.path.join(os.path.dirname(__file__), "fraud_corpus_extra.txt")
     lines.extend(_read_lines(extra_seed_path))
 
+    # Optional generated corpus from labeled A/B conversations.
+    gen_path = os.path.join(os.path.dirname(__file__), "fraud_corpus_gen_1000.txt")
+    lines.extend(_read_lines(gen_path))
+
     # Optional external corpus path (e.g., OCR output exported from PDF).
     extra_path = os.getenv("FRAUD_CORPUS_PATH", "").strip()
     if extra_path:

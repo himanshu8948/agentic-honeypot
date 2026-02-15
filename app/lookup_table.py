@@ -66,6 +66,10 @@ def load_lookup_table() -> list[dict[str, Any]]:
     seed = os.path.join(os.path.dirname(__file__), "lookup_responses_seed.json")
     items.extend(_read_items(seed))
 
+    # Optional repo-shipped generated patterns (from scripts/import_gen_conver.py).
+    gen_path = os.path.join(os.path.dirname(__file__), "lookup_responses_gen_1000.json")
+    items.extend(_read_items(gen_path))
+
     extra = os.getenv("LOOKUP_RESPONSES_PATH", "").strip()
     if extra:
         items.extend(_read_items(extra))
