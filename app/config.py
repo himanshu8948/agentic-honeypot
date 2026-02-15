@@ -12,20 +12,12 @@ def _get_env(name: str, default: str | None = None) -> str | None:
 @dataclass(frozen=True)
 class Settings:
     service_api_key: str
-    groq_api_keys: list[str]
-    groq_model: str
-    groq_base_url: str
     db_path: str
     rule_threshold: int
-    llm_threshold: float
     guvi_callback_url: str
     trusted_sms_headers: set[str]
-    local_llm_enabled: bool
-    ollama_base_url: str
-    ollama_model: str
     firebase_enabled: bool
     firebase_project_id: str | None
-    llm_enabled: bool
 
 
 def load_settings() -> Settings:
@@ -33,20 +25,11 @@ def load_settings() -> Settings:
     if not service_api_key:
         raise RuntimeError("SERVICE_API_KEY is required")
 
-    llm_enabled = _get_bool_env("LLM_ENABLED", True)
-    local_llm_enabled = _get_bool_env("LOCAL_LLM_ENABLED", False)
-    ollama_base_url = _get_env("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
-    ollama_model = _get_env("OLLAMA_MODEL", "qwen2.5:3b")
-    groq_api_keys = _load_groq_api_keys(require_if_no_local=(llm_enabled and not local_llm_enabled))
-
-    groq_model = _get_env("GROQ_MODEL", "llama3-70b-8192")
-    groq_base_url = _get_env("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
     db_path = _get_env("DB_PATH", "./honeypot.db")
     firebase_enabled = _get_bool_env("FIREBASE_ENABLED", False)
     firebase_project_id = _get_env("FIREBASE_PROJECT_ID")
 
     rule_threshold = int(_get_env("RULE_THRESHOLD", "8"))
-    llm_threshold = float(_get_env("LLM_THRESHOLD", "0.6"))
 
     guvi_callback_url = _get_env(
         "GUVI_CALLBACK_URL",
@@ -56,40 +39,13 @@ def load_settings() -> Settings:
 
     return Settings(
         service_api_key=service_api_key,
-        groq_api_keys=groq_api_keys,
-        groq_model=groq_model,
-        groq_base_url=groq_base_url,
         db_path=db_path,
         rule_threshold=rule_threshold,
-        llm_threshold=llm_threshold,
         guvi_callback_url=guvi_callback_url,
         trusted_sms_headers=trusted_sms_headers,
-        local_llm_enabled=local_llm_enabled,
-        ollama_base_url=ollama_base_url,
-        ollama_model=ollama_model,
         firebase_enabled=firebase_enabled,
         firebase_project_id=firebase_project_id,
-        llm_enabled=llm_enabled,
     )
-
-
-def _load_groq_api_keys(require_if_no_local: bool) -> list[str]:
-    # Preferred single-key configuration.
-    one_key = _get_env("GROQ_API_KEY")
-    if one_key and one_key.strip():
-        return [one_key.strip()]
-
-    # Backward compatibility: if old CSV env is provided, use only first key.
-    keys_raw = _get_env("GROQ_API_KEYS")
-    if keys_raw:
-        keys = [k.strip() for k in keys_raw.split(",") if k.strip()]
-        if keys:
-            return [keys[0]]
-
-    if require_if_no_local:
-        raise RuntimeError("GROQ_API_KEY is required when LOCAL_LLM_ENABLED is false")
-    return []
-
 
 def _load_trusted_headers() -> set[str]:
     headers: set[str] = set()
