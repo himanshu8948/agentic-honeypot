@@ -561,11 +561,11 @@ def _get_next_extraction_target(*, conversation: list[dict[str, Any]], intel: di
         return "Ask for the exact account number and IFSC/branch name"
 
     if missing_phone:
-        return "Ask for a number to call back (so you don't make a mistake)"
+        return "Ask for the exact phone number / WhatsApp contact to call back (so you don't make a mistake)"
     if missing_upi:
         return "Ask for the UPI handle to use"
     if missing_link:
-        return "Ask for the website link to proceed"
+        return "Ask for the exact link/URL to proceed"
     if missing_bank:
         return "Ask which account number this is about"
     return "Ask what to do next"
