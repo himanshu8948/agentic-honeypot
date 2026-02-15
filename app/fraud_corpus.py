@@ -19,6 +19,10 @@ def load_corpus_lines() -> list[str]:
     seed_path = os.path.join(os.path.dirname(__file__), "fraud_corpus_seed.txt")
     lines.extend(_read_lines(seed_path))
 
+    # Optional extra corpus shipped with repo (generated offline via scripts/build_fraud_corpus.py).
+    extra_seed_path = os.path.join(os.path.dirname(__file__), "fraud_corpus_extra.txt")
+    lines.extend(_read_lines(extra_seed_path))
+
     # Optional external corpus path (e.g., OCR output exported from PDF).
     extra_path = os.getenv("FRAUD_CORPUS_PATH", "").strip()
     if extra_path:
@@ -128,4 +132,3 @@ def _jaccard(a: set[str], b: set[str]) -> float:
 
 def _is_user_line(line: str) -> bool:
     return bool(re.match(r"^\s*(user|victim)\s*:", line, flags=re.IGNORECASE))
-
