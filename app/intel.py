@@ -18,6 +18,42 @@ MONEY_KEYWORDS = [
     "reward",
 ]
 
+DEVANAGARI_KEYWORDS = [
+    # Common Hindi-script scam markers (Devanagari).
+    # Used for pure-Hindi and mixed-script scam detection.
+    "खाता",  # ????
+    "अकाउंट",  # ??????
+    "खाता नंबर",  # ???? ????
+    "खाता संख्या",  # ???? ??????
+    "बैंक",  # ????
+    "ओटीपी",  # ?????
+    "पिन",  # ???
+    "पासवर्ड",  # ???????
+    "यूपीआई",  # ??????
+    "भुगतान",  # ??????
+    "पेमेंट",  # ??????
+    "ट्रांसफर",  # ????????
+    "लिंक",  # ????
+    "क्लिक",  # ?????
+    "वेरिफाई",  # ???????
+    "सत्यापित",  # ????????
+    "केवाईसी",  # ???????
+    "आधार",  # ????
+    "पैन",  # ???
+    "ब्लॉक",  # ?????
+    "सस्पेंड",  # ???????
+    "फ्रीज",  # ?????
+    "लॉक",  # ???
+    "तुरंत",  # ?????
+    "अभी",  # ???
+    "जल्दी",  # ?????
+    "पुलिस",  # ?????
+    "कानूनी",  # ??????
+    "गिरफ्तार",  # ????????
+    "आयकर",  # ????
+    "इनकम टैक्स",  # ???? ?????
+]
+
 URGENCY_KEYWORDS = [
     "urgent",
     "immediately",
@@ -266,6 +302,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         *PERSONAL_INFO_KEYWORDS,
         *IMPERSONATION_KEYWORDS,
         *THREAT_KEYWORDS,
+        *DEVANAGARI_KEYWORDS,
         # Broad anchors
         "bank",
         "upi",
@@ -280,6 +317,9 @@ BANK_RE = re.compile(r"\b\d{9,18}\b")
 IFSC_RE = re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b", re.IGNORECASE)
 ACCOUNT_CONTEXT_RE = re.compile(r"(account\s*(number|no\.?)|bank\s*account)", re.IGNORECASE)
 MONEY_RE = re.compile(r"(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d{1,2})?", re.IGNORECASE)
+
+DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
+GUJARATI_RE = re.compile(r"[\u0A80-\u0AFF]")
 
 
 def _unique_extend(target: list[str], values: Iterable[str]) -> None:
@@ -388,6 +428,45 @@ def rule_score(text: str) -> int:
     if LINK_RE.search(text):
         score += 2
 
+    # Hindi-script high-signal indicators (for pure Hindi / mixed script attacks).
+    if any(k in text for k in ["\u0913\u091f\u0940\u092a\u0940", "OTP"]):  # ?????
+        score += 3
+    if any(
+        k in text
+        for k in [
+            "\u092c\u094d\u0932\u0949\u0915",  # ?????
+            "\u092b\u094d\u0930\u0940\u091c",  # ?????
+            "\u0932\u0949\u0915",  # ???
+            "\u0938\u0938\u094d\u092a\u0947\u0902\u0921",  # ???????
+        ]
+    ):
+        score += 2
+    if any(
+        k in text
+        for k in [
+            "\u092f\u0942\u092a\u0940\u0906\u0908",  # ??????
+            "\u092d\u0941\u0917\u0924\u093e\u0928",  # ??????
+            "\u092a\u0947\u092e\u0947\u0902\u091f",  # ??????
+            "\u091f\u094d\u0930\u093e\u0902\u0938\u092b\u0930",  # ????????
+        ]
+    ):
+        score += 2
+    if any(
+        k in text
+        for k in [
+            "\u0932\u093f\u0902\u0915",  # ????
+            "\u0915\u094d\u0932\u093f\u0915",  # ?????
+            "\u0915\u0947\u0935\u093e\u0908\u0938\u0940",  # ???????
+            "\u0906\u0927\u093e\u0930",  # ????
+            "\u092a\u0948\u0928",  # ???
+            "\u0906\u092f\u0915\u0930",  # ????
+            "\u0907\u0928\u0915\u092e \u091f\u0948\u0915\u094d\u0938",  # ???? ?????
+        ]
+    ):
+        score += 2
+    if any(k in text for k in ["\u0924\u0941\u0930\u0902\u0924", "\u0905\u092d\u0940", "\u091c\u0932\u094d\u0926\u0940"]):
+        score += 2
+
     # Combo pattern: "send/share" + sensitive token is very high confidence
     if any(k in lower for k in ["share", "send", "provide", "submit"]) and any(
         k in lower for k in ["otp", "upi", "account", "card", "password", "pin", "cvv", "aadhaar", "pan"]
@@ -409,6 +488,20 @@ def rule_score(text: str) -> int:
 
 def infer_sender_role(text: str) -> str:
     lower = text.lower()
+    # Pure-Hindi / Devanagari scam messages should still be classified as scammer.
+    if DEVANAGARI_RE.search(text):
+        if any(k in text for k in DEVANAGARI_KEYWORDS) or any(
+            k in text
+            for k in [
+                "\u0916\u093e\u0924\u093e",  # ????
+                "\u092c\u0948\u0902\u0915",  # ????
+                "\u0913\u091f\u0940\u092a\u0940",  # ?????
+                "\u092f\u0942\u092a\u0940\u0906\u0908",  # ??????
+                "\u092c\u094d\u0932\u0949\u0915",  # ?????
+                "\u0932\u093f\u0902\u0915",  # ????
+            ]
+        ):
+            return "scammer"
     scam_signals = [
         *URGENCY_KEYWORDS,
         *ACTION_KEYWORDS,

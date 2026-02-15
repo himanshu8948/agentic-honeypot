@@ -10,6 +10,7 @@ from typing import Any, Optional
 import httpx
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from pydantic import BaseModel, Field
+from starlette.responses import JSONResponse
 
 from .config import Settings, load_settings
 from .db import (
@@ -45,8 +46,11 @@ SETTINGS: Settings | None = None
 DB = None
 FRAUD_CORPUS: list[str] = []
 LOOKUP_TABLE_COUNT = 0
-REQ_LIMITER = SlidingWindowLimiter(max_requests=400, window_seconds=60)
+REQ_LIMITER_SESSION = SlidingWindowLimiter(max_requests=400, window_seconds=60)
+REQ_LIMITER_IP = SlidingWindowLimiter(max_requests=1200, window_seconds=60)
 STAT_MODEL = None
+INFLIGHT_SEM: asyncio.Semaphore | None = None
+INFLIGHT_WAIT_S = 1.5
 
 
 def _health_payload() -> dict[str, str]:
@@ -122,7 +126,7 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
 
 @app.on_event("startup")
 async def startup() -> None:
-    global SETTINGS, DB, FRAUD_CORPUS, LOOKUP_TABLE_COUNT, STAT_MODEL
+    global SETTINGS, DB, FRAUD_CORPUS, LOOKUP_TABLE_COUNT, STAT_MODEL, REQ_LIMITER_SESSION, REQ_LIMITER_IP, INFLIGHT_SEM, INFLIGHT_WAIT_S
     setup_logging()
     SETTINGS = load_settings()
     DB = connect(SETTINGS.db_path)
@@ -130,6 +134,38 @@ async def startup() -> None:
     FRAUD_CORPUS = load_corpus_lines()
     LOOKUP_TABLE_COUNT = len(load_lookup_table())
     STAT_MODEL = load_stat_model()
+    # Rate limiting knobs (safe defaults).
+    try:
+        window = int(os.getenv("RL_WINDOW_SECONDS", "60") or "60")
+    except Exception:
+        window = 60
+    window = max(5, min(window, 600))
+    try:
+        per_session = int(os.getenv("RL_MAX_PER_SESSION", "400") or "400")
+    except Exception:
+        per_session = 400
+    per_session = max(5, min(per_session, 10000))
+    try:
+        per_ip = int(os.getenv("RL_MAX_PER_IP", "1200") or "1200")
+    except Exception:
+        per_ip = 1200
+    per_ip = max(5, min(per_ip, 50000))
+    REQ_LIMITER_SESSION = SlidingWindowLimiter(max_requests=per_session, window_seconds=window)
+    REQ_LIMITER_IP = SlidingWindowLimiter(max_requests=per_ip, window_seconds=window)
+
+    # Concurrency guard (prevents resource exhaustion under burst traffic).
+    try:
+        max_inflight = int(os.getenv("MAX_INFLIGHT_REQUESTS", "128") or "128")
+    except Exception:
+        max_inflight = 128
+    max_inflight = max(1, min(max_inflight, 2000))
+    try:
+        wait_ms = int(os.getenv("MAX_INFLIGHT_WAIT_MS", "1500") or "1500")
+    except Exception:
+        wait_ms = 1500
+    wait_ms = max(10, min(wait_ms, 30000))
+    INFLIGHT_WAIT_S = wait_ms / 1000.0
+    INFLIGHT_SEM = asyncio.Semaphore(max_inflight)
     log_event(
         "startup_complete",
         db_path=SETTINGS.db_path,
@@ -137,7 +173,33 @@ async def startup() -> None:
         lookupPatterns=LOOKUP_TABLE_COUNT,
         llmEnabled=False,
         statModelLoaded=bool(STAT_MODEL),
+        rlWindowSeconds=window,
+        rlMaxPerSession=per_session,
+        rlMaxPerIp=per_ip,
+        maxInflight=max_inflight,
+        maxInflightWaitMs=wait_ms,
     )
+
+
+@app.middleware("http")
+async def inflight_guard_middleware(request: Request, call_next):  # type: ignore[no-untyped-def]
+    disable_guard = (os.getenv("DISABLE_RATE_LIMITING", "").strip().lower() in {"1", "true", "yes", "on"})
+    sem = INFLIGHT_SEM
+    if disable_guard or sem is None:
+        return await call_next(request)
+    try:
+        await asyncio.wait_for(sem.acquire(), timeout=INFLIGHT_WAIT_S)
+    except TimeoutError:
+        client_host = request.client.host if request.client else "unknown"
+        log_event("server_busy", client=client_host, path=str(request.url.path))
+        return JSONResponse(status_code=503, content={"detail": "Server busy, retry shortly"})
+    try:
+        return await call_next(request)
+    finally:
+        try:
+            sem.release()
+        except Exception:
+            pass
 
 
 @app.post("/api/message", response_model=MessageResponse)
@@ -157,8 +219,9 @@ async def handle_message(
 
     client_host = request.client.host if request.client else "unknown"
     limiter_key = f"{client_host}:{session_id}"
+    ip_key = f"{client_host}"
     disable_rl = (os.getenv("DISABLE_RATE_LIMITING", "").strip().lower() in {"1", "true", "yes", "on"})
-    if not disable_rl and not REQ_LIMITER.allow(limiter_key):
+    if not disable_rl and (not REQ_LIMITER_IP.allow(ip_key) or not REQ_LIMITER_SESSION.allow(limiter_key)):
         log_event("rate_limited", sessionId=session_id, client=client_host)
         raise HTTPException(status_code=429, detail="Too many requests")
 
@@ -170,6 +233,9 @@ async def handle_message(
             append_message(DB, session_id, msg.sender, _sanitize_incoming_text(msg.text), msg.timestamp)
 
     incoming_text = _sanitize_incoming_text(payload.message.text)
+    # Edge-case: pure gibberish shouldn't trigger honeypot engagement.
+    if _looks_like_gibberish(incoming_text):
+        log_event("gibberish_input", sessionId=session_id, client=client_host, len=len(incoming_text))
     inferred_sender = infer_sender_role(incoming_text)
     effective_sender = payload.message.sender
     if inferred_sender != payload.message.sender:
@@ -232,8 +298,14 @@ async def handle_message(
     detector_route = "uncertain"
     detector_confidence = 0.0
 
+    # If the input is gibberish and we have no prior scam latch, treat as normal.
+    if _looks_like_gibberish(incoming_text) and not bool(session["scam_detected"]):
+        detector_route = "normal"
+        detector_confidence = 0.9
+        layer_reasons.append("route:gibberish_normal")
+
     first_turn = int(session["total_messages"]) <= 1
-    if first_turn:
+    if detector_route != "normal" and first_turn:
         try:
             # Corpus match is cheapest and avoids LLM calls for known scam scripts.
             threshold_raw = os.getenv("FRAUD_CORPUS_MATCH_THRESHOLD", "").strip()
@@ -257,7 +329,7 @@ async def handle_message(
             detector_route = "uncertain"
             detector_confidence = 0.0
             layer_reasons.append("opening_route:detector_failed")
-    else:
+    elif detector_route != "normal":
         detector_route = "scammer" if combined_score >= SETTINGS.rule_threshold else "normal"
         detector_confidence = 0.6
 
@@ -861,6 +933,7 @@ def _sanitize_outgoing_reply(text: str) -> str:
 
 
 _DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
+_GUJARATI_RE = re.compile(r"[\u0A80-\u0AFF]")
 _SCRIPT_TAG_RE = re.compile(r"(?is)<\s*script\b[^>]*>.*?<\s*/\s*script\s*>")
 _HTML_TAG_RE = re.compile(r"(?s)<[^>]{1,200}>")
 _CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0B\x0C\x0E-\x1F]")
@@ -882,6 +955,36 @@ def _sanitize_incoming_text(text: str) -> str:
     # Normalize whitespace (keeps extraction stable).
     s = " ".join(s.split())
     return s.strip()
+
+
+def _looks_like_gibberish(text: str) -> bool:
+    s = (text or "").strip()
+    if not s:
+        return True
+    # Non-Latin scripts are not gibberish by default (evaluators may send mixed scripts).
+    if _DEVANAGARI_RE.search(s) or _GUJARATI_RE.search(s):
+        return False
+    # If it contains URLs, UPI handles, numbers, or common scam anchors, it is not gibberish.
+    lower = s.lower()
+    if "http" in lower or "www." in lower:
+        return False
+    if any(k in lower for k in ["otp", "upi", "bank", "account", "verify", "blocked", "refund", "loan", "prize", "police", "income tax"]):
+        return False
+    # Simple heuristic: too few word-like tokens and high symbol ratio.
+    tokens = [t for t in re.split(r"\s+", s) if t]
+    wordish = [t for t in tokens if re.search(r"[a-zA-Z]{2,}", t)]
+    if len(s) <= 20 and not wordish:
+        return True
+    if len(wordish) == 0 and len(tokens) <= 2:
+        return True
+    letters = sum(1 for ch in s if ch.isalpha())
+    digits = sum(1 for ch in s if ch.isdigit())
+    spaces = sum(1 for ch in s if ch.isspace())
+    others = len(s) - letters - digits - spaces
+    if len(s) >= 8 and letters + digits > 0:
+        if others / len(s) > 0.45 and len(wordish) <= 1:
+            return True
+    return False
 
 
 def _detect_lang_style(text: str) -> str:

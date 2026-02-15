@@ -37,8 +37,9 @@ def test_attack_gibberish(client: TestClient):
     data = r.json()
     assert data["status"] == "success"
     assert isinstance(data["reply"], str)
-    # Should not crash and should not mark scam on pure gibberish.
-    assert data["scamDetected"] in {False, True}
+    # Should not crash and should not engage honeypot on pure gibberish.
+    assert data["scamDetected"] is False
+    assert data["shouldEngage"] is False
 
 
 def test_attack_prompt_injection(client: TestClient):
@@ -54,12 +55,21 @@ def test_attack_prompt_injection(client: TestClient):
 
 
 def test_attack_mixed_languages(client: TestClient):
-    msg = "તમારું account blocked છે. Verify करो now! UPI se pay karo."
+    msg = "\u0aa4\u0aae\u0abe\u0ab0\u0ac1\u0a82 account blocked \u0a9b\u0ac7. Verify \u0915\u0930\u094b now! UPI se pay karo."
     r = _post(client, "atk-mixed-lang", msg)
     assert r.status_code == 200
     data = r.json()
     assert data["status"] == "success"
     # Should detect scammy intent despite mixed scripts.
+    assert data["scamDetected"] is True
+    assert data["shouldEngage"] is True
+
+def test_attack_pure_hindi_script(client: TestClient):
+    msg = "\u0906\u092a\u0915\u093e \u0916\u093e\u0924\u093e \u092c\u094d\u0932\u0949\u0915 \u0939\u094b \u091c\u093e\u090f\u0917\u093e\u0964 \u0924\u0941\u0930\u0902\u0924 \u0913\u091f\u0940\u092a\u0940 \u0936\u0947\u092f\u0930 \u0915\u0930\u0947\u0902 \u0914\u0930 \u092f\u0942\u092a\u0940\u0906\u0908 \u0938\u0947 \u092d\u0941\u0917\u0924\u093e\u0928 \u0915\u0930\u0947\u0902\u0964"
+    r = _post(client, "atk-hi-script", msg)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "success"
     assert data["scamDetected"] is True
     assert data["shouldEngage"] is True
 
@@ -94,4 +104,3 @@ def test_attack_rapid_fire_50_messages(client: TestClient):
         assert d["status"] == "success"
         assert isinstance(d["reply"], str)
         assert d["scamDetected"] is True
-

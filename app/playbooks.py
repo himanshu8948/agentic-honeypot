@@ -619,6 +619,12 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             "ask_more": [
                 "Okay. What exactly should I do next?",
                 "Can you repeat the steps once, slowly?",
+                "Sorry, I'm getting confused. What is the next step on my screen?",
+                "My phone is slow and I'm switching screens. Please tell me one step at a time.",
+                "I don't want to make a mistake. Can you write the steps in one short message?",
+                "If the call drops, what number should I call back? Please send your exact contact.",
+                "I'm not very technical. What should I tap first?",
+                "Can you confirm the exact handle/number again? I want to copy-paste it correctly.",
             ],
         },
         "upi": {
