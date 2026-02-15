@@ -270,8 +270,10 @@ def _make_verbose(*, reply: str, domain: str, stage: str, language: str) -> str:
 def _load_templates(*, language: str) -> dict[str, Any]:
     # Built-in templates; can be overridden by JSON file in app/playbooks/*.json later.
     lang = (language or "en").strip().lower()
-    if lang.startswith("hi"):
-        lang = "hi"
+    if lang.startswith("hinglish") or lang in {"mix", "hi-en", "hi_en"}:
+        lang = "hinglish"
+    elif lang.startswith("hi"):
+        lang = "hi"  # Romanized Hindi (English alphabets)
     else:
         lang = "en"
 
@@ -776,7 +778,19 @@ def _load_templates(*, language: str) -> dict[str, Any]:
         },
     }
 
-    base = base_hi if lang == "hi" else base_en
+    if lang == "hi":
+        base = base_hi
+    elif lang == "hinglish":
+        # Mix: mostly English templates, with Roman-Hindi fillers.
+        base = dict(base_en)
+        base["generic"] = dict(base_en.get("generic", {}))
+        for k, v in base_hi.get("generic", {}).items():
+            base["generic"][k] = list(base["generic"].get(k, [])) + list(v)
+        # Preserve the Roman-Hindi UPI flows (more natural in India).
+        base["upi_refund"] = base_hi.get("upi_refund", base_en.get("upi_refund", {}))
+        base["upi_security"] = base_hi.get("upi_security", base_en.get("upi_security", {}))
+    else:
+        base = base_en
 
     # Optional external JSON file(s)
     folder = os.path.join(os.path.dirname(__file__), "playbooks")

@@ -3,6 +3,7 @@ import os
 import re
 import time
 import uuid
+import hashlib
 from typing import Any, Optional
 
 import httpx
@@ -288,7 +289,7 @@ async def handle_message(
         domain = detect_domain(payload.message.text)
         persona_used = _select_persona_tag(session=session, metadata=payload.metadata, domain=domain)
         next_target = _get_next_extraction_target(conversation=conversation, intel=intel)
-        language = _pick_language(payload.metadata)
+        language = _pick_language(payload.metadata, session_id, len(conversation))
         verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
         try:
             pb = build_reply(
@@ -571,22 +572,41 @@ def _get_next_extraction_target(*, conversation: list[dict[str, Any]], intel: di
     return "Ask what to do next"
 
 
-def _pick_language(metadata: Metadata | None) -> str:
-    lang = (metadata.language if metadata else None) or ""
+def _pick_language(metadata: Metadata | None, session_id: str, turn: int) -> str:
+    """
+    Language preferences:
+    - "en": English
+    - "hi": Romanized Hindi (Hindi in English alphabets)
+    - "hinglish": Mix of Hindi + English
+
+    If not specified, default to Hinglish for India, with light rotation.
+    """
+    lang_raw = (metadata.language if metadata else None) or ""
     loc = (metadata.locale if metadata else None) or ""
-    lang = lang.strip().lower()
+    lang = lang_raw.strip().lower()
     loc = loc.strip().upper()
 
-    # Prefer Hindi/Hinglish for India by default unless explicitly English.
-    if not lang:
-        if loc in {"IN", "HI-IN"}:
+    # Respect explicit language selection.
+    if lang:
+        if lang.startswith("en") or lang in {"english"}:
+            return "en"
+        if lang.startswith("hinglish") or lang in {"mix", "hi-en", "hi_en"}:
+            return "hinglish"
+        if lang.startswith("hi") or lang in {"hindi", "roman", "hi-latn", "hi_latn"}:
             return "hi"
-        return "hi"
-
-    if lang.startswith("en"):
         return "en"
-    if lang.startswith("hi"):
-        return "hi"
+
+    # Default for the hackathon (IN audience): mostly Hinglish.
+    # Rotate slightly to avoid sounding like a rigid template engine.
+    base = "hinglish" if (not loc or loc == "IN") else "en"
+    h = hashlib.sha1(f"{session_id}:{turn}".encode("utf-8")).digest()[0]
+    # 0-6: base, 7-8: roman Hindi, 9: English
+    if base == "hinglish":
+        if h >= 230:
+            return "en"
+        if h >= 200:
+            return "hi"
+        return "hinglish"
     return "en"
 
 
