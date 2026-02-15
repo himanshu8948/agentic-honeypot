@@ -315,6 +315,7 @@ async def handle_message(
     intents = {"intentScammer": "", "intentUser": ""}
     conversation_summary = session["conversation_summary"] if "conversation_summary" in session.keys() else ""
     convo_state = _load_conversation_state(conversation_summary)
+    domain_for_notes = str(convo_state.get("domain") or "generic").strip() or "generic"
     detector_route = "uncertain"
     detector_confidence = 0.0
 
@@ -391,6 +392,7 @@ async def handle_message(
     if should_engage:
         conversation = list_messages(DB, session_id, limit=30)
         domain = _pick_domain(convo_state, incoming_text)
+        domain_for_notes = domain
         persona_used = _select_persona_tag(session=session, metadata=payload.metadata, domain=domain)
         # Always keep a defined language so error paths don't crash the request.
         language = (convo_state.get("language") if isinstance(convo_state, dict) else None) or (
@@ -505,6 +507,8 @@ async def handle_message(
             raw_notes=agent_notes,
             scam_detected=scam_detected,
             policy_zone=policy_zone,
+            domain=domain_for_notes,
+            intel=intel,
         )
         success = await _send_callback(
             SETTINGS,
@@ -564,6 +568,8 @@ async def handle_message(
             raw_notes=agent_notes,
             scam_detected=scam_detected,
             policy_zone=policy_zone,
+            domain=domain_for_notes,
+            intel=intel,
         ),
     )
 
@@ -1325,15 +1331,32 @@ def _competition_agent_notes(
     raw_notes: str,
     scam_detected: bool,
     policy_zone: str,
+    domain: str,
+    intel: dict[str, list[str]],
 ) -> str:
     lower = (raw_notes or "").lower()
     if not scam_detected:
-        return "No high-confidence scam pattern detected in current conversation state"
+        zone = (policy_zone or "observe").strip().lower()
+        return f"zone={zone}; domain={domain or 'generic'}; no_high_confidence_scam_detected"
 
-    # Keep agent notes short and consistent for hackathon scoring.
-    payment_redirection = any(k in lower for k in ["upi", "transfer", "payment", "pay now", "link_present"])
-    if policy_zone == "lethal":
-        return "Scammer used urgency tactics and payment redirection."
-    if payment_redirection:
-        return "Scammer used urgency tactics and payment redirection."
-    return "Scammer used urgency tactics."
+    # Keep notes compact but not identical across turns: include tactic + small intel summary.
+    urgency = any(k in lower for k in ["urgent", "immediately", "minutes", "blocked", "suspended", "legal action", "arrest"])
+    redirection = any(k in lower for k in ["upi", "transfer", "payment", "pay now", "link_present"]) or any(
+        (intel.get("upiIds") or []) + (intel.get("phoneNumbers") or []) + (intel.get("phishingLinks") or [])
+    )
+    tactics = []
+    if urgency:
+        tactics.append("urgency")
+    if redirection:
+        tactics.append("redirection")
+    if not tactics:
+        tactics.append("social_engineering")
+
+    upi_n = len(intel.get("upiIds", []) or [])
+    phone_n = len(intel.get("phoneNumbers", []) or [])
+    link_n = len(intel.get("phishingLinks", []) or [])
+    bank_n = len(intel.get("bankAccounts", []) or [])
+
+    zone = (policy_zone or "unknown").strip().lower()
+    dom = (domain or "generic").strip().lower()
+    return f"zone={zone}; domain={dom}; tactics={'+'.join(tactics)}; intel(upi={upi_n},phone={phone_n},link={link_n},bank={bank_n})"
