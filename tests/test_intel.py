@@ -38,3 +38,9 @@ def test_rule_score_fake_refund_openers():
     text = "Congratulations! Get 50000 cashback. Your refund of ₹5,000 is pending. Claim your discount now."
     score = rule_score(text)
     assert score >= 8
+
+
+def test_rule_score_fake_loan_openers():
+    text = "Instant loan of ₹50,000 approved. Get loan in 5 minutes, pay ₹199 fee to activate."
+    score = rule_score(text)
+    assert score >= 7

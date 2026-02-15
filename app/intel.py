@@ -121,6 +121,16 @@ FAKE_REFUND_OPENERS = [
     "unclaimed refund",
 ]
 
+FAKE_LOAN_OPENERS = [
+    "pre-approved for",
+    "instant loan of",
+    "loan approved",
+    "loan application approved",
+    "no document loan",
+    "loan available",
+    "get loan in",
+]
+
 SUSPICIOUS_KEYWORDS = sorted(
     {
         # Common scam phrasing / UI cues
@@ -138,6 +148,7 @@ SUSPICIOUS_KEYWORDS = sorted(
         "update details",
         *PHISHING_OPENERS,
         *FAKE_REFUND_OPENERS,
+        *FAKE_LOAN_OPENERS,
         # Keyword bundles
         *MONEY_KEYWORDS,
         *URGENCY_KEYWORDS,
@@ -210,6 +221,9 @@ def rule_score(text: str) -> int:
         score += 3
     # Common refund/cashback hooks: keyword + amount is very high confidence.
     if any(p in lower for p in FAKE_REFUND_OPENERS) and (MONEY_RE.search(text) or any(k in lower for k in ["refund", "cashback", "discount"])):
+        score += 4
+    # Loan hooks: opener + amount or fee strongly indicates scam.
+    if any(p in lower for p in FAKE_LOAN_OPENERS) and (MONEY_RE.search(text) or "fee" in lower or "processing" in lower):
         score += 4
     if MONEY_RE.search(text) or any(k in lower for k in MONEY_KEYWORDS):
         score += 2
