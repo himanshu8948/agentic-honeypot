@@ -43,7 +43,7 @@ SETTINGS: Settings | None = None
 DB = None
 FRAUD_CORPUS: list[str] = []
 LOOKUP_TABLE_COUNT = 0
-REQ_LIMITER = SlidingWindowLimiter(max_requests=80, window_seconds=60)
+REQ_LIMITER = SlidingWindowLimiter(max_requests=400, window_seconds=60)
 STAT_MODEL = None
 
 
@@ -157,7 +157,8 @@ async def handle_message(
 
     client_host = request.client.host if request.client else "unknown"
     limiter_key = f"{client_host}:{session_id}"
-    if not REQ_LIMITER.allow(limiter_key):
+    disable_rl = (os.getenv("DISABLE_RATE_LIMITING", "").strip().lower() in {"1", "true", "yes", "on"})
+    if not disable_rl and not REQ_LIMITER.allow(limiter_key):
         log_event("rate_limited", sessionId=session_id, client=client_host)
         raise HTTPException(status_code=429, detail="Too many requests")
 
