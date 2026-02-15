@@ -289,7 +289,15 @@ async def handle_message(
         domain = detect_domain(payload.message.text)
         persona_used = _select_persona_tag(session=session, metadata=payload.metadata, domain=domain)
         next_target = _get_next_extraction_target(conversation=conversation, intel=intel)
-        language = _pick_language(payload.metadata, session_id, len(conversation))
+        scammer_text = ""
+        if effective_sender == "scammer":
+            scammer_text = payload.message.text
+        else:
+            for m in reversed(conversation):
+                if m.get("sender") == "scammer":
+                    scammer_text = str(m.get("text") or "")
+                    break
+        language = _pick_language(payload.metadata, session_id, len(conversation), scammer_text)
         verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
         try:
             pb = build_reply(
@@ -572,7 +580,53 @@ def _get_next_extraction_target(*, conversation: list[dict[str, Any]], intel: di
     return "Ask what to do next"
 
 
-def _pick_language(metadata: Metadata | None, session_id: str, turn: int) -> str:
+_DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
+
+
+def _detect_lang_style(text: str) -> str:
+    """
+    Heuristic language/style detector for scammer messages.
+
+    Returns:
+      - "en": English
+      - "hi": Roman Hindi (English alphabets)
+      - "hinglish": mix
+    """
+    t = (text or "").strip()
+    if not t:
+        return "en"
+
+    lower = t.lower()
+    if _DEVANAGARI_RE.search(t):
+        # Hindi script present -> prefer Roman-Hindi style templates (still in Latin chars in our dataset).
+        return "hi"
+
+    # Rough Hinglish signals (roman hindi words) - keep list small and high-precision.
+    hinglish_markers = [
+        "haan",
+        "arre",
+        "beta",
+        "bhai",
+        "sirji",
+        "ji ",
+        " kya ",
+        " ka ",
+        " nahi",
+        " ruko",
+        " jaldi",
+        " samajh",
+        " paise",
+        " bank",
+        " upi",
+    ]
+    hits = sum(1 for w in hinglish_markers if w in lower)
+    if hits >= 3:
+        return "hinglish"
+
+    return "en"
+
+
+def _pick_language(metadata: Metadata | None, session_id: str, turn: int, scammer_text: str) -> str:
     """
     Language preferences:
     - "en": English
@@ -596,18 +650,22 @@ def _pick_language(metadata: Metadata | None, session_id: str, turn: int) -> str
             return "hi"
         return "en"
 
-    # Default for the hackathon (IN audience): mostly Hinglish.
-    # Rotate slightly to avoid sounding like a rigid template engine.
-    base = "hinglish" if (not loc or loc == "IN") else "en"
+    # Default: make English the priority, but adapt to scammer language.
+    # This keeps output clean for evaluation while still sounding India-local when needed.
+    style = _detect_lang_style(scammer_text)
+    if style in {"hi", "hinglish"} and (not loc or loc == "IN"):
+        base = style
+    else:
+        base = "en"
+
+    # Light, deterministic rotation to avoid sounding like a rigid template engine.
     h = hashlib.sha1(f"{session_id}:{turn}".encode("utf-8")).digest()[0]
-    # 0-6: base, 7-8: roman Hindi, 9: English
-    if base == "hinglish":
-        if h >= 230:
-            return "en"
-        if h >= 200:
-            return "hi"
-        return "hinglish"
-    return "en"
+    # When base is English, occasionally blend to Hinglish for India sessions only.
+    if base == "en" and (not loc or loc == "IN"):
+        if h >= 245:
+            return "hinglish"
+        return "en"
+    return base
 
 
 def _normalize_session_id(value: str) -> str:
