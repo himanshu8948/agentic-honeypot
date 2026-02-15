@@ -344,6 +344,8 @@ async def handle_message(
                     persona_tag = "bittu_vet_doctor"
                 elif meta_persona in {"truck", "truck_owner", "transport", "business"}:
                     persona_tag = "bittu_truck_owner"
+                elif meta_persona in {"student", "hostel_student"}:
+                    persona_tag = "bittu_student"
                 elif meta_persona in {"shop", "shopkeeper"}:
                     persona_tag = "bittu_shopkeeper"
                 else:
@@ -374,6 +376,8 @@ async def handle_message(
                 persona_tag = "bittu_vet_doctor"
             elif meta_persona in {"truck", "truck_owner", "transport", "business"}:
                 persona_tag = "bittu_truck_owner"
+            elif meta_persona in {"student", "hostel_student"}:
+                persona_tag = "bittu_student"
             elif meta_persona in {"shop", "shopkeeper"}:
                 persona_tag = "bittu_shopkeeper"
             else:

@@ -17,6 +17,27 @@ def detect_domain(text: str) -> str:
     if any(
         k in lower
         for k in [
+            "ip address",
+            "illegal",
+            "restricted file",
+            "non-bailable",
+            "warrant",
+            "police jeep",
+            "verification fee",
+            "penalty",
+            "cyber crime department",
+            "cyber crime cell",
+            "national crime database",
+            "arrest",
+            "hostel",
+            "dispatch",
+            "fine",
+        ]
+    ):
+        return "cyber_fine"
+    if any(
+        k in lower
+        for k in [
             "cyber crime",
             "cybercrime",
             "police",
@@ -133,6 +154,15 @@ def _apply_persona(text: str, persona: str) -> str:
                 "Good evening, officer. ",
                 "Yes officer, ",
                 "Officer ji, ",
+            ]
+        )
+        return prefix + text
+    if persona == "bittu_student":
+        prefix = random.choice(
+            [
+                "Sir please, ",
+                "Oh my god sir, ",
+                "Sir, ",
             ]
         )
         return prefix + text
@@ -422,6 +452,52 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Please tell me the next step clearly. These apps have too many options.",
             ],
         },
+        "cyber_fine__bittu_student": {
+            # "Illegal downloads / IP flagged / verification fee" scam (student persona).
+            "hook": [
+                "Sir is this a mistake? I have not downloaded anything illegal. I am just a student and I only use my phone for college work. Please tell me what I should do.",
+                "Oh my god... please wait sir. I live in a hostel and if police come I will be expelled. I will cooperate, please guide me calmly.",
+            ],
+            "friction": [
+                "I am opening GPay, but it is stuck on a white screen with the logo. The hostel Wi-Fi is very bad today and keeps disconnecting.",
+                "I turned off Wi-Fi and switched to mobile data, but it says only 2G speed because my daily limit is over.",
+                "I walked to the corridor to get signal. It is loading but still spinning. I closed the app from background and reopened it.",
+                "Now the app is asking for fingerprint and it is loading the home screen slowly. My hands are shaking.",
+            ],
+            "tangent": [
+                "Sir my midterms are starting tomorrow and I am really scared. If this becomes a police case my parents will kill me.",
+                "My father pays my hostel fees and I get limited pocket money. Please do not call my parents or the warden.",
+                "One second sir, my roommate is here. I cannot talk loudly, please.",
+            ],
+            "near_miss": [
+                "It found the name, but it is asking for UPI PIN. I tried and it says incorrect PIN. I am pressing retry.",
+                "It failed again and now it says maximum attempts reached. It says I have to wait to reset it.",
+                "I tried PhonePe but it forced an update and the download is slow. Then it said bank server unavailable.",
+                "It says UPI network high traffic / bank server unavailable. I am pressing retry but it keeps failing.",
+            ],
+            "extract": [
+                "Sir please type the official department UPI ID again clearly in message. I want to copy it exactly without any spelling mistake.",
+                "Sir for my safety, please send your official name, badge/employee ID, and a callback number. I want to keep a record in case the hostel warden asks.",
+                "Sir please send the case/reference number. I am scared and I want to write it down.",
+            ],
+            "endurance": [
+                "Sir my phone battery is very low and the app is hanging. I am plugging it in and trying again slowly.",
+                "The bank server is still unavailable. Please give me 5 minutes; I will try again when network stabilizes.",
+                "I am not trying to delay. The apps are failing repeatedly. If you can share an alternate official method or website link, I can verify it first.",
+            ],
+            "ask_upi": [
+                "Please send the exact UPI ID in message. I will copy-paste it.",
+            ],
+            "ask_phone": [
+                "Please share an official callback number so I can confirm this is real.",
+            ],
+            "ask_link": [
+                "Sir, send the official cyber department website link. I am scared of fake links.",
+            ],
+            "ask_more": [
+                "Please tell me the next step slowly. I am very scared and I might press wrong.",
+            ],
+        },
         "otp": {
             "ask_phone": [
                 "You said OTP will come. Which number will it come from? Tell me the exact number.",
@@ -631,6 +707,51 @@ def _load_templates(*, language: str) -> dict[str, Any]:
                 "Next step clearly batao saab, apps mein options bahut hain.",
             ],
         },
+        "cyber_fine__bittu_student": {
+            "hook": [
+                "Sir kya yeh mistake hai? Maine kuch illegal download nahi kiya. Main student hoon. Please batao kya karna hai.",
+                "Sir please ruk jao. Main hostel mein rehta hoon, police aayi toh expel ho jaunga. Main cooperate karunga, calmly guide karo.",
+            ],
+            "friction": [
+                "GPay open kar raha hoon par white screen pe stuck hai. Hostel Wi-Fi bahut bad hai, disconnect ho raha hai.",
+                "Wi-Fi off karke mobile data on kiya par 2G speed aa rahi, daily limit over ho gayi.",
+                "Signal ke liye corridor mein aaya. Loading ho raha hai par spin hi kar raha. App close karke reopen kiya.",
+                "Fingerprint maang raha hai aur home screen slow load ho rahi. Haath kaanp rahe hain.",
+            ],
+            "tangent": [
+                "Sir mere exams kal se hain. Parents ko pata chala toh bahut problem ho jayegi.",
+                "Main limited pocket money mein rehta hoon. Please parents/warden ko mat batao.",
+                "Ek second sir, roommate hai, main loudly baat nahi kar sakta.",
+            ],
+            "near_miss": [
+                "UPI PIN maang raha. Try kiya toh incorrect PIN aa gaya. Retry kar raha hoon.",
+                "Phir fail hua aur maximum attempts reached aa gaya. Reset ke liye wait bol raha.",
+                "PhonePe try kiya par forced update aa gaya, download slow. Phir bank server unavailable.",
+                "UPI high traffic / bank server unavailable aa raha. Retry karta hoon par fail ho raha.",
+            ],
+            "extract": [
+                "Sir official department ka UPI ID message mein clearly bhej do. Spelling mistake nahi hona chahiye.",
+                "Sir aapka official naam, badge/employee ID aur callback number bhej do. Record ke liye.",
+                "Sir case/reference number bhej do. Main likh ke rakhna chahta hoon.",
+            ],
+            "endurance": [
+                "Sir phone ki battery low hai aur app hang ho raha. Charger laga ke phir try kar raha hoon.",
+                "Bank server abhi bhi down hai. 5 minute do, network stable hote hi try karunga.",
+                "Main delay nahi kar raha. Apps fail ho rahe hain. Alternate official method ya website link bhej do.",
+            ],
+            "ask_upi": [
+                "UPI ID exact message mein bhejo, main copy-paste kar lunga.",
+            ],
+            "ask_phone": [
+                "Official callback number bhejo sir, main confirm karna chahta hoon.",
+            ],
+            "ask_link": [
+                "Official website link bhejo sir, fake links se darr lagta hai.",
+            ],
+            "ask_more": [
+                "Next step slowly batao sir, main ghabra gaya hoon.",
+            ],
+        },
     }
 
     base = base_hi if lang == "hi" else base_en
@@ -663,7 +784,8 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
     if domain != "upi_refund":
         if domain != "upi_security":
             if domain != "upi_authority":
-                return "default"
+                if domain != "cyber_fine":
+                    return "default"
 
     # Use scammer-turn count to pace like your script (0-40+ minutes mapping).
     scammer_turns = sum(1 for m in conversation if m.get("sender") == "scammer")
@@ -714,6 +836,19 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
     if any(k in last_scam for k in ["pin", "upi pin", "incorrect", "too many attempts", "restart"]):
         return "near_miss"
     if "upi" in (next_target or "").lower():
+        return "extract"
+    return "endurance"
+
+    # cyber_fine
+    if scammer_turns <= 2:
+        return "hook"
+    if any(k in last_scam for k in ["open", "gpay", "phonepe", "paytm", "wifi", "data", "internet", "update", "otp"]):
+        return "friction"
+    if any(k in last_scam for k in ["parents", "hostel", "exam", "college", "warden"]):
+        return "tangent"
+    if any(k in last_scam for k in ["pin", "incorrect", "too many attempts", "server", "high traffic", "failed"]):
+        return "near_miss"
+    if any(k in (next_target or "").lower() for k in ["upi", "phone", "contact", "link"]):
         return "extract"
     return "endurance"
 
