@@ -19,6 +19,54 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    # Medical tourism / miracle cure scams
+    if any(
+        k in lower
+        for k in [
+            "cancer cure",
+            "miracle cure",
+            "treatment package",
+            "medical coordinator",
+            "medical tourism",
+            "abroad treatment",
+            "thailand",
+            "singapore",
+            "bangkok",
+            "phuket",
+            "chiang mai",
+            "singapore hospital",
+            "surgery abroad",
+            "slot available",
+            "oncology",
+            "chemotherapy",
+            "immunotherapy",
+            "stem cell",
+            "clinical trial",
+            "protocol",
+            "success rate",
+            "specialist doctor",
+            "consultation fee",
+            "advance payment",
+            "booking amount",
+            "medical visa",
+            "embassy verification",
+            "hospital brochure",
+        ]
+    ) and any(
+        k in lower
+        for k in [
+            "hospital",
+            "doctor",
+            "treatment",
+            "oncology",
+            "chemotherapy",
+            "immunotherapy",
+            "cancer",
+            "medical visa",
+            "patient",
+        ]
+    ):
+        return "medical_tourism_scam"
     # Sextortion / honey trap / blackmail threats
     if any(
         k in lower
@@ -1180,6 +1228,29 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                             "i will delete",
                             "last chance",
                             "final warning",
+                        ]
+                    ):
+                        return "near_miss"
+                    if domain == "medical_tourism_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "pay",
+                            "payment",
+                            "transfer",
+                            "upi",
+                            "bank",
+                            "account number",
+                            "ifsc",
+                            "advance",
+                            "booking amount",
+                            "deposit",
+                            "slot",
+                            "today",
+                            "urgent",
+                            "package cost",
+                            "consultation fee",
+                            "visa fee",
+                            "processing fee",
                         ]
                     ):
                         return "near_miss"

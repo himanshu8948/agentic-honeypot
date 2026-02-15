@@ -466,6 +466,46 @@
       "If you are sending me a payment link/QR, send the exact URL/handle again. My phone opens wrong pages sometimes."
     ]
   },
+  "medical_tourism_scam": {
+    "hook": [
+      "Hello. Please help me. My wife is very sick and we are desperate. What is the exact hospital name and country/city?",
+      "You said advanced treatment abroad. What is the exact treatment/protocol and the expected success rate?",
+      "Which doctor will treat her? Please share the doctor's full name, specialization, and license/registration number.",
+      "Can you WhatsApp/email the hospital brochure and doctor profile so I can verify?"
+    ],
+    "tangent": [
+      "Please share your coordinator details: your full name, your phone/WhatsApp number, and official email ID.",
+      "Is this hospital on an official website? Please send the exact hospital website link and the exact page for the doctor.",
+      "Can I speak directly to the doctor or hospital billing team on a video call? Please share their contact/extension.",
+      "Please send the package details in writing: itemized cost, inclusions (surgery, stay, tests), and timeline."
+    ],
+    "friction": [
+      "I searched the doctor name but I am not finding it on official sites. Can you send the exact verification link again?",
+      "My current doctor in India wants the protocol in writing. Please send the treatment plan and report requirements clearly.",
+      "Before any payment, I need to verify with the embassy/medical visa process. Which embassy and what documents are needed?",
+      "This is life and death for us. Please do not change details. Send everything in one clear message: hospital, doctor, city, cost, and contacts."
+    ],
+    "near_miss": [
+      "If you need an advance/booking amount, share the exact UPI ID or bank details and the beneficiary name that should show in the app.",
+      "Please send the final package cost (total), the minimum advance amount, and the deadline/slot validity in one message.",
+      "I need an official invoice/quotation with hospital name and address before I pay anything. Please email/WhatsApp it.",
+      "Also share the hospital billing department phone/email so we can confirm the payment destination before sending."
+    ],
+    "endurance": [
+      "I need some time to arrange money. Please keep the same payment details and do not change them.",
+      "Insurance is asking for hospital verification. Please share hospital registration details, address, and landline number.",
+      "I found complaints online and I am confused. If you share official verification links and direct hospital contact, I can proceed faster.",
+      "I want to visit the hospital or speak to them directly first. Please arrange a video call with hospital staff."
+    ],
+    "ask_phone": [
+      "Please share your exact phone/WhatsApp number (with country code) and the hospital landline number.",
+      "Share your official email ID and the hospital billing email as well."
+    ],
+    "ask_link": [
+      "Please share the exact hospital website link and the doctor profile link. Also send the Google Maps location for the hospital.",
+      "If you have a PDF brochure link, resend the exact URL. My phone is not opening it properly."
+    ]
+  },
   "romance_scam": {
     "hook": [
       "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",

@@ -250,6 +250,47 @@
     ]
   }
   ,
+  "medical_tourism_scam": {
+    "hook": [
+      "Hello. Please help. Meri wife bahut sick hai and we are desperate. Exact hospital name + country/city kya hai?",
+      "Advanced treatment abroad bol rahe ho. Exact treatment/protocol kya hai and success rate kitna claim kar rahe ho?",
+      "Kaunsa doctor treat karega? Doctor full name, specialization, and license/registration number share karo.",
+      "Hospital brochure + doctor profile WhatsApp/email pe bhej do so I can verify."
+    ],
+    "tangent": [
+      "Coordinator details bhej do: your full name, phone/WhatsApp number, and official email ID.",
+      "Hospital official website link + doctor profile exact page link bhejo please.",
+      "Doctor ya hospital billing team se direct video call possible hai? Contact/extension share karo.",
+      "Package details written mein bhej do: itemized cost, inclusions, timeline."
+    ],
+    "friction": [
+      "Doctor name search kiya but official sites pe nahi mil raha. Exact verification link again bhejo.",
+      "India wale doctor ko protocol written chahiye. Treatment plan + report requirements clearly bhej do.",
+      "Payment se pehle embassy/medical visa process verify karna hai. Which embassy and documents kya chahiye?",
+      "Life and death situation hai. Details change mat karo. One message mein hospital, doctor, city, cost, contacts bhej do."
+    ],
+    "near_miss": [
+      "If advance/booking amount needed, share exact UPI ID/bank details + beneficiary name that should show in the app.",
+      "Final package cost (total) + minimum advance amount + deadline/slot validity ek message mein bhej do.",
+      "Payment se pehle official invoice/quotation chahiye with hospital name + address. Email/WhatsApp it please.",
+      "Hospital billing department phone/email bhi bhejo so we can confirm payment destination."
+    ],
+    "endurance": [
+      "Money arrange karne mein time lagega. Payment details same rakhna please, change mat karna.",
+      "Insurance hospital verification maang rahi hai. Hospital registration details, address, landline bhej do.",
+      "Online complaints dekh ke confusion ho raha. Official verification links + direct hospital contact bhej doge toh proceed faster.",
+      "Main hospital staff se direct baat karna chahta hoon. Please video call arrange kar do."
+    ],
+    "ask_phone": [
+      "Apna exact phone/WhatsApp number (with country code) + hospital landline bhej do.",
+      "Official email ID + hospital billing email bhi share karo."
+    ],
+    "ask_link": [
+      "Hospital website link + doctor profile link bhejo. Hospital Google Maps location bhi bhejo please.",
+      "PDF brochure link open nahi ho raha. Exact URL dobara bhej do."
+    ]
+  }
+  ,
   "romance_scam": {
     "hook": [
       "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",

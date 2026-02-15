@@ -497,6 +497,46 @@
       "Payment link/QR bhejna hai toh exact URL/handle dobara bhej do. Kabhi wrong page open ho jata hai."
     ]
   },
+  "medical_tourism_scam": {
+    "hook": [
+      "Hello. Please help karo. Meri wife bahut sick hai aur hum desperate hain. Exact hospital name aur country/city kya hai?",
+      "Aap bol rahe ho advanced treatment abroad. Exact treatment/protocol kya hai aur expected success rate kitna?",
+      "Kaunsa doctor treat karega? Doctor ka full name, specialization, aur license/registration number bhej do.",
+      "Hospital brochure aur doctor profile WhatsApp/email pe bhej do so I can verify."
+    ],
+    "tangent": [
+      "Coordinator details bhej do: aapka full name, phone/WhatsApp number, aur official email ID.",
+      "Hospital official website pe listed hai? Exact hospital website link aur doctor ka exact page link bhej do.",
+      "Kya main doctor ya hospital billing team se direct video call pe baat kar sakta hoon? Unka contact/extension share kar do.",
+      "Package details written mein bhej do: itemized cost, inclusions (surgery, stay, tests), aur timeline."
+    ],
+    "friction": [
+      "Main doctor ka naam search kar raha hoon par official sites pe nahi mil raha. Exact verification link dobara bhej do.",
+      "India wale doctor ko protocol written chahiye. Treatment plan aur report requirements clearly bhej do.",
+      "Payment se pehle embassy/medical visa process verify karna hai. Kaunsi embassy aur kya documents chahiye?",
+      "Ye life and death hai. Details change mat karo. Ek message mein clear bhej do: hospital, doctor, city, cost, aur contacts."
+    ],
+    "near_miss": [
+      "Agar advance/booking amount chahiye toh exact UPI ID ya bank details bhejo aur beneficiary name bhi jo app pe show hoga.",
+      "Final package cost (total), minimum advance amount, aur deadline/slot validity ek message mein bhej do.",
+      "Payment se pehle hospital name aur address ke saath official invoice/quotation chahiye. Email/WhatsApp pe bhej do.",
+      "Hospital billing department ka phone/email bhi bhej do so we can confirm payment destination."
+    ],
+    "endurance": [
+      "Paisa arrange karne mein time lagega. Payment details same rakhna, change mat karna.",
+      "Insurance hospital verification maang rahi hai. Hospital registration details, address, aur landline number bhej do.",
+      "Online complaints dekh ke confusion ho raha hai. Official verification links aur direct hospital contact bhej doge toh main jaldi proceed karunga.",
+      "Main hospital staff se direct baat karna chahta hoon. Please video call arrange kar do."
+    ],
+    "ask_phone": [
+      "Apna exact phone/WhatsApp number (country code ke saath) bhej do aur hospital ka landline number bhi.",
+      "Official email ID aur hospital billing email bhi share kar do."
+    ],
+    "ask_link": [
+      "Exact hospital website link aur doctor profile link bhej do. Hospital ka Google Maps location bhi bhej do.",
+      "PDF brochure link hai toh exact URL dobara bhej do. Mere phone pe open nahi ho raha."
+    ]
+  },
   "generic": {
     "ask_more": [
       "Beta mujhe samajh nahi aaya. Zara dheere bolo.",
