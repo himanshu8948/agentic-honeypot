@@ -18,6 +18,10 @@ class Settings:
     trusted_sms_headers: set[str]
     firebase_enabled: bool
     firebase_project_id: str | None
+    # Engagement/callback pacing knobs (defaults are conservative for most demos)
+    target_messages_exchanged: int
+    min_messages_before_complete: int
+    min_messages_before_complete_with_intel: int
 
 
 def load_settings() -> Settings:
@@ -37,6 +41,10 @@ def load_settings() -> Settings:
     )
     trusted_sms_headers = _load_trusted_headers()
 
+    target_messages_exchanged = int(_get_env("TARGET_MESSAGES_EXCHANGED", "0"))
+    min_messages_before_complete = int(_get_env("MIN_MESSAGES_BEFORE_COMPLETE", "10"))
+    min_messages_before_complete_with_intel = int(_get_env("MIN_MESSAGES_BEFORE_COMPLETE_WITH_INTEL", "6"))
+
     return Settings(
         service_api_key=service_api_key,
         db_path=db_path,
@@ -45,6 +53,9 @@ def load_settings() -> Settings:
         trusted_sms_headers=trusted_sms_headers,
         firebase_enabled=firebase_enabled,
         firebase_project_id=firebase_project_id,
+        target_messages_exchanged=max(0, target_messages_exchanged),
+        min_messages_before_complete=max(1, min_messages_before_complete),
+        min_messages_before_complete_with_intel=max(1, min_messages_before_complete_with_intel),
     )
 
 def _load_trusted_headers() -> set[str]:

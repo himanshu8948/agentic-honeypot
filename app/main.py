@@ -355,12 +355,19 @@ async def handle_message(
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
-    if total_messages >= 10:
-        engagement_complete = True
-    if total_messages >= 6 and has_intel:
-        engagement_complete = True
+    target_messages = int(getattr(SETTINGS, "target_messages_exchanged", 0) or 0)
     if stop_reason == "scammer_left":
         engagement_complete = True
+    elif target_messages > 0:
+        # Force long exchanges for evaluation if requested.
+        engagement_complete = total_messages >= target_messages
+    else:
+        min_complete = int(getattr(SETTINGS, "min_messages_before_complete", 10) or 10)
+        min_complete_intel = int(getattr(SETTINGS, "min_messages_before_complete_with_intel", 6) or 6)
+        if total_messages >= min_complete:
+            engagement_complete = True
+        if total_messages >= min_complete_intel and has_intel:
+            engagement_complete = True
 
     callback_pending = bool(session["callback_pending"]) if "callback_pending" in session.keys() else False
     should_attempt_callback = scam_detected and (engagement_complete or callback_pending) and not bool(
