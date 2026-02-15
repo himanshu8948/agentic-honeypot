@@ -316,7 +316,12 @@ async def handle_message(
                 language=language,
                 verbosity=verbosity,
             )
-            reply = pb.reply
+            reply = _maybe_echo_scammer_intel(
+                reply=pb.reply,
+                intel=intel,
+                conversation=conversation,
+                domain=domain,
+            )
             agent_notes = pb.agent_notes
             stop_reason = pb.stop_reason
         except Exception:
@@ -711,6 +716,63 @@ def _get_next_extraction_target(
     if missing_bank:
         return ("Ask which account number this is about", "bank")
     return ("Ask what to do next", "other")
+
+
+def _maybe_echo_scammer_intel(
+    *,
+    reply: str,
+    intel: dict[str, list[str]],
+    conversation: list[dict[str, Any]],
+    domain: str,
+) -> str:
+    """
+    Make replies sound more "legit" to the scammer by repeating *scammer-provided* values
+    (UPI/phone/link) as a confirmation step. This also nudges them to correct typos.
+
+    Important: this uses `intel` that already had victim-provided identifiers subtracted.
+    """
+    base = (reply or "").strip()
+    if not base:
+        return reply
+
+    low = base.lower()
+    recent_user = [str(m.get("text") or "") for m in conversation[-8:] if m.get("sender") == "user"]
+
+    def _already_said(value: str) -> bool:
+        return any(value and value in t for t in recent_user)
+
+    # Prefer echoing payment redirection intel (most valuable in hackathon scoring).
+    if intel.get("upiIds") and ("upi" in low or "handle" in low or "payment" in low or "transfer" in low):
+        upi = str(intel["upiIds"][-1]).strip()
+        if upi and not _already_said(upi) and len(base.split()) <= 55:
+            if not base.endswith((".", "!", "?")):
+                base += "."
+            return f"{base} You said the UPI ID is {upi} — is that correct?"
+
+    if intel.get("phoneNumbers") and any(k in low for k in ["number", "call", "whatsapp", "sms", "text"]):
+        phone = str(intel["phoneNumbers"][-1]).strip()
+        if phone and not _already_said(phone) and len(base.split()) <= 55:
+            if not base.endswith((".", "!", "?")):
+                base += "."
+            return f"{base} Just to confirm, should I contact {phone} or a different number?"
+
+    if intel.get("phishingLinks") and any(k in low for k in ["link", "url", "website", "domain"]):
+        link = str(intel["phishingLinks"][-1]).strip()
+        if link and not _already_said(link) and len(base.split()) <= 55:
+            if not base.endswith((".", "!", "?")):
+                base += "."
+            return f"{base} The link you mentioned was {link} — should I open the same one?"
+
+    # For bank account numbers: avoid repeating full numbers too often; use last-4 for realism.
+    if intel.get("bankAccounts") and "account" in low and domain in {"bank_fraud", "upi_security", "upi_refund"}:
+        acc = str(intel["bankAccounts"][-1]).strip()
+        if acc and not _already_said(acc) and len(acc) >= 8 and len(base.split()) <= 60:
+            tail = acc[-4:]
+            if not base.endswith((".", "!", "?")):
+                base += "."
+            return f"{base} You mean the account ending in {tail}, right?"
+
+    return reply
 
 
 _DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
