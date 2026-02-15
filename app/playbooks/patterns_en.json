@@ -137,19 +137,41 @@
   "job_offer": {
     "hook": [
       "Job offer? For me? But I didn't apply!",
-      "Work from home? What is the salary? What will the work be?"
+      "Work from home? What is the salary? What will the work be?",
+      "Amazon HR? Okay, but I'm a bit suspicious because scams happen. Can you explain the role clearly?",
+      "Before I do anything, can you tell me your full name, HR department, and the official hiring process?",
+      "Registration fee sounds strange. Why do I need to pay to get selected?"
     ],
     "tangent": [
       "Yes, yes, I need a job. What is the process? Tell me.",
-      "Registration fee? How much is it? And the job is guaranteed after that, right?"
+      "Registration fee? How much is it? And the job is guaranteed after that, right?",
+      "What exactly is the daily work? Is it chat support, data entry, or something else?",
+      "What are the working hours and payment cycle? Weekly or monthly salary?",
+      "Can you share the official offer letter or a reference email from the company domain?",
+      "Please share your official website and the job posting link so I can verify.",
+      "Which city office is this linked to? Please share the office address for verification."
     ],
     "friction": [
       "I have to pay the registration fee online? I don't know how to do this.",
-      "500 rupees fee? Let the job be confirmed first, then I'll pay. Is it for real?"
+      "500 rupees fee? Let the job be confirmed first, then I'll pay. Is it for real?",
+      "My resume is not ready. I need to update it first. Can you wait 10 minutes?",
+      "I can't find my resume file. It's on my old phone/laptop. Please stay on the line.",
+      "My email is not working right now. The OTP/login is not coming. Can you share a WhatsApp number instead?",
+      "The payment gateway is not loading. It keeps spinning. Should I retry or use another method?",
+      "Before payment, please share the exact contact number and official email again. I want to save it properly."
+    ],
+    "near_miss": [
+      "Okay I can try, but before paying, tell me the exact payment destination (UPI ID / bank account) and the beneficiary name that should appear.",
+      "I will not share any OTP/PIN. If this is legitimate, send the official offer letter link and a callback number from your HR desk.",
+      "If you want ₹500 now, please send the exact UPI handle and confirm the company name that will show in the app.",
+      "I tried paying but it failed. Can you resend the payment link/UPI ID in one message, clearly, so I don't make a mistake?"
     ],
     "endurance": [
       "My CV is old. I need to update it. It will take some time.",
-      "My son works in HR. I'll get him to confirm if this is legitimate or not."
+      "My son works in HR. I'll get him to confirm if this is legitimate or not.",
+      "I will verify the office address and HR email first. Please wait and don't change the details.",
+      "My phone battery is low and email is not loading. I'll reply in a few minutes once it's stable.",
+      "I wrote the details down but I'm not sure I copied correctly. Please repeat the number/UPI/email once more, slowly."
     ]
   },
   "investment_crypto": {

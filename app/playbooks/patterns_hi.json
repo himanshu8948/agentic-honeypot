@@ -135,25 +135,45 @@
       "Job offer? Mujhe? Lekin beta maine toh apply nahi kiya!",
       "Work from home? Salary kitni hai? Kya kaam karna hoga?",
       "HR se call? Konsi company hai ye? Naam kya hai?",
-      "Shortlisted? Arre lekin interview kab hua? Mujhe yaad nahi."
+      "Shortlisted? Arre lekin interview kab hua? Mujhe yaad nahi.",
+      "Amazon HR? Beta pakka hai na? Aajkal bahut fraud hota hai. Role clearly batao.",
+      "Work from home ke liye fee kyun? Selection ho gaya toh payment baad mein nahi?"
     ],
     "tangent": [
       "Haan haan, job chahiye mujhe. Kya process hai? Batao beta.",
       "Registration fee? Kitni hai? Aur job pakki hai na uske baad?",
       "Resume bhejni hai? Mere paas hai, lekin PDF mein kaise convert karoon?",
-      "Haan interested hoon. Training kab shuru hogi? Kya sikhana hai?"
+      "Haan interested hoon. Training kab shuru hogi? Kya sikhana hai?",
+      "Kaam exactly kya hai? Data entry, chat support, ya kuch aur? Daily kitna time lagega?",
+      "Salary kitni milegi aur payment weekly hoga ya monthly? Contract hai kya?",
+      "Offer letter ya official email bhej do company domain se. Main verify karna chahta hoon.",
+      "Office address batao. Main Google pe check kar lunga ki real office hai ya nahi."
     ],
     "friction": [
       "Registration fee online payment karni hai? Beta mujhe nahi aata ye.",
       "Resume email pe bhejni hai? Mera email password bhool gaya. Reset karna padega.",
       "\u20b9500 fees? Arre pehle job confirm ho toh payment karoon. Pakka hai na?",
       "Company ka office kahaan hai? Address batao, ek baar jaake dekh loon.",
-      "Beta phone number do company ka. Main verify kar loon pehle."
+      "Beta phone number do company ka. Main verify kar loon pehle.",
+      "Mera resume ready nahi hai. Update karna padega. 10 minute do beta.",
+      "Resume file mil nahi rahi. Purane phone/laptop mein hai. Ruko zara, dhoondhta hoon.",
+      "Email login nahi ho raha. OTP nahi aa raha. WhatsApp number bhej do kya?",
+      "Payment gateway load nahi ho raha. Circle ghoom raha hai. Main retry karoon ya dusra method?",
+      "Payment se pehle aap apna exact number aur official email dobara bhej do. Main save kar leta hoon."
     ],
     "endurance": [
       "Beta mera CV purana hai. Update karna padega. Thoda time lagega.",
       "Haan job offer tha... konsi company thi? Kya position tha? Bhool gaya.",
-      "Beta kal call karo. Aaj CV nahi mil raha. Kal dhoondhke ready rakhunga."
+      "Beta kal call karo. Aaj CV nahi mil raha. Kal dhoondhke ready rakhunga.",
+      "Main pehle office address aur email verify kar leta hoon. Details change mat karna beta.",
+      "Phone battery low hai aur email open nahi ho raha. 5-10 minute mein reply karunga.",
+      "Mainne details likh liye, par confirm nahi ho raha. Number/UPI/email ek baar aur slowly repeat kar do."
+    ],
+    "near_miss": [
+      "Theek hai, par payment se pehle exact destination do: UPI ID ya bank account, aur beneficiary name kya aayega?",
+      "Main koi OTP/PIN share nahi karunga. Legit hai toh offer letter link aur HR desk ka callback number bhejo.",
+      "?500 bhejna hai toh exact UPI handle aur company ka naam confirm kar do jo app mein show hoga.",
+      "Payment fail ho gaya. UPI ID/link ek message mein clearly bhej do, main galat jagah nahi bhejna chahta."
     ]
   },
   "investment_crypto": {

@@ -957,6 +957,8 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                     if any(k in last_scam for k in ["otp", "pin", "fee", "link", "install", "download", "pay", "transfer", "upi"]):
                         if scammer_turns <= 8:
                             return "friction"
+                    if domain == "job_offer" and any(k in last_scam for k in ["fee", "registration", "pay", "payment", "upi", "transfer", "deposit"]):
+                        return "near_miss"
                     # Payment push / deposit requests in investment scams are a "near miss" moment where
                     # we keep them talking and force them to repeat their handles/links without paying.
                     if domain == "investment_crypto" and any(

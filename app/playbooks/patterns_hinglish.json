@@ -56,4 +56,33 @@
       "I wrote it down but I might have copied wrong. Repeat the website/number once more, slowly."
     ]
   }
+  ,
+  "job_offer": {
+    "hook": [
+      "Amazon HR? Okay but I'm a bit suspicious. Scams happen. Role clearly batao please.",
+      "Work from home ke liye registration fee kyun? Selection hua hai toh fee later nahi?",
+      "Salary kitni hogi and work kya hoga exactly? Data entry ya chat support?"
+    ],
+    "tangent": [
+      "Offer letter ya official email bhej do company domain se so I can verify.",
+      "Office address share kar do. Main Google pe check karunga.",
+      "Working hours aur payment cycle kya hai? Weekly ya monthly?"
+    ],
+    "friction": [
+      "Resume file mil nahi rahi. Purane phone/laptop mein hai. Ruko zara.",
+      "Email login nahi ho raha, OTP nahi aa raha. WhatsApp number send kar do.",
+      "Payment gateway load nahi ho raha. Retry karoon ya dusra method?",
+      "Before payment, please send exact number + email again. Main save kar leta hoon."
+    ],
+    "near_miss": [
+      "If you want ₹500 now, share exact UPI handle/bank details and beneficiary name that should show.",
+      "I will not share any OTP/PIN. Legit hai toh offer letter link + callback number bhejo.",
+      "Payment failed. UPI ID/link ek message mein clearly bhej do so I don't make mistake."
+    ],
+    "endurance": [
+      "Main family se discuss karke confirm karunga. Details change mat karna please.",
+      "Phone battery low hai and email not loading. 5-10 min mein reply karunga.",
+      "Repeat the number/UPI/email once more slowly. I might have copied wrong."
+    ]
+  }
 }
