@@ -90,7 +90,7 @@
     "tangent": [
       "OTP? Yes, a message came. Wait, let me check the messages...",
       "Account number? Yes, I have it. I'll tell you from the passbook.",
-      "Okay, I will cooperate, but I'm confused. Where exactly should I reply the OTP — on SMS, WhatsApp, email, or inside the app?",
+      "Okay, I will cooperate, but I'm confused. Where exactly should I reply the OTP \u2014 on SMS, WhatsApp, email, or inside the app?",
       "Before I type anything, please tell me the exact contact/handle/number you want me to send it to. I don't want to send it to the wrong place.",
       "My phone is new and I get confused switching screens. Can you write the steps in one message, slowly?"
     ],
@@ -163,7 +163,7 @@
     "near_miss": [
       "Okay I can try, but before paying, tell me the exact payment destination (UPI ID / bank account) and the beneficiary name that should appear.",
       "I will not share any OTP/PIN. If this is legitimate, send the official offer letter link and a callback number from your HR desk.",
-      "If you want ₹500 now, please send the exact UPI handle and confirm the company name that will show in the app.",
+      "If you want \u20b9500 now, please send the exact UPI handle and confirm the company name that will show in the app.",
       "I tried paying but it failed. Can you resend the payment link/UPI ID in one message, clearly, so I don't make a mistake?"
     ],
     "endurance": [
@@ -304,6 +304,38 @@
     "endurance": [
       "I'll think and let you know. There are many charities. It's hard to decide.",
       "I'll talk to the CA. He'll tell me which charity is genuine."
+    ]
+  },
+  "romance_scam": {
+    "hook": [
+      "Hi Sarah. You seem kind. Where did we connect exactly (Facebook or a dating app)?",
+      "You are very sweet, but I am cautious online. Can you tell me where you live and what you do for work?",
+      "I don't want to be rude, but can we talk slowly? I'm not used to strangers messaging me like this.",
+      "I appreciate your message. What time zone are you in right now?"
+    ],
+    "tangent": [
+      "Tell me more about your job and your daily routine. Which hospital/company do you work at?",
+      "Do you have an Instagram or Facebook profile I can check? Please share the exact handle.",
+      "Can we do a quick video call later? If not, at least send a voice note so I can recognize you.",
+      "Where exactly do you live (city and country)? I like to be clear before I get attached."
+    ],
+    "friction": [
+      "My WhatsApp is acting up and messages are delayed. Can you also share your phone number so I can save it properly?",
+      "I clicked the profile link but it is not opening. Can you type the exact handle/link again?",
+      "I am at work and I can't talk continuously. Can you message the details in one clear text?",
+      "If you are traveling, which airport are you at and which airline? Please write it clearly so I understand."
+    ],
+    "near_miss": [
+      "I care, but I can't send money without verification. Please share the hospital/airport name, the exact amount, and what payment method you want.",
+      "If you need urgent help, tell me the exact destination (Western Union name, bank details, or crypto wallet) in one message so I can verify. I will not share OTP/PIN.",
+      "Send me proof first: booking reference, hospital bill header, or any official document details. Then tell me the exact phone/email I should use to contact support.",
+      "I want to help, but I need the exact number/email/handle you are using. Please repeat it slowly so I don't make a mistake."
+    ],
+    "endurance": [
+      "I am feeling emotionally pressured. Give me a little time to think and verify. Please do not get angry.",
+      "I want to check with a friend first. Share your exact number and the official link again and I will revert.",
+      "My banking app is not loading right now. I can try later, but I need all the details written clearly in one message.",
+      "If this is genuine, you will understand I need to verify. Tell me your exact location and the payment details again."
     ]
   }
 }

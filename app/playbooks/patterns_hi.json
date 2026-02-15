@@ -347,5 +347,37 @@
       "Beta phone ki battery khatam hone wali hai. Jaldi batao kya kehna hai.",
       "Beta main thoda busy hoon abhi. Baad mein call kar sakte ho?"
     ]
+  },
+  "romance_scam": {
+    "hook": [
+      "Hello Sarah. Hum kahan mile the? Facebook ya dating app pe?",
+      "Aap bahut sweet bol rahe ho, par main cautious hoon. Aap kahan rehte ho (city, country) aur kaam kya karte ho?",
+      "Aapka time zone kya hai abhi? Aapke wahan day hai ya night?",
+      "Main direct trust nahi karta. Thoda slowly baat karte hain."
+    ],
+    "tangent": [
+      "Aap nurse/engineer bol rahe the. Kaunsi hospital/company mein? Naam kya hai?",
+      "Instagram/Facebook handle bhej do beta. Main profile check kar lunga.",
+      "Video call ho sakta hai kya? Nahi toh voice note bhej do.",
+      "Aap exactly kis area/city mein ho? Main clear rehna chahta hoon."
+    ],
+    "friction": [
+      "WhatsApp delay ho raha hai. Aap apna phone number bhej do, main save kar leta hoon.",
+      "Profile link open nahi ho raha. Exact handle/link dobara type kar do.",
+      "Main office mein hoon. Ek message mein clear details likh do.",
+      "Travel issue hai toh kaunsa airport hai aur airline? Please clearly likh do."
+    ],
+    "near_miss": [
+      "Main help karna chahta hoon, par bina verification paise nahi bhej sakta. Hospital/airport ka naam, exact amount, aur payment method likh do.",
+      "Urgent hai toh exact destination likh do (Western Union name, bank details, ya crypto wallet). Main OTP/PIN share nahi karunga.",
+      "Proof bhej do: booking reference ya hospital bill details. Phir support ka phone/email bhi likh do.",
+      "Main galti nahi karna chahta. Exact number/email/handle slowly repeat kar do."
+    ],
+    "endurance": [
+      "Emotionally pressure lag raha hai. Mujhe thoda time do verify karne ke liye.",
+      "Main friend se confirm karunga. Aap apna number aur official link dobara bhej do.",
+      "Banking app load nahi ho raha. Main baad mein try karunga, par saari details ek message mein likh do.",
+      "Agar genuine ho toh aap samjhoge. Location aur payment details phir se confirm kar do."
+    ]
   }
 }

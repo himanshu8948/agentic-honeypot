@@ -19,6 +19,47 @@ class PlaybookReply:
 
 def detect_domain(text: str) -> str:
     lower = text.lower()
+    # Romance / dating / relationship scams
+    if any(
+        k in lower
+        for k in [
+            "dating",
+            "tinder",
+            "bumble",
+            "facebook",
+            "instagram",
+            "telegram",
+            "whatsapp",
+            "i love you",
+            "love",
+            "dear",
+            "baby",
+            "babe",
+            "sweetheart",
+            "relationship",
+            "marry",
+            "marriage",
+            "visa",
+            "airport",
+            "travel",
+            "ticket",
+            "customs",
+            "hospital",
+            "medical",
+            "surgery",
+            "emergency",
+            "western union",
+            "moneygram",
+            "gift card",
+            "steam card",
+            "google play card",
+            "itunes card",
+            "crypto",
+            "bitcoin",
+            "usdt",
+        ]
+    ) and any(k in lower for k in ["send", "transfer", "help", "pay", "money", "fee", "urgent"]):
+        return "romance_scam"
     if any(k in lower for k in ["grant", "subsidy", "government scheme", "tax refund", "processing fee"]):
         return "government_grant"
     if any(k in lower for k in ["congratulations", "you won", "winner", "lucky draw", "lottery", "cash prize", "mega draw", "prize"]):
@@ -963,6 +1004,29 @@ def _infer_stage(*, domain: str, conversation: list[dict[str, str]], next_target
                     # we keep them talking and force them to repeat their handles/links without paying.
                     if domain == "investment_crypto" and any(
                         k in last_scam for k in ["pay", "transfer", "upi", "deposit", "wallet", "address", "invest now", "send", "qr"]
+                    ):
+                        return "near_miss"
+                    if domain == "romance_scam" and any(
+                        k in last_scam
+                        for k in [
+                            "send money",
+                            "transfer",
+                            "help me",
+                            "urgent",
+                            "hospital",
+                            "airport",
+                            "visa",
+                            "customs",
+                            "western union",
+                            "moneygram",
+                            "gift card",
+                            "crypto",
+                            "bitcoin",
+                            "usdt",
+                            "wallet address",
+                            "pay",
+                            "fee",
+                        ]
                     ):
                         return "near_miss"
                     if scammer_turns <= 5:

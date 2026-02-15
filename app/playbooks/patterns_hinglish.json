@@ -85,4 +85,37 @@
       "Repeat the number/UPI/email once more slowly. I might have copied wrong."
     ]
   }
+  ,
+  "romance_scam": {
+    "hook": [
+      "Hi Sarah. Hum kahan mile the exactly, Facebook ya dating app pe?",
+      "You sound very sweet, but I'm cautious. Aap kahan rehti ho (city/country) and job kya hai?",
+      "Time zone kya hai aapka? Wahan abhi day hai ya night?",
+      "Let's talk slowly. Main jaldi trust nahi karta."
+    ],
+    "tangent": [
+      "Aap nurse/engineer ho? Kaunsi hospital/company mein? Name share kar do.",
+      "Instagram/Facebook handle bhej do so I can check profile.",
+      "Video call possible hai? Nahi toh voice note bhej do please.",
+      "Exact location batao (city + country). I like clarity."
+    ],
+    "friction": [
+      "WhatsApp delay ho raha hai. Apna phone number bhej do, main save kar leta hoon.",
+      "Profile link open nahi ho raha. Exact handle/link dobara type karo please.",
+      "Main office mein hoon. Details ek message mein clearly likh do.",
+      "If you are traveling, which airport and airline? Clearly type it please."
+    ],
+    "near_miss": [
+      "I want to help but bina verification money nahi bhej sakta. Hospital/airport name, exact amount, and payment method batao.",
+      "If you need urgent help, send exact destination (Western Union/bank/crypto wallet) in one message. I will not share OTP/PIN.",
+      "Proof details bhejo first (booking ref / bill header). Then send your exact phone/email/handle again.",
+      "Repeat the number/email/handle slowly so I don't make a mistake."
+    ],
+    "endurance": [
+      "I feel emotionally pressured. Give me some time to verify, please don't get angry.",
+      "Main friend/family se confirm karunga. Number + official link dobara bhej do.",
+      "Banking app load nahi ho raha. I'll try later, but keep all details in one message.",
+      "If genuine, you will understand verification. Location and payment details once more please."
+    ]
+  }
 }
