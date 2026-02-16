@@ -503,9 +503,11 @@ async def handle_message(
             session["engagement_complete"]
         )
     if should_attempt_callback:
+        notes_observed_text = incoming_text
         callback_notes = _competition_agent_notes(
             session_id=session_id,
             total_messages=total_messages_exchanged,
+            observed_text=notes_observed_text,
             raw_notes=agent_notes,
             scam_detected=scam_detected,
             policy_zone=policy_zone,
@@ -559,6 +561,18 @@ async def handle_message(
         totalMessages=total_messages_exchanged,
     )
 
+    notes_observed_text = incoming_text
+    if effective_sender != "scammer":
+        try:
+            # Prefer last scammer message for notes so tactic tags reflect attacker behavior.
+            if "conversation" in locals():
+                for m in reversed(conversation):
+                    if m.get("sender") == "scammer":
+                        notes_observed_text = str(m.get("text") or "") or notes_observed_text
+                        break
+        except Exception:
+            pass
+
     return MessageResponse(
         status="success",
         sessionId=session_id,
@@ -569,6 +583,7 @@ async def handle_message(
         agentNotes=_competition_agent_notes(
             session_id=session_id,
             total_messages=total_messages_exchanged,
+            observed_text=notes_observed_text,
             raw_notes=agent_notes,
             scam_detected=scam_detected,
             policy_zone=policy_zone,
@@ -1421,13 +1436,17 @@ def _competition_agent_notes(
     *,
     session_id: str,
     total_messages: int,
+    observed_text: str,
     raw_notes: str,
     scam_detected: bool,
     policy_zone: str,
     domain: str,
     intel: dict[str, list[str]],
 ) -> str:
-    lower = (raw_notes or "").lower()
+    lower_notes = (raw_notes or "").lower()
+    lower_obs = (observed_text or "").lower()
+    # Use observed scammer text as primary signal; fall back to raw notes if needed.
+    lower = (lower_obs or lower_notes)
     # Include a short stable session tag to help debugging in evaluator logs.
     try:
         safe_sid = _normalize_session_id(session_id or "")
@@ -1442,21 +1461,30 @@ def _competition_agent_notes(
 
     # Keep notes compact but informative and non-repetitive:
     # add tactic tags + intel summary + suggested next probe for extraction.
-    urgency = any(k in lower for k in ["urgent", "immediately", "minutes", "blocked", "suspended", "legal action", "arrest"])
-    redirection = any(k in lower for k in ["upi", "transfer", "payment", "pay now", "link_present"]) or any(
+    urgency = any(k in lower for k in ["urgent", "immediately", "minutes", "blocked", "suspended", "legal action", "arrest", "freeze", "deactivate"])
+    redirection = any(k in lower for k in ["upi", "vpa", "transfer", "payment", "pay now", "send money", "collect request", "link_present"]) or any(
         (intel.get("upiIds") or []) + (intel.get("phoneNumbers") or []) + (intel.get("phishingLinks") or [])
     )
-    impersonation = any(k in lower for k in ["bank", "sbi", "hdfc", "icici", "income tax", "police", "microsoft", "lic"])
-    credential_grab = any(k in lower for k in ["otp", "pin", "password", "cvv", "teamviewer", "anydesk", "remote"])
+    authority = any(k in lower for k in ["income tax", "it department", "irda", "rbi", "police", "cyber cell", "court", "warrant"])
+    impersonation = any(k in lower for k in ["bank", "sbi", "hdfc", "icici", "axis", "kotak", "airtel", "jio", "microsoft", "lic", "fastag", "electricity board"])
+    credential_grab = any(k in lower for k in ["otp", "pin", "upi pin", "password", "cvv", "card", "teamviewer", "anydesk", "remote", "id", "passcode"])
+    doc_pressure = any(k in lower for k in ["pdf", "policy", "notice", "letter", "document", "license", "brochure", "sanction", "agreement"])
+    fee_pressure = any(k in lower for k in ["fee", "premium", "deposit", "processing", "gst", "tax", "fine", "penalty", "charge", "payment"])
     tactics = []
     if urgency:
         tactics.append("urgency")
     if redirection:
         tactics.append("redirection")
+    if fee_pressure:
+        tactics.append("fee_pressure")
     if impersonation:
         tactics.append("impersonation")
+    if authority:
+        tactics.append("authority")
     if credential_grab:
         tactics.append("credential_grab")
+    if doc_pressure:
+        tactics.append("doc_pressure")
     if not tactics:
         tactics.append("social_engineering")
 
@@ -1470,7 +1498,7 @@ def _competition_agent_notes(
 
     # Decide what to ask for next (drives more varied notes across turns).
     # Keep this purely observational; do not include victim-owned details.
-    if link_n == 0 and any(k in lower for k in ["http://", "https://", "link", "url", "website"]):
+    if link_n == 0 and any(k in lower for k in ["http://", "https://", "link", "url", "website", "domain"]):
         probe = "ask_exact_domain"
     elif upi_n == 0 and any(k in lower for k in ["upi", "vpa", "@", "collect", "pay"]):
         probe = "ask_upi_id_spelling"
