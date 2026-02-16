@@ -1531,7 +1531,21 @@ def _competition_agent_notes(
     if (redirection or fee_pressure) and not any("upi" in c.lower() or "payment" in c.lower() for c in clauses):
         clauses.append("Scammer pushed payment/UPI steps to extract money")
 
-    summary = "; ".join(clauses[:3]) + "."
+    # Shuffle clause order for variety, but keep it deterministic per session/turn so logs are stable.
+    try:
+        import hashlib
+        import random
+
+        seed_material = f"{session_id}|{turns}|{observed_text[:80]}"
+        seed = int.from_bytes(hashlib.sha256(seed_material.encode("utf-8")).digest()[:8], "big")
+        rr = random.Random(seed)
+        shuffled = list(clauses)
+        rr.shuffle(shuffled)
+        clauses_out = shuffled
+    except Exception:
+        clauses_out = clauses
+
+    summary = "; ".join(clauses_out[:3]) + "."
     # Hard cap for safety (keep concise for evaluator logs).
     if len(summary) > 180:
         summary = summary[:177].rstrip(" ,;:-") + "..."
