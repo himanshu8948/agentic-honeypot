@@ -1509,44 +1509,17 @@ def _competition_agent_notes(
 
     # Compact one-line summary with a small telemetry footer.
     # Produce a short natural-language behavior summary (no telemetry, no intel).
-    # Build in priority order and keep max 3 clauses, but don't drop payment/UPI when present.
-    clauses: list[str] = []
+    # Shortest possible behavior summary: one compact sentence.
+    if (redirection or fee_pressure) and credential_grab:
+        return "Scammer used manipulation to get OTP/PIN."
     if authority or impersonation:
-        clauses.append("Scammer used authority/impersonation to appear legitimate")
+        return "Scammer used authority/impersonation tactics."
     if urgency:
-        clauses.append("Scammer used urgency tactics to rush the user")
-    # Prefer UPI/PIN manipulation phrasing when payment/credential signals exist.
-    if (redirection or fee_pressure) and (credential_grab or "upi pin" in lower_obs or "upi pin" in lower_notes):
-        clauses.append("Scammer used manipulation to obtain UPI PIN/OTP/password")
-    elif credential_grab:
-        clauses.append("Scammer tried to obtain OTP/PIN/password")
-    elif redirection or fee_pressure:
-        clauses.append("Scammer pushed payment/UPI steps to extract money")
+        return "Scammer used urgency tactics."
+    if credential_grab:
+        return "Scammer attempted credential theft."
+    if redirection or fee_pressure:
+        return "Scammer pushed payment redirection."
     if doc_pressure:
-        clauses.append("Scammer used document/notice pressure to intimidate")
-    if not clauses:
-        clauses.append("Scammer used social engineering to extract sensitive details")
-
-    # Ensure UPI/payment clause is included when applicable.
-    if (redirection or fee_pressure) and not any("upi" in c.lower() or "payment" in c.lower() for c in clauses):
-        clauses.append("Scammer pushed payment/UPI steps to extract money")
-
-    # Shuffle clause order for variety, but keep it deterministic per session/turn so logs are stable.
-    try:
-        import hashlib
-        import random
-
-        seed_material = f"{session_id}|{turns}|{observed_text[:80]}"
-        seed = int.from_bytes(hashlib.sha256(seed_material.encode("utf-8")).digest()[:8], "big")
-        rr = random.Random(seed)
-        shuffled = list(clauses)
-        rr.shuffle(shuffled)
-        clauses_out = shuffled
-    except Exception:
-        clauses_out = clauses
-
-    summary = "; ".join(clauses_out[:3]) + "."
-    # Hard cap for safety (keep concise for evaluator logs).
-    if len(summary) > 180:
-        summary = summary[:177].rstrip(" ,;:-") + "..."
-    return summary
+        return "Scammer used document pressure."
+    return "Scammer used social engineering."

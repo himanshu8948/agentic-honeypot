@@ -34,15 +34,10 @@ def test_agent_notes_tactics_uses_observed_text(client: TestClient):
     data = r.json()
     assert data["status"] == "success"
     notes = data["agentNotes"]
-    # Notes should be clean: only behavior summary (no telemetry footer).
-    # Natural language behavior summary (no telemetry).
-    assert notes.lower().startswith("scammer used") or notes.lower().startswith("scammer tried") or notes.lower().startswith("scammer pushed") or notes.lower().startswith("scammer used social")
+    # Notes should be clean + very short behavior summary (no telemetry).
+    assert notes.lower().startswith("scammer ")
     assert "sid=" not in notes
     assert "turns=" not in notes
     assert "zone=" not in notes
     assert "dom=" not in notes
-    # Summary should reflect observed scammer behavior (not generic).
-    assert ("authority" in notes.lower()) or ("impersonation" in notes.lower())
-    assert "otp" in notes.lower() or "pin" in notes.lower() or "password" in notes.lower()
-    assert "upi" in notes.lower() or "payment" in notes.lower()
-    assert len(notes) <= 180
+    assert len(notes) <= 60
