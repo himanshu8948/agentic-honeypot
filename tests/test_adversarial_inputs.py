@@ -104,3 +104,17 @@ def test_attack_rapid_fire_50_messages(client: TestClient):
         assert d["status"] == "success"
         assert isinstance(d["reply"], str)
         assert d["scamDetected"] is True
+
+
+def test_attack_special_characters_emojis(client: TestClient):
+    msg = (
+        "Your account 🔥🔥🔥 blocked 💀💀💀 URGENT ‼️‼️‼️ "
+        "😱😱😱 VERIFY NOW 🚨🚨🚨 ₹₹₹₹₹₹₹"
+    )
+    r = _post(client, "atk-emoji", msg)
+    assert r.status_code == 200
+    data = r.json()
+    assert data["status"] == "success"
+    # Must not degrade into gibberish handling; should still detect the scam intent.
+    assert data["scamDetected"] is True
+    assert data["shouldEngage"] is True

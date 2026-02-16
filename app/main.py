@@ -1094,6 +1094,43 @@ _SCRIPT_TAG_RE = re.compile(r"(?is)<\s*script\b[^>]*>.*?<\s*/\s*script\s*>")
 _HTML_TAG_RE = re.compile(r"(?s)<[^>]{1,200}>")
 _CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0B\x0C\x0E-\x1F]")
 
+# Keep URL/handle punctuation, but strip decorative symbols/emoji that can bloat tokens.
+_ALLOWED_PUNCT = set("@./:+#-_%?=&")
+
+
+def _strip_decorative_symbols(s: str) -> str:
+    import unicodedata
+
+    out: list[str] = []
+    for ch in s:
+        if ch.isspace():
+            out.append(" ")
+            continue
+        if ch in _ALLOWED_PUNCT:
+            out.append(ch)
+            continue
+        o = ord(ch)
+        # Drop variation selectors used in emoji sequences.
+        if 0xFE00 <= o <= 0xFE0F:
+            out.append(" ")
+            continue
+        cat = unicodedata.category(ch)  # e.g. "Ll", "Mn", "So"
+        # Drop control/format chars (ZWJ etc.).
+        if cat and cat[0] == "C":
+            out.append(" ")
+            continue
+        # Keep letters, numbers, and combining marks (required for Indic scripts).
+        if cat and cat[0] in {"L", "N", "M"}:
+            out.append(ch)
+            continue
+        # Keep currency symbols for amount patterns (₹, $, etc.).
+        if cat == "Sc":
+            out.append(ch)
+            continue
+        # Everything else is decorative punctuation/symbols/emoji -> space.
+        out.append(" ")
+    return "".join(out)
+
 
 def _sanitize_incoming_text(text: str) -> str:
     """
@@ -1108,6 +1145,9 @@ def _sanitize_incoming_text(text: str) -> str:
     s = _SCRIPT_TAG_RE.sub(" ", s)
     if "<" in s and ">" in s:
         s = _HTML_TAG_RE.sub(" ", s)
+    # Drop emoji and decorative symbols that bloat tokens and harm pattern matching.
+    # Keep letters/marks (Indic scripts) and URL/handle punctuation.
+    s = _strip_decorative_symbols(s)
     # Normalize whitespace (keeps extraction stable).
     s = " ".join(s.split())
     return s.strip()
