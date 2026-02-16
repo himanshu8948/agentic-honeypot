@@ -1508,26 +1508,31 @@ def _competition_agent_notes(
         probe = "stall_with_confusion"
 
     # Compact one-line summary with a small telemetry footer.
-    # Produce a very short, evaluator-friendly behavior summary.
-    # Keep under ~140 chars so it stays readable in leaderboards/logs.
-    short_bits = []
+    # Produce a short natural-language behavior summary (no telemetry, no intel).
+    # Build in priority order and keep max 3 clauses, but don't drop payment/UPI when present.
+    clauses: list[str] = []
     if authority or impersonation:
-        short_bits.append("impersonation")
+        clauses.append("Scammer used authority/impersonation to appear legitimate")
     if urgency:
-        short_bits.append("urgency")
-    if credential_grab:
-        short_bits.append("otp/pin/password")
-    if redirection:
-        short_bits.append("payment_redirect")
-    if fee_pressure and "payment_redirect" not in short_bits:
-        short_bits.append("fee_pressure")
+        clauses.append("Scammer used urgency tactics to rush the user")
+    # Prefer UPI/PIN manipulation phrasing when payment/credential signals exist.
+    if (redirection or fee_pressure) and (credential_grab or "upi pin" in lower_obs or "upi pin" in lower_notes):
+        clauses.append("Scammer used manipulation to obtain UPI PIN/OTP/password")
+    elif credential_grab:
+        clauses.append("Scammer tried to obtain OTP/PIN/password")
+    elif redirection or fee_pressure:
+        clauses.append("Scammer pushed payment/UPI steps to extract money")
     if doc_pressure:
-        short_bits.append("doc_pressure")
-    if not short_bits:
-        short_bits.append("social_engineering")
+        clauses.append("Scammer used document/notice pressure to intimidate")
+    if not clauses:
+        clauses.append("Scammer used social engineering to extract sensitive details")
 
-    summary = "Scammer: " + ", ".join(short_bits[:4]) + "."
-    # Hard cap for safety.
-    if len(summary) > 140:
-        summary = summary[:137].rstrip(" ,;:-") + "..."
+    # Ensure UPI/payment clause is included when applicable.
+    if (redirection or fee_pressure) and not any("upi" in c.lower() or "payment" in c.lower() for c in clauses):
+        clauses.append("Scammer pushed payment/UPI steps to extract money")
+
+    summary = "; ".join(clauses[:3]) + "."
+    # Hard cap for safety (keep concise for evaluator logs).
+    if len(summary) > 180:
+        summary = summary[:177].rstrip(" ,;:-") + "..."
     return summary
