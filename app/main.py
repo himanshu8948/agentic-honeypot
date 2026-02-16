@@ -1458,7 +1458,7 @@ def _competition_agent_notes(
     zone = (policy_zone or "observe").strip().lower()
     dom = (domain or "generic").strip().lower()
     if not scam_detected:
-        return f"Summary: No high-confidence scam detected. (sid={sid_tag} turns={turns} zone={zone} dom={dom})"
+        return "No high-confidence scam detected."
 
     # Keep notes compact but informative and non-repetitive:
     # add tactic tags + intel summary + suggested next probe for extraction.
@@ -1509,8 +1509,4 @@ def _competition_agent_notes(
 
     # Compact one-line summary with a small telemetry footer.
     behavior = ", ".join(behavior_bits[:4])
-    return (
-        f"Summary: Scammer used {behavior}. Next probe: {probe}. "
-        f"Intel: upi={upi_n} phone={phone_n} link={link_n} bank={bank_n}. "
-        f"(sid={sid_tag} turns={turns} zone={zone} dom={dom})"
-    )
+    return f"Scammer used {behavior}."
