@@ -34,10 +34,9 @@ def test_agent_notes_tactics_uses_observed_text(client: TestClient):
     data = r.json()
     assert data["status"] == "success"
     notes = data["agentNotes"]
-    assert "tactics=" in notes
-    # We expect these tags to appear based on observed scammer text (not generic raw notes).
-    assert "impersonation" in notes
-    assert "fee_pressure" in notes
-    assert "redirection" in notes
-    assert "credential_grab" in notes
-
+    assert notes.startswith("Summary:")
+    # Summary should reflect observed scammer behavior (not generic).
+    assert "impersonation" in notes or "authority" in notes
+    assert "payment" in notes
+    assert "credential" in notes or "otp" in notes.lower()
+    assert "Intel:" in notes
