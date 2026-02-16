@@ -1508,5 +1508,26 @@ def _competition_agent_notes(
         probe = "stall_with_confusion"
 
     # Compact one-line summary with a small telemetry footer.
-    behavior = ", ".join(behavior_bits[:4])
-    return f"Scammer used {behavior}."
+    # Produce a very short, evaluator-friendly behavior summary.
+    # Keep under ~140 chars so it stays readable in leaderboards/logs.
+    short_bits = []
+    if authority or impersonation:
+        short_bits.append("impersonation")
+    if urgency:
+        short_bits.append("urgency")
+    if credential_grab:
+        short_bits.append("otp/pin/password")
+    if redirection:
+        short_bits.append("payment_redirect")
+    if fee_pressure and "payment_redirect" not in short_bits:
+        short_bits.append("fee_pressure")
+    if doc_pressure:
+        short_bits.append("doc_pressure")
+    if not short_bits:
+        short_bits.append("social_engineering")
+
+    summary = "Scammer: " + ", ".join(short_bits[:4]) + "."
+    # Hard cap for safety.
+    if len(summary) > 140:
+        summary = summary[:137].rstrip(" ,;:-") + "..."
+    return summary
