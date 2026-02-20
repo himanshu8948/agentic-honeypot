@@ -12,6 +12,10 @@ def test_competition_payload_shape_and_safety() -> None:
             "upiIds": ["scammer.fraud@fakebank"],
             "phishingLinks": ["https://secure.fakebank.com/verify"],
             "phoneNumbers": ["+91-9876543210"],
+            "emailAddresses": ["ops@fakebank.com"],
+            "caseIds": ["FIR202300987"],
+            "policyNumbers": ["POL90876"],
+            "orderNumbers": ["ORD445566"],
             "suspiciousKeywords": ["urgent", "verify", "otp", "upi", "bank"],
         },
         agent_notes="Scammer used urgency tactics.",
@@ -26,6 +30,10 @@ def test_competition_payload_shape_and_safety() -> None:
         "upiIds",
         "phishingLinks",
         "phoneNumbers",
+        "emailAddresses",
+        "caseIds",
+        "policyNumbers",
+        "orderNumbers",
         "suspiciousKeywords",
     }
     # Top keywords are priority-limited to prevent noisy payloads.

@@ -146,6 +146,22 @@ class MessageResponse(BaseModel):
     agentNotes: str
 
 
+class FinalOutputResponse(BaseModel):
+    sessionId: str
+    scamDetected: bool
+    totalMessagesExchanged: int
+    engagementDurationSeconds: int
+    extractedIntelligence: dict[str, list[str]]
+    agentNotes: str
+    scamType: str
+    confidenceLevel: str
+
+
+class FinalOutputRequest(BaseModel):
+    sessionId: str
+    observedText: str = ""
+
+
 def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
     if SETTINGS is None:
         raise HTTPException(status_code=500, detail="Service not initialized")
@@ -543,7 +559,19 @@ async def handle_message(
     total_messages_exchanged = total_messages
     min_ts, max_ts = get_message_time_bounds(DB, session_id)
     engagement_duration_seconds = _compute_engagement_duration_seconds(session, min_ts, max_ts)
-    has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
+    has_intel = any(
+        intel.get(k)
+        for k in [
+            "bankAccounts",
+            "upiIds",
+            "phishingLinks",
+            "phoneNumbers",
+            "emailAddresses",
+            "caseIds",
+            "policyNumbers",
+            "orderNumbers",
+        ]
+    )
 
     engagement_complete = False
     target_messages = int(getattr(SETTINGS, "target_messages_exchanged", 0) or 0)
@@ -677,6 +705,46 @@ async def handle_message(
     )
 
 
+@app.post("/api/final-output", response_model=FinalOutputResponse)
+@app.post("/final-output", response_model=FinalOutputResponse)
+async def final_output(
+    payload: FinalOutputRequest,
+    _auth: None = Depends(require_api_key),
+) -> FinalOutputResponse:
+    if SETTINGS is None or DB is None:
+        raise HTTPException(status_code=500, detail="Service not initialized")
+    session_id = _normalize_session_id((payload.sessionId or "").strip())
+    session = get_or_create_session(DB, session_id)
+    intel = _sanitize_intelligence(_subtract_user_intel(load_intel(DB, session_id), load_user_intel(DB, session_id)))
+    min_ts, max_ts = get_message_time_bounds(DB, session_id)
+    duration_s = _compute_engagement_duration_seconds(session, min_ts, max_ts)
+    total_messages = int(session["total_messages"]) if "total_messages" in session.keys() else 0
+    scam_detected = bool(session["scam_detected"]) if "scam_detected" in session.keys() else False
+    confidence = float(session["confidence"]) if "confidence" in session.keys() and session["confidence"] is not None else 0.0
+    raw_notes = str(session["agent_notes"] or "") if "agent_notes" in session.keys() else ""
+    observed_text = payload.observedText if payload else ""
+    notes = _competition_agent_notes(
+        session_id=session_id,
+        total_messages=total_messages,
+        observed_text=observed_text,
+        raw_notes=raw_notes,
+        scam_detected=scam_detected,
+        policy_zone="observe",
+        domain="generic",
+        intel=intel,
+    )
+    return FinalOutputResponse(
+        sessionId=session_id,
+        scamDetected=scam_detected,
+        totalMessagesExchanged=max(1, total_messages),
+        engagementDurationSeconds=max(1, duration_s),
+        extractedIntelligence=intel,
+        agentNotes=notes,
+        scamType=_infer_scam_type(intel, observed_text),
+        confidenceLevel=_infer_confidence_level(confidence),
+    )
+
+
 def _should_fire_callback_now(
     *,
     state: dict[str, Any],
@@ -771,7 +839,32 @@ def _build_competition_payload(
         "engagementDurationSeconds": safe_duration,
         "extractedIntelligence": safe_intel,
         "agentNotes": safe_notes,
+        "scamType": _infer_scam_type(safe_intel, safe_notes),
+        "confidenceLevel": _infer_confidence_level(1.0 if scam_detected else 0.0),
     }
+
+
+def _infer_scam_type(intel: dict[str, list[str]], context_text: str) -> str:
+    text = (context_text or "").lower()
+    has_bank = bool(intel.get("bankAccounts"))
+    has_upi = bool(intel.get("upiIds"))
+    has_link = bool(intel.get("phishingLinks"))
+    if has_bank and ("otp" in text or "ifsc" in text or "bank" in text):
+        return "bank_fraud"
+    if has_upi and ("cashback" in text or "refund" in text or "collect" in text or "upi" in text):
+        return "upi_fraud"
+    if has_link:
+        return "phishing"
+    return "generic_scam"
+
+
+def _infer_confidence_level(confidence: float) -> str:
+    val = max(0.0, min(1.0, float(confidence)))
+    if val >= 0.8:
+        return "high"
+    if val >= 0.5:
+        return "medium"
+    return "low"
 
 
 def _epoch_seconds_from_unknown(ts: int) -> int:
@@ -803,6 +896,10 @@ def _sanitize_intelligence(intel: dict[str, list[str]]) -> dict[str, list[str]]:
         "upiIds": list(intel.get("upiIds", [])),
         "phishingLinks": list(intel.get("phishingLinks", [])),
         "phoneNumbers": list(intel.get("phoneNumbers", [])),
+        "emailAddresses": list(intel.get("emailAddresses", [])),
+        "caseIds": list(intel.get("caseIds", [])),
+        "policyNumbers": list(intel.get("policyNumbers", [])),
+        "orderNumbers": list(intel.get("orderNumbers", [])),
         "suspiciousKeywords": [],
     }
     keyword_priority = {
@@ -840,7 +937,17 @@ def _subtract_user_intel(intel: dict[str, list[str]], user_intel: dict[str, list
     # Remove identifiers that were first provided by the "user" (victim) side.
     # This prevents reporting victim-owned details even if the scammer repeats them.
     out: dict[str, list[str]] = {}
-    for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers", "suspiciousKeywords"]:
+    for k in [
+        "bankAccounts",
+        "upiIds",
+        "phishingLinks",
+        "phoneNumbers",
+        "emailAddresses",
+        "caseIds",
+        "policyNumbers",
+        "orderNumbers",
+        "suspiciousKeywords",
+    ]:
         base = list(intel.get(k, []))
         if k == "suspiciousKeywords":
             out[k] = base

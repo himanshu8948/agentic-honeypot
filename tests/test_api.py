@@ -45,3 +45,27 @@ async def test_message_flow(client):
     assert data["status"] == "success"
     assert data["scamDetected"] is True
     assert "reply" in data
+
+
+@pytest.mark.asyncio
+async def test_final_output_endpoint(client):
+    payload = {
+        "sessionId": "s2",
+        "message": {"sender": "scammer", "text": "Share OTP and call +91-9876543210", "timestamp": 1770005528731},
+        "conversationHistory": [],
+        "metadata": {"channel": "SMS", "language": "English", "locale": "IN"},
+    }
+    first = client.post("/api/message", json=payload, headers={"x-api-key": "test-key"})
+    assert first.status_code == 200
+
+    out = client.post(
+        "/api/final-output",
+        json={"sessionId": "s2", "observedText": "Urgent bank OTP scam"},
+        headers={"x-api-key": "test-key"},
+    )
+    assert out.status_code == 200
+    body = out.json()
+    assert body["sessionId"] == "s2"
+    assert "extractedIntelligence" in body
+    assert "scamType" in body
+    assert "confidenceLevel" in body

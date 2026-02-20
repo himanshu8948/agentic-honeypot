@@ -60,6 +60,10 @@ def init_db(conn: sqlite3.Connection) -> None:
             upi_ids TEXT,
             phishing_links TEXT,
             phone_numbers TEXT,
+            email_addresses TEXT,
+            case_ids TEXT,
+            policy_numbers TEXT,
+            order_numbers TEXT,
             suspicious_keywords TEXT,
             FOREIGN KEY (session_id) REFERENCES sessions (session_id)
         )
@@ -73,6 +77,10 @@ def init_db(conn: sqlite3.Connection) -> None:
             upi_ids TEXT,
             phishing_links TEXT,
             phone_numbers TEXT,
+            email_addresses TEXT,
+            case_ids TEXT,
+            policy_numbers TEXT,
+            order_numbers TEXT,
             FOREIGN KEY (session_id) REFERENCES sessions (session_id)
         )
         """
@@ -115,6 +123,10 @@ def init_db(conn: sqlite3.Connection) -> None:
             "upi_ids": "upi_ids TEXT",
             "phishing_links": "phishing_links TEXT",
             "phone_numbers": "phone_numbers TEXT",
+            "email_addresses": "email_addresses TEXT",
+            "case_ids": "case_ids TEXT",
+            "policy_numbers": "policy_numbers TEXT",
+            "order_numbers": "order_numbers TEXT",
             "suspicious_keywords": "suspicious_keywords TEXT",
         },
     )
@@ -125,6 +137,10 @@ def init_db(conn: sqlite3.Connection) -> None:
             "upi_ids": "upi_ids TEXT",
             "phishing_links": "phishing_links TEXT",
             "phone_numbers": "phone_numbers TEXT",
+            "email_addresses": "email_addresses TEXT",
+            "case_ids": "case_ids TEXT",
+            "policy_numbers": "policy_numbers TEXT",
+            "order_numbers": "order_numbers TEXT",
         },
     )
     conn.commit()
@@ -148,17 +164,28 @@ def get_or_create_session(conn: sqlite3.Connection, session_id: str) -> sqlite3.
     )
     conn.execute(
         """
-        INSERT INTO intel (session_id, bank_accounts, upi_ids, phishing_links, phone_numbers, suspicious_keywords)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO intel (
+            session_id,
+            bank_accounts,
+            upi_ids,
+            phishing_links,
+            phone_numbers,
+            email_addresses,
+            case_ids,
+            policy_numbers,
+            order_numbers,
+            suspicious_keywords
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (session_id, "[]", "[]", "[]", "[]", "[]"),
+        (session_id, "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"),
     )
     conn.execute(
         """
-        INSERT INTO user_intel (session_id, bank_accounts, upi_ids, phishing_links, phone_numbers)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO user_intel (session_id, bank_accounts, upi_ids, phishing_links, phone_numbers, email_addresses, case_ids, policy_numbers, order_numbers)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (session_id, "[]", "[]", "[]", "[]"),
+        (session_id, "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"),
     )
     conn.commit()
     created = conn.execute(
@@ -248,6 +275,10 @@ def load_intel(conn: sqlite3.Connection, session_id: str) -> dict[str, list[str]
         "upiIds": json.loads(row["upi_ids"] or "[]"),
         "phishingLinks": json.loads(row["phishing_links"] or "[]"),
         "phoneNumbers": json.loads(row["phone_numbers"] or "[]"),
+        "emailAddresses": json.loads(row["email_addresses"] or "[]"),
+        "caseIds": json.loads(row["case_ids"] or "[]"),
+        "policyNumbers": json.loads(row["policy_numbers"] or "[]"),
+        "orderNumbers": json.loads(row["order_numbers"] or "[]"),
         "suspiciousKeywords": json.loads(row["suspicious_keywords"] or "[]"),
     }
 
@@ -256,7 +287,7 @@ def save_intel(conn: sqlite3.Connection, session_id: str, intel: dict[str, list[
     conn.execute(
         """
         UPDATE intel
-        SET bank_accounts = ?, upi_ids = ?, phishing_links = ?, phone_numbers = ?, suspicious_keywords = ?
+        SET bank_accounts = ?, upi_ids = ?, phishing_links = ?, phone_numbers = ?, email_addresses = ?, case_ids = ?, policy_numbers = ?, order_numbers = ?, suspicious_keywords = ?
         WHERE session_id = ?
         """,
         (
@@ -264,6 +295,10 @@ def save_intel(conn: sqlite3.Connection, session_id: str, intel: dict[str, list[
             json.dumps(intel.get("upiIds", [])),
             json.dumps(intel.get("phishingLinks", [])),
             json.dumps(intel.get("phoneNumbers", [])),
+            json.dumps(intel.get("emailAddresses", [])),
+            json.dumps(intel.get("caseIds", [])),
+            json.dumps(intel.get("policyNumbers", [])),
+            json.dumps(intel.get("orderNumbers", [])),
             json.dumps(intel.get("suspiciousKeywords", [])),
             session_id,
         ),
@@ -283,6 +318,10 @@ def load_user_intel(conn: sqlite3.Connection, session_id: str) -> dict[str, list
         "upiIds": json.loads(row["upi_ids"] or "[]"),
         "phishingLinks": json.loads(row["phishing_links"] or "[]"),
         "phoneNumbers": json.loads(row["phone_numbers"] or "[]"),
+        "emailAddresses": json.loads(row["email_addresses"] or "[]"),
+        "caseIds": json.loads(row["case_ids"] or "[]"),
+        "policyNumbers": json.loads(row["policy_numbers"] or "[]"),
+        "orderNumbers": json.loads(row["order_numbers"] or "[]"),
         "suspiciousKeywords": [],
     }
 
@@ -291,7 +330,7 @@ def save_user_intel(conn: sqlite3.Connection, session_id: str, intel: dict[str, 
     conn.execute(
         """
         UPDATE user_intel
-        SET bank_accounts = ?, upi_ids = ?, phishing_links = ?, phone_numbers = ?
+        SET bank_accounts = ?, upi_ids = ?, phishing_links = ?, phone_numbers = ?, email_addresses = ?, case_ids = ?, policy_numbers = ?, order_numbers = ?
         WHERE session_id = ?
         """,
         (
@@ -299,6 +338,10 @@ def save_user_intel(conn: sqlite3.Connection, session_id: str, intel: dict[str, 
             json.dumps(intel.get("upiIds", [])),
             json.dumps(intel.get("phishingLinks", [])),
             json.dumps(intel.get("phoneNumbers", [])),
+            json.dumps(intel.get("emailAddresses", [])),
+            json.dumps(intel.get("caseIds", [])),
+            json.dumps(intel.get("policyNumbers", [])),
+            json.dumps(intel.get("orderNumbers", [])),
             session_id,
         ),
     )
@@ -349,6 +392,10 @@ def _empty_intel() -> dict[str, list[str]]:
         "upiIds": [],
         "phishingLinks": [],
         "phoneNumbers": [],
+        "emailAddresses": [],
+        "caseIds": [],
+        "policyNumbers": [],
+        "orderNumbers": [],
         "suspiciousKeywords": [],
     }
 
@@ -359,5 +406,9 @@ def _empty_user_intel() -> dict[str, list[str]]:
         "upiIds": [],
         "phishingLinks": [],
         "phoneNumbers": [],
+        "emailAddresses": [],
+        "caseIds": [],
+        "policyNumbers": [],
+        "orderNumbers": [],
         "suspiciousKeywords": [],
     }

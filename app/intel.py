@@ -314,9 +314,19 @@ UPI_RE = re.compile(r"[a-zA-Z0-9._-]{2,}@[a-zA-Z]{2,}")
 PHONE_RE = re.compile(r"\+?\d[\d -]{8,}\d")
 LINK_RE = re.compile(r"https?://\S+")
 BANK_RE = re.compile(r"\b\d{9,18}\b")
+EMAIL_RE = re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b")
 IFSC_RE = re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b", re.IGNORECASE)
 ACCOUNT_CONTEXT_RE = re.compile(r"(account\s*(number|no\.?)|bank\s*account)", re.IGNORECASE)
 MONEY_RE = re.compile(r"(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d{1,2})?", re.IGNORECASE)
+
+POLICY_NUMBER_RE = re.compile(
+    r"\b(?:policy(?:\s*(?:number|no\.?))?|pol)\s*[:#-]?\s*([A-Z0-9][A-Z0-9-]{3,24})\b",
+    re.IGNORECASE,
+)
+ORDER_NUMBER_RE = re.compile(
+    r"\b(?:order(?:\s*(?:id|number|no\.?))?|ord|awb|tracking|track|shipment|ship)\s*[:#-]?\s*([A-Z0-9][A-Z0-9-]{3,24})\b",
+    re.IGNORECASE,
+)
 
 DEVANAGARI_RE = re.compile(r"[\u0900-\u097F]")
 GUJARATI_RE = re.compile(r"[\u0A80-\u0AFF]")
@@ -330,7 +340,17 @@ def _unique_extend(target: list[str], values: Iterable[str]) -> None:
 
 def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]]:
     # Ensure required keys exist
-    for key in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers", "suspiciousKeywords"]:
+    for key in [
+        "bankAccounts",
+        "upiIds",
+        "phishingLinks",
+        "phoneNumbers",
+        "emailAddresses",
+        "caseIds",
+        "policyNumbers",
+        "orderNumbers",
+        "suspiciousKeywords",
+    ]:
         if key not in intel:
             intel[key] = []
     lower = text.lower()
@@ -338,6 +358,27 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
     upis = UPI_RE.findall(text)
     phones = [p for p in PHONE_RE.findall(text) if len(re.sub(r"\D", "", p)) <= 13]
     links = LINK_RE.findall(text)
+    emails = EMAIL_RE.findall(text)
+    case_ids = [
+        f"{prefix.upper()}{suffix.upper()}"
+        for prefix, suffix in re.findall(
+            r"\b(FIR|CASE|REF|REFERENCE|TICKET|COMPLAINT)[\s:#-]*([A-Z0-9-]{3,24})\b",
+            text,
+            flags=re.IGNORECASE,
+        )
+    ]
+    policy_numbers = []
+    for token in POLICY_NUMBER_RE.findall(text):
+        normalized = token.upper().replace("-", "").replace("_", "")
+        if not normalized.startswith("POL"):
+            normalized = f"POL{normalized}"
+        policy_numbers.append(normalized)
+    order_numbers = []
+    for token in ORDER_NUMBER_RE.findall(text):
+        normalized = token.upper().replace("-", "").replace("_", "")
+        if not normalized.startswith(("ORD", "ORDER", "AWB", "TRACK", "SHIP")):
+            normalized = f"ORD{normalized}"
+        order_numbers.append(normalized)
     bank_candidates = BANK_RE.findall(text)
     # Avoid treating common 10-digit phone numbers as bank accounts
     filtered_bank: list[str] = []
@@ -353,6 +394,10 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
     _unique_extend(intel["upiIds"], upis)
     _unique_extend(intel["phoneNumbers"], phones)
     _unique_extend(intel["phishingLinks"], links)
+    _unique_extend(intel["emailAddresses"], emails)
+    _unique_extend(intel["caseIds"], case_ids)
+    _unique_extend(intel["policyNumbers"], policy_numbers)
+    _unique_extend(intel["orderNumbers"], order_numbers)
 
     keywords = [k for k in SUSPICIOUS_KEYWORDS if k in lower]
     if MONEY_RE.search(text):

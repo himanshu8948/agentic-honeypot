@@ -54,6 +54,8 @@ python scripts/soak_24h.py --base-url http://127.0.0.1:8000 --api-key <SERVICE_A
 ## Endpoints
 - `POST /api/message` with `x-api-key` header
 - `POST /analyze` with `x-api-key` header (alias for compatibility)
+- `POST /api/final-output` with `x-api-key` header (returns final session summary payload)
+- `POST /final-output` (alias for compatibility)
 - `GET /healthz` for health checks
 - `GET /health` health-check alias (compatibility)
 

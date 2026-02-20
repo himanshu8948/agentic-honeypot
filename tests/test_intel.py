@@ -7,6 +7,10 @@ def test_extract_intel():
         "upiIds": [],
         "phishingLinks": [],
         "phoneNumbers": [],
+        "emailAddresses": [],
+        "caseIds": [],
+        "policyNumbers": [],
+        "orderNumbers": [],
         "suspiciousKeywords": [],
     }
     text = "Pay to abc@upi or call +91 99999 88888. Visit https://evil.example now."
@@ -14,6 +18,26 @@ def test_extract_intel():
     assert "abc@upi" in result["upiIds"]
     assert "+91 99999 88888" in result["phoneNumbers"]
     assert "https://evil.example" in result["phishingLinks"]
+
+
+def test_extract_extended_intel():
+    intel = {
+        "bankAccounts": [],
+        "upiIds": [],
+        "phishingLinks": [],
+        "phoneNumbers": [],
+        "emailAddresses": [],
+        "caseIds": [],
+        "policyNumbers": [],
+        "orderNumbers": [],
+        "suspiciousKeywords": [],
+    }
+    text = "Officer: rajesh.kumar@fakebank.com FIR-202300987 policy POL-90876 order ORD445566"
+    result = extract_intel(text, intel)
+    assert "rajesh.kumar@fakebank.com" in result["emailAddresses"]
+    assert "FIR202300987" in result["caseIds"]
+    assert "POL90876" in result["policyNumbers"]
+    assert "ORD445566" in result["orderNumbers"]
 
 
 def test_rule_score():
