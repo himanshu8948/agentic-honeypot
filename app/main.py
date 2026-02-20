@@ -562,11 +562,19 @@ async def handle_message(
 
     callback_pending = bool(session["callback_pending"]) if "callback_pending" in session.keys() else False
     callback_mode = str(getattr(SETTINGS, "callback_mode", "always") or "always").strip().lower()
+    try:
+        cb_min_msgs = int(getattr(SETTINGS, "callback_min_interval_messages", 0))
+    except Exception:
+        cb_min_msgs = 0
+    try:
+        cb_min_secs = int(getattr(SETTINGS, "callback_min_interval_seconds", 0))
+    except Exception:
+        cb_min_secs = 0
     callback_allowed_now = _should_fire_callback_now(
         state=convo_state,
         total_messages=total_messages_exchanged,
-        min_interval_messages=int(getattr(SETTINGS, "callback_min_interval_messages", 8) or 8),
-        min_interval_seconds=int(getattr(SETTINGS, "callback_min_interval_seconds", 45) or 45),
+        min_interval_messages=cb_min_msgs,
+        min_interval_seconds=cb_min_secs,
     )
     if callback_mode == "always":
         should_attempt_callback = scam_detected and effective_sender == "scammer" and callback_allowed_now
@@ -685,9 +693,9 @@ def _should_fire_callback_now(
     except Exception:
         last_at = 0
     now_s = int(time.time())
-    if last_count > 0 and (total_messages - last_count) < max(1, min_interval_messages):
+    if min_interval_messages > 0 and last_count > 0 and (total_messages - last_count) < min_interval_messages:
         return False
-    if last_at > 0 and (now_s - last_at) < max(1, min_interval_seconds):
+    if min_interval_seconds > 0 and last_at > 0 and (now_s - last_at) < min_interval_seconds:
         return False
     return True
 

@@ -27,8 +27,8 @@ Optional LLM replies (Groq):
 Callback endurance knobs:
 - `CALLBACK_TIMEOUT_MS=2000`
 - `CALLBACK_MAX_RETRIES=1`
-- `CALLBACK_MIN_INTERVAL_MESSAGES=8`
-- `CALLBACK_MIN_INTERVAL_SECONDS=45`
+- `CALLBACK_MIN_INTERVAL_MESSAGES=0` (0 disables callback throttling)
+- `CALLBACK_MIN_INTERVAL_SECONDS=0` (0 disables callback throttling)
 
 LLM is used for reply generation only. Detection and extraction remain rule/NLP based. If the LLM fails or times out, the system falls back to the built-in playbooks. We do not use any test-specific prompts or hardcoded scenario answers.
 

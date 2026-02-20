@@ -78,8 +78,8 @@ def load_settings() -> Settings:
         callback_mode = "always"
     callback_timeout_ms = int(_get_env("CALLBACK_TIMEOUT_MS", "2000") or "2000")
     callback_max_retries = int(_get_env("CALLBACK_MAX_RETRIES", "1") or "1")
-    callback_min_interval_messages = int(_get_env("CALLBACK_MIN_INTERVAL_MESSAGES", "8") or "8")
-    callback_min_interval_seconds = int(_get_env("CALLBACK_MIN_INTERVAL_SECONDS", "45") or "45")
+    callback_min_interval_messages = int(_get_env("CALLBACK_MIN_INTERVAL_MESSAGES", "0") or "0")
+    callback_min_interval_seconds = int(_get_env("CALLBACK_MIN_INTERVAL_SECONDS", "0") or "0")
 
     return Settings(
         service_api_key=service_api_key,
@@ -101,8 +101,8 @@ def load_settings() -> Settings:
         callback_mode=callback_mode,
         callback_timeout_ms=max(500, min(callback_timeout_ms, 15000)),
         callback_max_retries=max(1, min(callback_max_retries, 5)),
-        callback_min_interval_messages=max(1, min(callback_min_interval_messages, 100)),
-        callback_min_interval_seconds=max(1, min(callback_min_interval_seconds, 3600)),
+        callback_min_interval_messages=max(0, min(callback_min_interval_messages, 1000)),
+        callback_min_interval_seconds=max(0, min(callback_min_interval_seconds, 86400)),
     )
 
 def _load_trusted_headers() -> set[str]:
