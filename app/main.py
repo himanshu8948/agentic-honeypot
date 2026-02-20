@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import asynccontextmanager
 import os
 import re
 import time
@@ -40,7 +41,13 @@ from .fraud_corpus import best_match, load_corpus_lines
 from .lookup_table import load_lookup_table
 from .stat_model import load_stat_model
 
-app = FastAPI(title="Agentic Honeypot API")
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    await _startup_runtime()
+    yield
+
+
+app = FastAPI(title="Agentic Honeypot API", lifespan=lifespan)
 
 SETTINGS: Settings | None = None
 DB = None
@@ -137,8 +144,7 @@ def require_api_key(x_api_key: str | None = Header(default=None)) -> None:
         raise HTTPException(status_code=401, detail="Invalid API key")
 
 
-@app.on_event("startup")
-async def startup() -> None:
+async def _startup_runtime() -> None:
     global SETTINGS, DB, FRAUD_CORPUS, LOOKUP_TABLE_COUNT, STAT_MODEL, REQ_LIMITER_SESSION, REQ_LIMITER_IP, INFLIGHT_SEM, INFLIGHT_WAIT_S
     setup_logging()
     SETTINGS = load_settings()
@@ -1258,24 +1264,67 @@ def _ensure_engagement_question(
     if "?" in s:
         return s
 
-    # Keep follow-up prompt short and contextual so the scammer keeps responding.
-    question_by_target = {
-        "phone": "What number should I use?",
-        "upi": "Which UPI ID should I send to?",
-        "link": "Which exact link should I open?",
-        "bank": "Please share the exact account details?",
-        "other": "What should I do next?",
+    key_raw = (target_key or "other").strip().lower()
+    key = {
+        "phone": "ask_phone",
+        "upi": "ask_upi",
+        "link": "ask_link",
+        "bank": "ask_bank",
+        "ask_phone": "ask_phone",
+        "ask_upi": "ask_upi",
+        "ask_link": "ask_link",
+        "ask_bank": "ask_bank",
+    }.get(key_raw, "other")
+    pools: dict[str, list[str]] = {
+        "ask_phone": [
+            "Which phone number should I contact you on (with country code)?",
+            "Can you type your exact callback number again?",
+            "If the call drops, which number should I call back?",
+        ],
+        "ask_upi": [
+            "What is the exact UPI ID again (type it clearly)?",
+            "Please repeat the UPI handle once more so I can copy it.",
+            "Which UPI ID should I use? Write it exactly like name@bank.",
+        ],
+        "ask_link": [
+            "What is the exact link again (paste it in full)?",
+            "Can you paste the full URL again? I do not want to mistype it.",
+            "Which page should I open exactly? Please send the link again.",
+        ],
+        "ask_bank": [
+            "What is the account number and IFSC again (write it in one message)?",
+            "Please type the account number and IFSC clearly, no spaces.",
+            "Which bank details should I use? Account number and IFSC, please repeat.",
+        ],
+        "other": [
+            "What should I do next?",
+            "Can you repeat the steps once, slowly?",
+            "I am on the wrong screen. What should I tap next?",
+            "Please write the next step in one short message.",
+            "Which option should I choose next?",
+        ],
     }
-    q = question_by_target.get((target_key or "other").strip().lower(), "What should I do next?")
+    options = list(pools.get(key, pools["other"]))
 
-    # Avoid repeating the exact same trailing question if it was asked very recently.
-    recent = [str(t or "").strip().lower() for t in (recent_user_messages or []) if str(t or "").strip()]
-    if recent and any(q.lower() in t for t in recent[-3:]):
-        q = "Can you repeat the next step slowly?"
+    def _norm_q(x: str) -> str:
+        x = " ".join((x or "").lower().strip().split())
+        for ch in [".", ",", "!", "?", "-", "..."]:
+            x = x.replace(ch, "")
+        return x
 
-    if s.endswith((".", "!", "?")):
-        s = s[:-1].rstrip()
-    return f"{s}. {q}"
+    if recent_user_messages:
+        recent_norm = {_norm_q(t) for t in recent_user_messages if t and t.strip()}
+        filtered = [q for q in options if _norm_q(q) not in recent_norm]
+        if filtered:
+            options = filtered
+
+    digest = hashlib.sha256((salt + "|" + key + "|" + str(len(options))).encode("utf-8")).hexdigest()
+    idx = int(digest[:8], 16) % len(options)
+    q = options[idx]
+
+    if not s.endswith((".", "!", "?", ":")):
+        s += "."
+    return f"{s} {q}"
 
 
 def _format_recent_turns(conversation: list[dict[str, str]], max_turns: int = 6) -> str:
@@ -1379,73 +1428,6 @@ async def _generate_llm_reply(
         return text or None
     except Exception:
         return None
-
-    key_raw = (target_key or "other").strip().lower()
-    # Call sites use "phone/upi/link/bank/other" as target keys.
-    key = {
-        "phone": "ask_phone",
-        "upi": "ask_upi",
-        "link": "ask_link",
-        "bank": "ask_bank",
-        "ask_phone": "ask_phone",
-        "ask_upi": "ask_upi",
-        "ask_link": "ask_link",
-        "ask_bank": "ask_bank",
-    }.get(key_raw, "other")
-    pools: dict[str, list[str]] = {
-        "ask_phone": [
-            "Which phone number should I contact you on (with country code)?",
-            "Can you type your exact callback number again?",
-            "If the call drops, which number should I call back?",
-        ],
-        "ask_upi": [
-            "What is the exact UPI ID again (type it clearly)?",
-            "Please repeat the UPI handle once more so I can copy it.",
-            "Which UPI ID should I use? Write it exactly like name@bank.",
-        ],
-        "ask_link": [
-            "What is the exact link again (paste it in full)?",
-            "Can you paste the full URL again? I do not want to mistype it.",
-            "Which page should I open exactly? Please send the link again.",
-        ],
-        "ask_bank": [
-            "What is the account number and IFSC again (write it in one message)?",
-            "Please type the account number and IFSC clearly, no spaces.",
-            "Which bank details should I use? Account number + IFSC, please repeat.",
-        ],
-        "other": [
-            "What should I do next?",
-            "Can you repeat the steps once, slowly?",
-            "I am on the wrong screen. What should I tap next?",
-            "Please write the next step in one short message.",
-            "Which option should I choose next?",
-        ],
-    }
-
-    options = list(pools.get(key, pools["other"]))
-
-    def _norm_q(x: str) -> str:
-        x = " ".join((x or "").lower().strip().split())
-        for ch in [".", ",", "!", "?", "…", "–", "-", "â€¦", "â€“"]:
-            x = x.replace(ch, "")
-        return x
-
-    # Avoid repeating the same engagement question in a visible loop.
-    if recent_user_messages:
-        recent_norm = {_norm_q(t) for t in recent_user_messages if t and t.strip()}
-        filtered = [q for q in options if _norm_q(q) not in recent_norm]
-        if filtered:
-            options = filtered
-
-    # Stable-ish selection per call (salt changes each API call), but after filtering.
-    digest = hashlib.sha256((salt + "|" + key + "|" + str(len(options))).encode("utf-8")).hexdigest()
-    idx = int(digest[:8], 16) % len(options)
-    q = options[idx]
-
-    if not s.endswith((".", "!", "?", ":")):
-        s += "."
-    return f"{s} {q}"
-
 
 def _lightweight_reply(incoming_text: str, *, salt: str) -> str:
     """
