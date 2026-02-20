@@ -34,6 +34,9 @@ class Settings:
     groq_model: str
     llm_timeout_ms: int
     llm_max_tokens: int
+    llm_temperature: float
+    llm_max_session_tokens: int
+    llm_max_daily_tokens: int
     # Engagement/callback pacing knobs (defaults are conservative for most demos)
     target_messages_exchanged: int
     min_messages_before_complete: int
@@ -58,6 +61,9 @@ def load_settings() -> Settings:
     groq_model = (_get_env("GROQ_MODEL", "llama-3.1-8b-instant") or "llama-3.1-8b-instant").strip()
     llm_timeout_ms = int(_get_env("LLM_TIMEOUT_MS", "4000") or "4000")
     llm_max_tokens = int(_get_env("LLM_MAX_TOKENS", "180") or "180")
+    llm_temperature = float(_get_env("LLM_TEMPERATURE", "0.2") or "0.2")
+    llm_max_session_tokens = int(_get_env("LLM_MAX_SESSION_TOKENS", "2500") or "2500")
+    llm_max_daily_tokens = int(_get_env("LLM_MAX_DAILY_TOKENS", "200000") or "200000")
 
     # Default to hackathon-style long engagements; override in env for shorter demos.
     target_messages_exchanged = int(_get_env("TARGET_MESSAGES_EXCHANGED", "150"))
@@ -78,6 +84,9 @@ def load_settings() -> Settings:
         groq_model=groq_model,
         llm_timeout_ms=max(500, min(llm_timeout_ms, 10000)),
         llm_max_tokens=max(60, min(llm_max_tokens, 400)),
+        llm_temperature=max(0.0, min(llm_temperature, 0.7)),
+        llm_max_session_tokens=max(200, min(llm_max_session_tokens, 200000)),
+        llm_max_daily_tokens=max(1000, min(llm_max_daily_tokens, 5000000)),
         target_messages_exchanged=max(0, target_messages_exchanged),
         min_messages_before_complete=max(1, min_messages_before_complete),
         min_messages_before_complete_with_intel=max(1, min_messages_before_complete_with_intel),
