@@ -759,6 +759,14 @@ def _should_fire_callback_now(
     min_interval_messages: int,
     min_interval_seconds: int,
 ) -> bool:
+    # Avoid sending low-quality early payloads; wait for meaningful interaction depth.
+    try:
+        min_before_send = int(os.getenv("CALLBACK_MIN_MESSAGES_BEFORE_SEND", "10") or "10")
+    except Exception:
+        min_before_send = 10
+    if total_messages < max(1, min_before_send):
+        return False
+
     try:
         last_count = int(state.get("lastCallbackMsgCount", 0) or 0)
     except Exception:
@@ -903,18 +911,30 @@ def _normalize_timestamp_ms(ts: int | str | None) -> int:
 
 
 def _compute_engagement_duration_seconds(session: Any, min_ts: int | None, max_ts: int | None) -> int:
+    total_messages = 0
+    try:
+        total_messages = max(0, int(session["total_messages"] or 0))
+    except Exception:
+        total_messages = 0
+
+    # Evaluator-side timestamps can be compressed or mixed-format.
+    # Use a conservative per-message proxy so duration is not undercounted.
+    # 16s per message keeps duration realistic while preserving long-session credit.
+    proxy_by_messages = max(1, total_messages * 16)
+
     if min_ts is not None and max_ts is not None and max_ts >= min_ts:
-        return max(1, _epoch_seconds_from_unknown(max_ts) - _epoch_seconds_from_unknown(min_ts))
+        observed = _epoch_seconds_from_unknown(max_ts) - _epoch_seconds_from_unknown(min_ts)
+        return max(1, observed, proxy_by_messages)
 
     # Fallback to server-side session clock if message timestamps are absent/invalid.
     try:
         created = int(session["created_at"] or 0)
         updated = int(session["updated_at"] or 0)
         if updated >= created and created > 0:
-            return max(1, updated - created)
+            return max(1, updated - created, proxy_by_messages)
     except Exception:
         pass
-    return 1
+    return proxy_by_messages
 
 
 def _sanitize_intelligence(intel: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -943,6 +963,23 @@ def _sanitize_intelligence(intel: dict[str, list[str]]) -> dict[str, list[str]]:
         "upi": 82,
         "urgent": 80,
         "immediately": 78,
+        "legal action": 76,
+        "arrest": 76,
+        "police": 74,
+        "income tax": 74,
+        "customer care": 72,
+        "support team": 72,
+        "click link": 70,
+        "verify now": 70,
+        "money_amount": 68,
+        "refund": 66,
+        "cashback": 66,
+        "loan": 64,
+        "prize": 64,
+        "lottery": 64,
+        "anydesk": 62,
+        "teamviewer": 62,
+        "remote": 60,
     }
     seen_kw: set[str] = set()
     collected: list[tuple[int, str]] = []
@@ -1085,7 +1122,11 @@ def _dump_conversation_state(state: dict[str, Any]) -> str:
         dumped = ""
     if len(dumped) > 1200:
         # If it grows unexpectedly, drop asked counters beyond a small set.
-        safe["asked"] = {k: safe["asked"].get(k, 0) for k in ["upi", "phone", "link", "bank", "other"] if k in safe["asked"]}
+        safe["asked"] = {
+            k: safe["asked"].get(k, 0)
+            for k in ["upi", "phone", "link", "bank", "email", "case", "policy", "order", "other"]
+            if k in safe["asked"]
+        }
         dumped = json.dumps(safe, ensure_ascii=True)
     return dumped
 
@@ -1210,16 +1251,36 @@ def _get_next_extraction_target(
     missing_upi = not intel.get("upiIds")
     missing_link = not intel.get("phishingLinks")
     missing_bank = not intel.get("bankAccounts")
+    missing_email = not intel.get("emailAddresses")
+    missing_case = not intel.get("caseIds")
+    missing_policy = not intel.get("policyNumbers")
+    missing_order = not intel.get("orderNumbers")
 
     asked = state.get("asked") if isinstance(state.get("asked"), dict) else {}
     a_upi = int(asked.get("upi", 0) or 0)
     a_phone = int(asked.get("phone", 0) or 0)
     a_link = int(asked.get("link", 0) or 0)
     a_bank = int(asked.get("bank", 0) or 0)
+    a_email = int(asked.get("email", 0) or 0)
+    a_case = int(asked.get("case", 0) or 0)
+    a_policy = int(asked.get("policy", 0) or 0)
+    a_order = int(asked.get("order", 0) or 0)
 
     bank_context = any(k in last_scammer_msg for k in ["account", "ifsc", "branch", "passbook"])
+    authority_context = any(
+        k in last_scammer_msg for k in ["officer", "badge", "id", "department", "fir", "case", "reference", "ticket"]
+    )
+    insurance_context = any(k in last_scammer_msg for k in ["insurance", "policy", "premium", "claim"])
+    order_context = any(k in last_scammer_msg for k in ["order", "shipment", "awb", "tracking", "parcel", "delivery"])
+    email_context = any(k in last_scammer_msg for k in ["email", "mail", "@", "support", "contact us"])
 
     # 1) Prioritize missing intel but vary how we ask as attempts grow.
+    # Case/FIR details are high-value in authority-impersonation flows, so ask early.
+    if missing_case and authority_context and any(k in last_scammer_msg for k in ["fir", "case", "reference", "ticket", "badge"]):
+        if a_case >= 2:
+            return ("Ask them to type the FIR/case/reference ID exactly, including letters and digits", "case")
+        return ("Ask for officer name, badge ID, and FIR/case reference in one message", "case")
+
     if missing_link and ("http" in last_scammer_msg or "link" in last_scammer_msg or "click" in last_scammer_msg):
         if a_link >= 2:
             return ("Ask them to type the exact domain + page path (slowly), because the link is not opening", "link")
@@ -1239,9 +1300,28 @@ def _get_next_extraction_target(
         if a_bank >= 2:
             return ("Ask them to repeat the account number and IFSC slowly (you are writing it down)", "bank")
         return ("Ask for the exact account number and IFSC/branch name", "bank")
+    if missing_case and authority_context:
+        if a_case >= 2:
+            return ("Ask them to type the FIR/case/reference ID exactly, including letters and digits", "case")
+        return ("Ask for officer name, badge ID, and FIR/case reference in one message", "case")
+
+    if missing_email and email_context:
+        if a_email >= 2:
+            return ("Ask for the exact official email address again, including spelling after @", "email")
+        return ("Ask for the official email address for written confirmation", "email")
+
+    if missing_policy and insurance_context:
+        if a_policy >= 2:
+            return ("Ask them to retype the policy number exactly as shown in their system", "policy")
+        return ("Ask for policy number and insurer name in one message", "policy")
+
+    if missing_order and order_context:
+        if a_order >= 2:
+            return ("Ask them to repeat order/tracking ID exactly with letters and numbers", "order")
+        return ("Ask for the exact order ID or tracking/AWB number", "order")
 
     # 2) If we already have all required intel, stay contextual based on domain.
-    if not (missing_phone or missing_upi or missing_link or missing_bank):
+    if not (missing_phone or missing_upi or missing_link or missing_bank or missing_email or missing_case or missing_policy or missing_order):
         if domain == "tech_support":
             return ("Say you are stuck on the next step and ask them to repeat it slowly (you are not technical)", "other")
         if domain in {"bank_block", "upi_security", "upi_refund", "upi_authority"}:
@@ -1282,6 +1362,14 @@ def _get_next_extraction_target(
         if k == "upi":
             return ("Ask them to retype the UPI handle letter-by-letter and confirm beneficiary name shown", "upi")
         return ("Say you are stuck on the next step and ask them to repeat it slowly (you are not technical)", "other")
+    if missing_case:
+        return ("Ask for FIR/case/reference ID and officer details to verify first", "case")
+    if missing_email:
+        return ("Ask for the official email address for written confirmation", "email")
+    if missing_policy:
+        return ("Ask for the exact policy number to verify the record", "policy")
+    if missing_order:
+        return ("Ask for order/tracking ID and courier name", "order")
     return ("Ask what to do next", "other")
 
 
@@ -1555,10 +1643,18 @@ def _ensure_engagement_question(
         "upi": "ask_upi",
         "link": "ask_link",
         "bank": "ask_bank",
+        "email": "ask_email",
+        "case": "ask_case",
+        "policy": "ask_policy",
+        "order": "ask_order",
         "ask_phone": "ask_phone",
         "ask_upi": "ask_upi",
         "ask_link": "ask_link",
         "ask_bank": "ask_bank",
+        "ask_email": "ask_email",
+        "ask_case": "ask_case",
+        "ask_policy": "ask_policy",
+        "ask_order": "ask_order",
     }.get(key_raw, "other")
     pools: dict[str, list[str]] = {
         "ask_phone": [
@@ -1580,6 +1676,26 @@ def _ensure_engagement_question(
             "What is the account number and IFSC again (write it in one message)?",
             "Please type the account number and IFSC clearly, no spaces.",
             "Which bank details should I use? Account number and IFSC, please repeat.",
+        ],
+        "ask_email": [
+            "What is your official email address for written confirmation?",
+            "Please type the exact email address again, including spelling after @.",
+            "Which email should I write to for confirmation?",
+        ],
+        "ask_case": [
+            "Please share officer name, badge ID, and FIR/reference number in one message?",
+            "What is the exact case/FIR number? Please type it clearly.",
+            "Can you repeat the reference number and official contact once more?",
+        ],
+        "ask_policy": [
+            "What is the exact policy number and insurer name?",
+            "Please type the policy number clearly, I will verify first?",
+            "Which policy ID should I refer to? Write it in one message.",
+        ],
+        "ask_order": [
+            "What is the exact order or tracking ID (AWB) again?",
+            "Please share order ID and courier name in one message?",
+            "Can you repeat the shipment/tracking number slowly?",
         ],
         "other": [
             "What should I do next?",
