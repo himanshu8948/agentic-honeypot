@@ -1,5 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 import os
 import re
 import time
@@ -114,7 +115,7 @@ async def health_head() -> None:
 class Message(BaseModel):
     sender: str = Field(..., pattern="^(scammer|user)$")
     text: str = Field(..., min_length=1, max_length=4000)
-    timestamp: int
+    timestamp: int | str
 
 
 class Metadata(BaseModel):
@@ -282,7 +283,13 @@ async def handle_message(
     api_calls = get_api_calls(DB, session_id)
     if int(session["total_messages"]) == 0 and payload.conversationHistory:
         for msg in payload.conversationHistory:
-            append_message(DB, session_id, msg.sender, _sanitize_incoming_text(msg.text), msg.timestamp)
+            append_message(
+                DB,
+                session_id,
+                msg.sender,
+                _sanitize_incoming_text(msg.text),
+                _normalize_timestamp_ms(msg.timestamp),
+            )
 
     incoming_text = _sanitize_incoming_text(payload.message.text)
     # Edge-case: pure gibberish shouldn't trigger honeypot engagement.
@@ -301,7 +308,7 @@ async def handle_message(
             if quick_score >= max(SETTINGS.rule_threshold, 10):
                 effective_sender = "scammer"
 
-    append_message(DB, session_id, effective_sender, incoming_text, payload.message.timestamp)
+    append_message(DB, session_id, effective_sender, incoming_text, _normalize_timestamp_ms(payload.message.timestamp))
 
     interpreter = interpret_message(incoming_text, effective_sender)
     signal_assessment = assess_sender_signals(
@@ -873,6 +880,26 @@ def _epoch_seconds_from_unknown(ts: int) -> int:
     if val > 10_000_000_000:  # likely milliseconds
         return val // 1000
     return val
+
+
+def _normalize_timestamp_ms(ts: int | str | None) -> int:
+    if ts is None:
+        return int(time.time() * 1000)
+    if isinstance(ts, int):
+        return ts
+    raw = str(ts).strip()
+    if not raw:
+        return int(time.time() * 1000)
+    if raw.isdigit():
+        return int(raw)
+    try:
+        iso = raw.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(iso)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return int(dt.timestamp() * 1000)
+    except Exception:
+        return int(time.time() * 1000)
 
 
 def _compute_engagement_duration_seconds(session: Any, min_ts: int | None, max_ts: int | None) -> int:

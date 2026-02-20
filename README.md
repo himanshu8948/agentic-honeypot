@@ -1,6 +1,17 @@
 # Agentic Honeypot API
 [![CI](https://github.com/himanshu8948/agentic-honeypot/actions/workflows/ci.yml/badge.svg)](https://github.com/himanshu8948/agentic-honeypot/actions/workflows/ci.yml)
 
+## Description
+Agentic Honeypot API for scam conversation handling in multi-turn sessions.  
+The API detects scam intent, engages scammers safely, extracts actionable intelligence, and produces a final structured output for evaluator scoring.
+
+## Tech Stack
+- Python 3.11+
+- FastAPI + Uvicorn
+- SQLite (state + session intelligence)
+- Rule-based/NLP extraction with optional LLM reply generation (Groq)
+- Pytest for automated validation
+
 ## Setup
 ```
 pip install -r requirements.txt
@@ -50,6 +61,11 @@ python scripts/soak_24h.py --base-url http://127.0.0.1:8000 --api-key <SERVICE_A
 ## CI Workflow
 - GitHub Actions runs automatically on every push and pull request.
 - Pipeline includes dependency install, import smoke check, and full pytest suite.
+
+## API Endpoint
+- URL (example): `https://your-deployed-url.com/api/message`
+- Method: `POST`
+- Authentication: `x-api-key` header
 
 ## Endpoints
 - `POST /api/message` with `x-api-key` header
@@ -106,6 +122,7 @@ Your endpoint receives:
   }
 }
 ```
+`timestamp` supports both ISO-8601 string (for compatibility) and epoch milliseconds.
 
 ## API Response Format
 Your API must return HTTP 200 with:
@@ -116,6 +133,14 @@ Your API must return HTTP 200 with:
 }
 ```
 If `reply` is missing, the evaluator may check `message` or `text`.
+
+## Approach
+- Scam Detection
+  Hybrid scoring using rule signals, intent cues, and metadata risk signals. Scam detection is generic and not tied to fixed scenario phrases.
+- Intelligence Extraction
+  Entity extraction from scammer turns for `phoneNumbers`, `bankAccounts`, `upiIds`, `phishingLinks`, `emailAddresses`, `caseIds`, `policyNumbers`, and `orderNumbers`.
+- Engagement Strategy
+  Multi-turn, non-confrontational, detail-eliciting replies to keep the scammer engaged and maximize intelligence collection while avoiding sensitive-user disclosures.
 
 ## Final Output Format
 After the conversation ends, submit a final output with:

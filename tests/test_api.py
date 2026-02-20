@@ -48,6 +48,21 @@ async def test_message_flow(client):
 
 
 @pytest.mark.asyncio
+async def test_message_flow_accepts_iso_timestamp(client):
+    payload = {
+        "sessionId": "s1-iso",
+        "message": {"sender": "scammer", "text": "URGENT verify OTP", "timestamp": "2025-02-11T10:30:00Z"},
+        "conversationHistory": [],
+        "metadata": {"channel": "SMS", "language": "English", "locale": "IN"},
+    }
+    response = client.post("/api/message", json=payload, headers={"x-api-key": "test-key"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert "reply" in data
+
+
+@pytest.mark.asyncio
 async def test_final_output_endpoint(client):
     payload = {
         "sessionId": "s2",
