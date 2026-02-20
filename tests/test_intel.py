@@ -40,6 +40,23 @@ def test_extract_extended_intel():
     assert "ORD445566" in result["orderNumbers"]
 
 
+def test_extract_bare_domain_link():
+    intel = {
+        "bankAccounts": [],
+        "upiIds": [],
+        "phishingLinks": [],
+        "phoneNumbers": [],
+        "emailAddresses": [],
+        "caseIds": [],
+        "policyNumbers": [],
+        "orderNumbers": [],
+        "suspiciousKeywords": [],
+    }
+    text = "Open www.secure-verify-example.com/login and complete verification"
+    result = extract_intel(text, intel)
+    assert "www.secure-verify-example.com/login" in result["phishingLinks"]
+
+
 def test_rule_score():
     text = "Urgent: your account is blocked. Verify now via this link."
     score = rule_score(text)

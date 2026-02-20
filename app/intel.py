@@ -313,6 +313,10 @@ SUSPICIOUS_KEYWORDS = sorted(
 UPI_RE = re.compile(r"[a-zA-Z0-9._-]{2,}@[a-zA-Z]{2,}")
 PHONE_RE = re.compile(r"\+?\d[\d -]{8,}\d")
 LINK_RE = re.compile(r"https?://\S+")
+# Catch common phishing links that omit scheme, e.g. "bankverify.example.com/login"
+BARE_LINK_RE = re.compile(
+    r"\b(?:www\.)?[a-zA-Z0-9-]{2,}(?:\.[a-zA-Z0-9-]{2,}){1,3}(?:/[^\s]*)?\b"
+)
 BANK_RE = re.compile(r"\b\d{9,18}\b")
 EMAIL_RE = re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b")
 IFSC_RE = re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b", re.IGNORECASE)
@@ -358,6 +362,13 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
     upis = UPI_RE.findall(text)
     phones = [p for p in PHONE_RE.findall(text) if len(re.sub(r"\D", "", p)) <= 13]
     links = LINK_RE.findall(text)
+    bare_links = []
+    for m in BARE_LINK_RE.findall(text):
+        if "." not in m or "@" in m:
+            continue
+        clean = m.rstrip(".,);:!?")
+        if clean:
+            bare_links.append(clean)
     emails = EMAIL_RE.findall(text)
     case_ids = [
         f"{prefix.upper()}{suffix.upper()}"
@@ -394,6 +405,8 @@ def extract_intel(text: str, intel: dict[str, list[str]]) -> dict[str, list[str]
     _unique_extend(intel["upiIds"], upis)
     _unique_extend(intel["phoneNumbers"], phones)
     _unique_extend(intel["phishingLinks"], links)
+    # Keep bare links as seen by scammer text (no forced scheme rewrite).
+    _unique_extend(intel["phishingLinks"], bare_links)
     _unique_extend(intel["emailAddresses"], emails)
     _unique_extend(intel["caseIds"], case_ids)
     _unique_extend(intel["policyNumbers"], policy_numbers)

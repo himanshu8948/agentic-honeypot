@@ -46,3 +46,10 @@ def test_ensure_engagement_question_supports_new_keys() -> None:
     assert "?" in out2
     out3 = _ensure_engagement_question("Please confirm.", "order", salt="s3")
     assert "?" in out3
+
+
+def test_ensure_engagement_question_adds_relevant_followup_when_irrelevant_question_exists() -> None:
+    out = _ensure_engagement_question("I am confused, what next?", "upi", salt="s4")
+    low = out.lower()
+    assert "?" in out
+    assert "upi" in low or "handle" in low
