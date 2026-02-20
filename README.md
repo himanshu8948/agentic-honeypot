@@ -1,4 +1,5 @@
 # Agentic Honeypot API
+[![CI](https://github.com/himanshu8948/agentic-honeypot/actions/workflows/ci.yml/badge.svg)](https://github.com/himanshu8948/agentic-honeypot/actions/workflows/ci.yml)
 
 ## Setup
 ```
