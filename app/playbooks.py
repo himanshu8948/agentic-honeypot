@@ -1102,7 +1102,7 @@ def _load_templates(*, language: str) -> dict[str, Any]:
             "near_miss": [
                 "Verification request aayi, par amount bhi dikh raha hai. Verification mein paisa kyun?",
                 "PIN daal diya... 'Incorrect PIN' aa gaya. Pressure mein haath kaanp jata hai.",
-                "Ab 'Bank server not responding' aa raha hai. SBI ka natak hamesha ka hai.",
+                "Ab 'Bank server not responding' aa raha hai. Aaj bank system slow lag raha hai.",
             ],
             "extract": [
                 "Yeh verification kis UPI ID se linked hai? UPI ID message mein clearly likh do.",

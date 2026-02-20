@@ -5,13 +5,13 @@ from typing import Dict, List
 
 GLOBAL_VARIABLES: Dict[str, List[str]] = {
     "banks": [
-        "State Bank of India",
-        "HDFC",
-        "Punjab National Bank",
-        "Post Office Account",
-        "Co-operative Bank",
-        "Gramin Bank",
-        "LIC Policy",
+        "the bank",
+        "national bank",
+        "private bank",
+        "local bank",
+        "regional bank",
+        "post office account",
+        "insurance policy",
     ],
     "channels": [
         "SMS",

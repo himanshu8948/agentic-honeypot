@@ -51,6 +51,7 @@ REQ_LIMITER_IP = SlidingWindowLimiter(max_requests=1200, window_seconds=60)
 STAT_MODEL = None
 INFLIGHT_SEM: asyncio.Semaphore | None = None
 INFLIGHT_WAIT_S = 1.5
+GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 _EXCITED_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\boh\s+no\b", re.IGNORECASE), "Observed"),
@@ -183,7 +184,7 @@ async def startup() -> None:
         db_path=SETTINGS.db_path,
         fraudCorpusLines=len(FRAUD_CORPUS),
         lookupPatterns=LOOKUP_TABLE_COUNT,
-        llmEnabled=False,
+        llmEnabled=bool(SETTINGS.llm_enabled and SETTINGS.groq_api_key and SETTINGS.groq_model),
         statModelLoaded=bool(STAT_MODEL),
         rlWindowSeconds=window,
         rlMaxPerSession=per_session,
@@ -417,23 +418,37 @@ async def handle_message(
         )
         verbosity = (payload.metadata.verbosity if payload.metadata else None) or "low"
         try:
-            pb = build_reply(
-                domain=domain,
-                next_target=next_target,
+            llm_reply = await _generate_llm_reply(
+                settings=SETTINGS,
+                conversation=conversation,
                 persona=persona_used,
-                conversation=conversation,
                 language=language,
-                verbosity=verbosity,
-            )
-            reply = _maybe_echo_scammer_intel(
-                reply=pb.reply,
+                next_target=next_target,
+                target_key=target_key,
                 intel=intel,
-                conversation=conversation,
-                domain=domain,
-                state=convo_state,
             )
-            agent_notes = pb.agent_notes
-            stop_reason = pb.stop_reason
+            if llm_reply:
+                reply = llm_reply
+                agent_notes = "llm_reply:groq"
+                stop_reason = None
+            else:
+                pb = build_reply(
+                    domain=domain,
+                    next_target=next_target,
+                    persona=persona_used,
+                    conversation=conversation,
+                    language=language,
+                    verbosity=verbosity,
+                )
+                reply = _maybe_echo_scammer_intel(
+                    reply=pb.reply,
+                    intel=intel,
+                    conversation=conversation,
+                    domain=domain,
+                    state=convo_state,
+                )
+                agent_notes = pb.agent_notes
+                stop_reason = pb.stop_reason
         except Exception:
             # Absolute fallback to keep the API stable in evaluation harnesses.
             reply = "Sorry, I'm confused. What should I do next?"
@@ -453,6 +468,7 @@ async def handle_message(
         reply = _lightweight_reply(incoming_text, salt=f"{session_id}:{api_calls}")
     # Note: even in high-risk zones, we keep engaging (honeypot) but never reveal detection.
 
+    reply = _debrand_reply(reply, incoming_text)
     reply = _tone_normalize_reply(reply)
     if should_engage:
         # Provide recent user (honeypot) messages so we don't append the same question repeatedly.
@@ -1172,6 +1188,40 @@ def _sanitize_incoming_text(text: str) -> str:
     return s.strip()
 
 
+_BRAND_TOKENS = [
+    "state bank of india",
+    "sbi",
+    "hdfc",
+    "icici",
+    "axis",
+    "pnb",
+    "punjab national bank",
+    "kotak",
+    "indusind",
+    "yes bank",
+    "union bank",
+    "canara",
+    "bank of india",
+    "boi",
+]
+
+
+def _debrand_reply(reply: str, incoming_text: str) -> str:
+    """
+    Avoid brand-specific phrasing unless the scammer explicitly mentioned it.
+    This reduces the appearance of scenario-specific hardcoding.
+    """
+    s = (reply or "").strip()
+    if not s:
+        return reply
+    incoming_low = (incoming_text or "").lower()
+    for token in _BRAND_TOKENS:
+        if token in incoming_low:
+            continue
+        s = re.sub(rf"(?i)\b{re.escape(token)}\b", "the bank", s)
+    return s
+
+
 def _tone_normalize_reply(text: str) -> str:
     """
     Keep the honeypot calm/observational (avoid excited language that looks scripted),
@@ -1207,6 +1257,128 @@ def _ensure_engagement_question(
         return "Observed. What should I do next?"
     if "?" in s:
         return s
+
+    # Keep follow-up prompt short and contextual so the scammer keeps responding.
+    question_by_target = {
+        "phone": "What number should I use?",
+        "upi": "Which UPI ID should I send to?",
+        "link": "Which exact link should I open?",
+        "bank": "Please share the exact account details?",
+        "other": "What should I do next?",
+    }
+    q = question_by_target.get((target_key or "other").strip().lower(), "What should I do next?")
+
+    # Avoid repeating the exact same trailing question if it was asked very recently.
+    recent = [str(t or "").strip().lower() for t in (recent_user_messages or []) if str(t or "").strip()]
+    if recent and any(q.lower() in t for t in recent[-3:]):
+        q = "Can you repeat the next step slowly?"
+
+    if s.endswith((".", "!", "?")):
+        s = s[:-1].rstrip()
+    return f"{s}. {q}"
+
+
+def _format_recent_turns(conversation: list[dict[str, str]], max_turns: int = 6) -> str:
+    if not conversation:
+        return ""
+    recent = conversation[-max_turns:]
+    lines: list[str] = []
+    for m in recent:
+        who = "SCAMMER" if m.get("sender") == "scammer" else "USER"
+        text = str(m.get("text") or "").strip()
+        if not text:
+            continue
+        # Keep lines compact to reduce prompt size.
+        lines.append(f"{who}: {text}")
+    return "\n".join(lines)
+
+
+def _summarize_intel_for_llm(intel: dict[str, list[str]]) -> str:
+    if not intel:
+        return ""
+    parts: list[str] = []
+    for key, label in [
+        ("phoneNumbers", "phones"),
+        ("bankAccounts", "bank_accounts"),
+        ("upiIds", "upi_ids"),
+        ("phishingLinks", "links"),
+        ("emailAddresses", "emails"),
+        ("caseIds", "case_ids"),
+        ("policyNumbers", "policy_numbers"),
+        ("orderNumbers", "order_numbers"),
+    ]:
+        vals = [str(v).strip() for v in intel.get(key, []) if str(v).strip()]
+        if vals:
+            preview = ", ".join(vals[-2:])
+            parts.append(f"{label}: {preview}")
+    return "; ".join(parts)
+
+
+async def _generate_llm_reply(
+    *,
+    settings: Settings,
+    conversation: list[dict[str, str]],
+    persona: str,
+    language: str,
+    next_target: str,
+    target_key: str,
+    intel: dict[str, list[str]],
+) -> str | None:
+    if not settings.llm_enabled:
+        return None
+    if not settings.groq_api_key or not settings.groq_model:
+        return None
+
+    history = _format_recent_turns(conversation, max_turns=6)
+    intel_hint = _summarize_intel_for_llm(intel)
+    target_hint = (next_target or target_key or "details").strip()
+    lang = (language or "en").strip().lower()
+
+    system = (
+        "You are a calm, cooperative honeypot chatting with a scammer. "
+        "Do not mention scams or safety. "
+        "Ask for the next needed detail and keep them engaged. "
+        "Reply in 1-2 short sentences."
+    )
+    user = (
+        f"Language: {lang}\n"
+        f"Persona: {persona or 'neutral'}\n"
+        f"Goal: ask for {target_hint}\n"
+        f"Known intel: {intel_hint or 'none'}\n"
+        f"Recent conversation:\n{history}\n"
+        "Reply:"
+    )
+
+    payload = {
+        "model": settings.groq_model,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "max_tokens": settings.llm_max_tokens,
+        "temperature": 0.6,
+        "top_p": 0.9,
+    }
+
+    timeout_s = max(0.5, settings.llm_timeout_ms / 1000.0)
+    try:
+        async with httpx.AsyncClient(timeout=timeout_s) as client:
+            resp = await client.post(
+                GROQ_CHAT_URL,
+                headers={"Authorization": f"Bearer {settings.groq_api_key}"},
+                json=payload,
+            )
+        if resp.status_code < 200 or resp.status_code >= 300:
+            return None
+        data = resp.json()
+        choices = data.get("choices") or []
+        if not choices:
+            return None
+        msg = choices[0].get("message") or {}
+        text = str(msg.get("content") or "").strip()
+        return text or None
+    except Exception:
+        return None
 
     key_raw = (target_key or "other").strip().lower()
     # Call sites use "phone/upi/link/bank/other" as target keys.

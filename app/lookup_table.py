@@ -142,7 +142,8 @@ def lookup_response(
             score = max(score, rf)
 
         if pattern and kp_hits and pattern.lower() in kp_hits:
-            score = max(score, 0.95)
+            # Slight boost for exact phrase hits without making it deterministic.
+            score = max(score, min(0.85, score + 0.15))
 
         if score < min_score:
             continue

@@ -16,6 +16,11 @@ class Settings:
     rule_threshold: int
     guvi_callback_url: str
     trusted_sms_headers: set[str]
+    llm_enabled: bool
+    groq_api_key: str
+    groq_model: str
+    llm_timeout_ms: int
+    llm_max_tokens: int
     # Engagement/callback pacing knobs (defaults are conservative for most demos)
     target_messages_exchanged: int
     min_messages_before_complete: int
@@ -35,6 +40,12 @@ def load_settings() -> Settings:
     guvi_callback_url = _get_env("GUVI_CALLBACK_URL", "")
     trusted_sms_headers = _load_trusted_headers()
 
+    llm_enabled = (_get_env("LLM_ENABLED", "false") or "false").strip().lower() in {"1", "true", "yes", "on"}
+    groq_api_key = _get_env("GROQ_API_KEY", "") or ""
+    groq_model = (_get_env("GROQ_MODEL", "llama-3.1-8b-instant") or "llama-3.1-8b-instant").strip()
+    llm_timeout_ms = int(_get_env("LLM_TIMEOUT_MS", "4000") or "4000")
+    llm_max_tokens = int(_get_env("LLM_MAX_TOKENS", "180") or "180")
+
     # Default to hackathon-style long engagements; override in env for shorter demos.
     target_messages_exchanged = int(_get_env("TARGET_MESSAGES_EXCHANGED", "150"))
     min_messages_before_complete = int(_get_env("MIN_MESSAGES_BEFORE_COMPLETE", "10"))
@@ -49,6 +60,11 @@ def load_settings() -> Settings:
         rule_threshold=rule_threshold,
         guvi_callback_url=guvi_callback_url,
         trusted_sms_headers=trusted_sms_headers,
+        llm_enabled=llm_enabled,
+        groq_api_key=groq_api_key,
+        groq_model=groq_model,
+        llm_timeout_ms=max(500, min(llm_timeout_ms, 10000)),
+        llm_max_tokens=max(60, min(llm_max_tokens, 400)),
         target_messages_exchanged=max(0, target_messages_exchanged),
         min_messages_before_complete=max(1, min_messages_before_complete),
         min_messages_before_complete_with_intel=max(1, min_messages_before_complete_with_intel),
@@ -76,4 +92,3 @@ def _load_trusted_headers() -> set[str]:
             pass
 
     return headers
-
