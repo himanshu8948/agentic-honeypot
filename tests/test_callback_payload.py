@@ -6,6 +6,7 @@ def test_competition_payload_shape_and_safety() -> None:
         session_id="abc123",
         scam_detected=True,
         total_messages=0,
+        engagement_duration_seconds=0,
         intel={
             "bankAccounts": ["1234567890123456"],
             "upiIds": ["scammer.fraud@fakebank"],
@@ -19,6 +20,7 @@ def test_competition_payload_shape_and_safety() -> None:
     assert isinstance(payload["sessionId"], str) and payload["sessionId"]
     assert payload["scamDetected"] is True
     assert payload["totalMessagesExchanged"] == 1  # normalized min
+    assert payload["engagementDurationSeconds"] == 1  # normalized min
     assert set(payload["extractedIntelligence"].keys()) == {
         "bankAccounts",
         "upiIds",

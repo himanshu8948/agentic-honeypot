@@ -1,12 +1,25 @@
 import os
 from dataclasses import dataclass
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 def _get_env(name: str, default: str | None = None) -> str | None:
     value = os.getenv(name)
     if value is None or value == "":
         return default
     return value
+
+
+def _get_env_any(names: tuple[str, ...], default: str | None = None) -> str | None:
+    for name in names:
+        value = _get_env(name)
+        if value is not None and value != "":
+            return value
+    return default
 
 
 @dataclass(frozen=True)
@@ -29,15 +42,15 @@ class Settings:
 
 
 def load_settings() -> Settings:
-    service_api_key = _get_env("SERVICE_API_KEY")
+    service_api_key = _get_env_any(("SERVICE_API_KEY", "API_KEY"))
     if not service_api_key:
-        raise RuntimeError("SERVICE_API_KEY is required")
+        raise RuntimeError("SERVICE_API_KEY (or API_KEY) is required")
 
     db_path = _get_env("DB_PATH", "./honeypot.db")
 
     rule_threshold = int(_get_env("RULE_THRESHOLD", "8"))
 
-    guvi_callback_url = _get_env("GUVI_CALLBACK_URL", "")
+    guvi_callback_url = _get_env_any(("GUVI_CALLBACK_URL", "CALLBACK_URL"), "")
     trusted_sms_headers = _load_trusted_headers()
 
     llm_enabled = (_get_env("LLM_ENABLED", "false") or "false").strip().lower() in {"1", "true", "yes", "on"}

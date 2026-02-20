@@ -327,6 +327,22 @@ def count_messages(conn: sqlite3.Connection, session_id: str) -> int:
     return int(row["cnt"]) if row else 0
 
 
+def get_message_time_bounds(conn: sqlite3.Connection, session_id: str) -> tuple[int | None, int | None]:
+    row = conn.execute(
+        """
+        SELECT MIN(timestamp_ms) AS min_ts, MAX(timestamp_ms) AS max_ts
+        FROM messages
+        WHERE session_id = ?
+        """,
+        (session_id,),
+    ).fetchone()
+    if not row:
+        return None, None
+    min_ts = row["min_ts"]
+    max_ts = row["max_ts"]
+    return (int(min_ts), int(max_ts)) if min_ts is not None and max_ts is not None else (None, None)
+
+
 def _empty_intel() -> dict[str, list[str]]:
     return {
         "bankAccounts": [],

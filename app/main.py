@@ -17,6 +17,7 @@ from .config import Settings, load_settings
 from .db import (
     append_message,
     connect,
+    get_message_time_bounds,
     get_or_create_session,
     get_api_calls,
     init_db,
@@ -499,6 +500,8 @@ async def handle_message(
     session = get_or_create_session(DB, session_id)
     total_messages = int(session["total_messages"]) if "total_messages" in session.keys() else 0
     total_messages_exchanged = total_messages
+    min_ts, max_ts = get_message_time_bounds(DB, session_id)
+    engagement_duration_seconds = _compute_engagement_duration_seconds(session, min_ts, max_ts)
     has_intel = any(intel.get(k) for k in ["bankAccounts", "upiIds", "phishingLinks", "phoneNumbers"])
 
     engagement_complete = False
@@ -541,6 +544,7 @@ async def handle_message(
             session_id,
             scam_detected,
             total_messages_exchanged,
+            engagement_duration_seconds,
             intel,
             callback_notes,
         )
@@ -620,6 +624,7 @@ async def _send_callback(
     session_id: str,
     scam_detected: bool,
     total_messages: int,
+    engagement_duration_seconds: int,
     intel: dict[str, list[str]],
     agent_notes: str,
 ) -> bool:
@@ -631,6 +636,7 @@ async def _send_callback(
         session_id=session_id,
         scam_detected=scam_detected,
         total_messages=total_messages,
+        engagement_duration_seconds=engagement_duration_seconds,
         intel=intel,
         agent_notes=agent_notes,
     )
@@ -638,6 +644,7 @@ async def _send_callback(
         "callback_payload_ready",
         sessionId=payload["sessionId"],
         totalMessagesExchanged=payload["totalMessagesExchanged"],
+        engagementDurationSeconds=payload["engagementDurationSeconds"],
         suspiciousKeywords=len(payload["extractedIntelligence"].get("suspiciousKeywords", [])),
     )
 
@@ -660,20 +667,46 @@ def _build_competition_payload(
     session_id: str,
     scam_detected: bool,
     total_messages: int,
+    engagement_duration_seconds: int,
     intel: dict[str, list[str]],
     agent_notes: str,
 ) -> dict[str, Any]:
     safe_session_id = _normalize_session_id(session_id)
     safe_total = max(1, int(total_messages))
+    safe_duration = max(1, int(engagement_duration_seconds or 0))
     safe_intel = _sanitize_intelligence(intel)
     safe_notes = str(agent_notes).strip() or "No additional agent notes."
     return {
         "sessionId": safe_session_id,
         "scamDetected": bool(scam_detected),
         "totalMessagesExchanged": safe_total,
+        "engagementDurationSeconds": safe_duration,
         "extractedIntelligence": safe_intel,
         "agentNotes": safe_notes,
     }
+
+
+def _epoch_seconds_from_unknown(ts: int) -> int:
+    # Client timestamps are expected in ms, but tolerate sec-based payloads.
+    val = int(ts)
+    if val > 10_000_000_000:  # likely milliseconds
+        return val // 1000
+    return val
+
+
+def _compute_engagement_duration_seconds(session: Any, min_ts: int | None, max_ts: int | None) -> int:
+    if min_ts is not None and max_ts is not None and max_ts >= min_ts:
+        return max(1, _epoch_seconds_from_unknown(max_ts) - _epoch_seconds_from_unknown(min_ts))
+
+    # Fallback to server-side session clock if message timestamps are absent/invalid.
+    try:
+        created = int(session["created_at"] or 0)
+        updated = int(session["updated_at"] or 0)
+        if updated >= created and created > 0:
+            return max(1, updated - created)
+    except Exception:
+        pass
+    return 1
 
 
 def _sanitize_intelligence(intel: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -1374,8 +1407,10 @@ async def _generate_llm_reply(
     intel: dict[str, list[str]],
 ) -> str | None:
     if not settings.llm_enabled:
+        log_event("llm_skipped", reason="disabled")
         return None
     if not settings.groq_api_key or not settings.groq_model:
+        log_event("llm_skipped", reason="missing_config")
         return None
 
     history = _format_recent_turns(conversation, max_turns=6)
@@ -1418,15 +1453,22 @@ async def _generate_llm_reply(
                 json=payload,
             )
         if resp.status_code < 200 or resp.status_code >= 300:
+            log_event("llm_non_2xx", statusCode=resp.status_code)
             return None
         data = resp.json()
         choices = data.get("choices") or []
         if not choices:
+            log_event("llm_empty_choices")
             return None
         msg = choices[0].get("message") or {}
         text = str(msg.get("content") or "").strip()
-        return text or None
+        if text:
+            log_event("llm_reply_generated")
+            return text
+        log_event("llm_empty_text")
+        return None
     except Exception:
+        log_event("llm_exception")
         return None
 
 def _lightweight_reply(incoming_text: str, *, salt: str) -> str:
@@ -1661,19 +1703,34 @@ def _competition_agent_notes(
     else:
         probe = "stall_with_confusion"
 
-    # Compact one-line summary with a small telemetry footer.
     # Produce a short natural-language behavior summary (no telemetry, no intel).
-    # Shortest possible behavior summary: one compact sentence.
     if (redirection or fee_pressure) and credential_grab:
-        return "Scammer used manipulation to get OTP/PIN."
-    if authority or impersonation:
-        return "Scammer used authority/impersonation tactics."
-    if urgency:
-        return "Scammer used urgency tactics."
-    if credential_grab:
-        return "Scammer attempted credential theft."
-    if redirection or fee_pressure:
-        return "Scammer pushed payment redirection."
-    if doc_pressure:
-        return "Scammer used document pressure."
-    return "Scammer used social engineering."
+        tactic = "OTP/PIN and payment push"
+    elif authority or impersonation:
+        tactic = "authority/impersonation"
+    elif urgency:
+        tactic = "urgency"
+    elif credential_grab:
+        tactic = "credential theft"
+    elif redirection or fee_pressure:
+        tactic = "payment redirection"
+    elif doc_pressure:
+        tactic = "document pressure"
+    else:
+        tactic = "social engineering"
+
+    templates = [
+        "Scammer used {tactic} tactics.",
+        "Scammer applied {tactic} pressure.",
+        "Scammer relied on {tactic} framing.",
+        "Scammer pushed {tactic}.",
+        "Scammer used {tactic} to coerce.",
+        "Scammer attempted {tactic}.",
+        "Scammer leaned on {tactic}.",
+        "Scammer drove {tactic} behavior.",
+        "Scammer escalated with {tactic}.",
+        "Scammer showed {tactic} signs.",
+    ]
+    seed = f"{safe_sid}|{turns}|{tactic}"
+    idx = int(hashlib.sha256(seed.encode("utf-8", "ignore")).hexdigest(), 16) % len(templates)
+    return templates[idx].format(tactic=tactic)
