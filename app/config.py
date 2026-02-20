@@ -42,6 +42,10 @@ class Settings:
     min_messages_before_complete: int
     min_messages_before_complete_with_intel: int
     callback_mode: str
+    callback_timeout_ms: int
+    callback_max_retries: int
+    callback_min_interval_messages: int
+    callback_min_interval_seconds: int
 
 
 def load_settings() -> Settings:
@@ -72,6 +76,10 @@ def load_settings() -> Settings:
     callback_mode = (_get_env("CALLBACK_MODE", "always") or "always").strip().lower()
     if callback_mode not in {"always", "on_complete"}:
         callback_mode = "always"
+    callback_timeout_ms = int(_get_env("CALLBACK_TIMEOUT_MS", "2000") or "2000")
+    callback_max_retries = int(_get_env("CALLBACK_MAX_RETRIES", "1") or "1")
+    callback_min_interval_messages = int(_get_env("CALLBACK_MIN_INTERVAL_MESSAGES", "8") or "8")
+    callback_min_interval_seconds = int(_get_env("CALLBACK_MIN_INTERVAL_SECONDS", "45") or "45")
 
     return Settings(
         service_api_key=service_api_key,
@@ -91,6 +99,10 @@ def load_settings() -> Settings:
         min_messages_before_complete=max(1, min_messages_before_complete),
         min_messages_before_complete_with_intel=max(1, min_messages_before_complete_with_intel),
         callback_mode=callback_mode,
+        callback_timeout_ms=max(500, min(callback_timeout_ms, 15000)),
+        callback_max_retries=max(1, min(callback_max_retries, 5)),
+        callback_min_interval_messages=max(1, min(callback_min_interval_messages, 100)),
+        callback_min_interval_seconds=max(1, min(callback_min_interval_seconds, 3600)),
     )
 
 def _load_trusted_headers() -> set[str]:

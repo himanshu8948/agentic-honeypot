@@ -66,6 +66,8 @@ LLM_CIRCUIT = CircuitBreaker(failure_threshold=4, recovery_seconds=45)
 _DAILY_LLM_LOCK = threading.Lock()
 _DAILY_LLM_DAY = ""
 _DAILY_LLM_TOKENS = 0
+_LLM_AUTH_LOCK = threading.Lock()
+_LLM_AUTH_BLOCK_UNTIL = 0.0
 
 _EXCITED_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"\boh\s+no\b", re.IGNORECASE), "Observed"),
@@ -207,6 +209,11 @@ async def _startup_runtime() -> None:
         llmMaxSessionTokens=SETTINGS.llm_max_session_tokens,
         llmMaxDailyTokens=SETTINGS.llm_max_daily_tokens,
         llmTemperature=SETTINGS.llm_temperature,
+        callbackMode=SETTINGS.callback_mode,
+        callbackTimeoutMs=SETTINGS.callback_timeout_ms,
+        callbackMaxRetries=SETTINGS.callback_max_retries,
+        callbackMinIntervalMessages=SETTINGS.callback_min_interval_messages,
+        callbackMinIntervalSeconds=SETTINGS.callback_min_interval_seconds,
     )
 
 
@@ -555,8 +562,14 @@ async def handle_message(
 
     callback_pending = bool(session["callback_pending"]) if "callback_pending" in session.keys() else False
     callback_mode = str(getattr(SETTINGS, "callback_mode", "always") or "always").strip().lower()
+    callback_allowed_now = _should_fire_callback_now(
+        state=convo_state,
+        total_messages=total_messages_exchanged,
+        min_interval_messages=int(getattr(SETTINGS, "callback_min_interval_messages", 8) or 8),
+        min_interval_seconds=int(getattr(SETTINGS, "callback_min_interval_seconds", 45) or 45),
+    )
     if callback_mode == "always":
-        should_attempt_callback = scam_detected and effective_sender == "scammer"
+        should_attempt_callback = scam_detected and effective_sender == "scammer" and callback_allowed_now
     else:
         should_attempt_callback = scam_detected and (engagement_complete or callback_pending) and not bool(
             session["engagement_complete"]
@@ -588,6 +601,9 @@ async def handle_message(
             agent_notes = (agent_notes + " | callback_failed").strip(" |")
         else:
             callback_pending = False
+        convo_state["lastCallbackAt"] = int(time.time())
+        convo_state["lastCallbackMsgCount"] = int(total_messages_exchanged)
+        conversation_summary = _dump_conversation_state(convo_state)
 
     update_session(
         DB,
@@ -653,6 +669,29 @@ async def handle_message(
     )
 
 
+def _should_fire_callback_now(
+    *,
+    state: dict[str, Any],
+    total_messages: int,
+    min_interval_messages: int,
+    min_interval_seconds: int,
+) -> bool:
+    try:
+        last_count = int(state.get("lastCallbackMsgCount", 0) or 0)
+    except Exception:
+        last_count = 0
+    try:
+        last_at = int(state.get("lastCallbackAt", 0) or 0)
+    except Exception:
+        last_at = 0
+    now_s = int(time.time())
+    if last_count > 0 and (total_messages - last_count) < max(1, min_interval_messages):
+        return False
+    if last_at > 0 and (now_s - last_at) < max(1, min_interval_seconds):
+        return False
+    return True
+
+
 async def _send_callback(
     settings: Settings,
     session_id: str,
@@ -682,17 +721,24 @@ async def _send_callback(
         suspiciousKeywords=len(payload["extractedIntelligence"].get("suspiciousKeywords", [])),
     )
 
-    for attempt in range(3):
+    max_retries = int(getattr(settings, "callback_max_retries", 1) or 1)
+    timeout_s = max(0.3, float(getattr(settings, "callback_timeout_ms", 2000) or 2000) / 1000.0)
+    for attempt in range(max_retries):
         try:
-            async with httpx.AsyncClient(timeout=5) as client:
+            async with httpx.AsyncClient(timeout=timeout_s) as client:
                 resp = await client.post(settings.guvi_callback_url, json=payload)
                 if 200 <= resp.status_code < 300:
                     log_event("callback_sent", statusCode=resp.status_code, attempt=attempt + 1)
                     return True
+                # Do not retry auth/validation failures; they won't recover immediately.
+                if resp.status_code in {400, 401, 403, 404, 422}:
+                    log_event("callback_non_retryable", statusCode=resp.status_code, attempt=attempt + 1)
+                    return False
                 log_event("callback_non_2xx", statusCode=resp.status_code, attempt=attempt + 1)
         except Exception:
             log_event("callback_exception", attempt=attempt + 1)
-        await asyncio.sleep(2 ** attempt)
+        if attempt < max_retries - 1:
+            await asyncio.sleep(min(2.0, 0.4 * (attempt + 1)))
     return False
 
 
@@ -842,6 +888,14 @@ def _load_conversation_state(raw: str) -> dict[str, Any]:
             obj["llmTokensUsed"] = max(0, int(obj.get("llmTokensUsed", 0) or 0))
         except Exception:
             obj["llmTokensUsed"] = 0
+        try:
+            obj["lastCallbackAt"] = max(0, int(obj.get("lastCallbackAt", 0) or 0))
+        except Exception:
+            obj["lastCallbackAt"] = 0
+        try:
+            obj["lastCallbackMsgCount"] = max(0, int(obj.get("lastCallbackMsgCount", 0) or 0))
+        except Exception:
+            obj["lastCallbackMsgCount"] = 0
         return obj
     except Exception:
         return {"asked": {}}
@@ -858,6 +912,18 @@ def _dump_conversation_state(state: dict[str, Any]) -> str:
         llm_tokens = int(state.get("llmTokensUsed", 0) or 0)
         if llm_tokens > 0:
             safe["llmTokensUsed"] = llm_tokens
+    except Exception:
+        pass
+    try:
+        last_callback_at = int(state.get("lastCallbackAt", 0) or 0)
+        if last_callback_at > 0:
+            safe["lastCallbackAt"] = last_callback_at
+    except Exception:
+        pass
+    try:
+        last_callback_count = int(state.get("lastCallbackMsgCount", 0) or 0)
+        if last_callback_count > 0:
+            safe["lastCallbackMsgCount"] = last_callback_count
     except Exception:
         pass
     asked = state.get("asked")
@@ -1476,6 +1542,17 @@ def _adjust_daily_llm_tokens(delta: int) -> None:
         _DAILY_LLM_TOKENS = max(0, _DAILY_LLM_TOKENS + delta)
 
 
+def _is_llm_auth_blocked() -> bool:
+    with _LLM_AUTH_LOCK:
+        return time.time() < _LLM_AUTH_BLOCK_UNTIL
+
+
+def _set_llm_auth_block(seconds: int) -> None:
+    global _LLM_AUTH_BLOCK_UNTIL
+    with _LLM_AUTH_LOCK:
+        _LLM_AUTH_BLOCK_UNTIL = max(_LLM_AUTH_BLOCK_UNTIL, time.time() + max(1, seconds))
+
+
 def _has_jailbreak_signal(text: str) -> bool:
     lower = (text or "").lower()
     markers = [
@@ -1601,6 +1678,9 @@ async def _generate_llm_reply(
     if not settings.groq_api_key or not settings.groq_model:
         log_event("llm_skipped", reason="missing_config")
         return None, 0
+    if _is_llm_auth_blocked():
+        log_event("llm_skipped", reason="auth_cooldown")
+        return None, 0
     if suspicious_prompting:
         log_event("llm_skipped", reason="jailbreak_guard")
         return None, 0
@@ -1679,6 +1759,9 @@ async def _generate_llm_reply(
         if resp.status_code < 200 or resp.status_code >= 300:
             LLM_CIRCUIT.record_failure()
             _adjust_daily_llm_tokens(-reserved_estimate)
+            if resp.status_code in {401, 403, 429}:
+                # Cool down for auth/rate failures so we don't keep paying latency every turn.
+                _set_llm_auth_block(300)
             log_event("llm_non_2xx", statusCode=resp.status_code)
             return None, 0
         data = resp.json()

@@ -20,6 +20,15 @@ Optional LLM replies (Groq):
 - `GROQ_MODEL=llama-3.1-8b-instant`
 - `LLM_TIMEOUT_MS=4000`
 - `LLM_MAX_TOKENS=180`
+- `LLM_TEMPERATURE=0.2`
+- `LLM_MAX_SESSION_TOKENS=2500`
+- `LLM_MAX_DAILY_TOKENS=200000`
+
+Callback endurance knobs:
+- `CALLBACK_TIMEOUT_MS=2000`
+- `CALLBACK_MAX_RETRIES=1`
+- `CALLBACK_MIN_INTERVAL_MESSAGES=8`
+- `CALLBACK_MIN_INTERVAL_SECONDS=45`
 
 LLM is used for reply generation only. Detection and extraction remain rule/NLP based. If the LLM fails or times out, the system falls back to the built-in playbooks. We do not use any test-specific prompts or hardcoded scenario answers.
 
@@ -31,6 +40,11 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 ## Test
 ```
 python -m pytest
+```
+
+24-hour soak runner (against running API):
+```
+python scripts/soak_24h.py --base-url http://127.0.0.1:8000 --api-key <SERVICE_API_KEY> --hours 24 --concurrency 8
 ```
 
 ## CI Workflow
